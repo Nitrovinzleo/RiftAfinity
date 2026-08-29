@@ -125,7 +125,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col justify-between">
       
       {/* Barre de navigation sticky */}
-      <Navbar onDemoClick={handleDemoClick} onReset={handleReset} />
+      <Navbar onReset={handleReset} />
 
       {/* Contenu Principal */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -134,7 +134,6 @@ export default function App() {
         {viewState === 'form' && (
           <RiotForm
             onSubmit={handleFormSubmit}
-            onDemoClick={handleDemoClick}
             isLoading={false}
           />
         )}
@@ -168,25 +167,16 @@ export default function App() {
               <ul className="list-disc list-inside space-y-1 text-[11px]">
                 <li>Les clés de développement gratuites Riot (<code className="text-hextech-cyan">RGAPI-...</code>) s'expirent automatiquement toutes les 24h.</li>
                 <li>Générez une nouvelle clé gratuite en 1 clic sur <a href="https://developer.riotgames.com/" target="_blank" rel="noreferrer" className="text-hextech-cyan underline font-semibold">developer.riotgames.com</a>.</li>
-                <li>Ou testez immédiatement l'application sans clé avec le <strong>Mode Démo</strong>.</li>
               </ul>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <button
-                onClick={handleDemoClick}
-                className="py-3 px-4 rounded-xl bg-gradient-to-r from-hextech-pink to-purple-600 hover:opacity-95 text-white text-xs font-semibold shadow-love-glow transition-all flex items-center justify-center gap-2"
-              >
-                <Sparkles className="w-4 h-4 text-hextech-gold animate-pulse" />
-                <span>Tester le Mode Démo</span>
-              </button>
-
+            <div className="pt-2">
               <button
                 onClick={handleReset}
-                className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center justify-center gap-2"
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>Modifier les Pseudos / Clé</span>
+                <span>Modifier les Pseudos / Clé API</span>
               </button>
             </div>
           </div>

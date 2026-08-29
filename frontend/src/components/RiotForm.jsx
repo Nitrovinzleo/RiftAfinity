@@ -193,25 +193,15 @@ export default function RiotForm({ onSubmit, onDemoClick, isLoading }) {
           </div>
 
           {/* Boutons d'Action */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-2">
+          <div className="pt-2">
             <button
               type="submit"
               disabled={isLoading}
-              className="flex-1 py-3.5 px-6 rounded-xl bg-gradient-to-r from-hextech-pink via-purple-600 to-hextech-cyan text-white font-semibold text-sm shadow-love-glow hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
+              className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-hextech-pink via-purple-600 to-hextech-cyan text-white font-semibold text-base shadow-love-glow hover:opacity-95 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 group disabled:opacity-50"
             >
               <Heart className="w-5 h-5 fill-white/20 group-hover:scale-110 transition-transform" />
               <span>Analyser notre Compatibilité</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-
-            <button
-              type="button"
-              onClick={onDemoClick}
-              disabled={isLoading}
-              className="py-3.5 px-6 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-medium text-sm transition-all flex items-center justify-center gap-2"
-            >
-              <Sparkles className="w-4 h-4 text-hextech-gold" />
-              <span>Tester la Démo</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
