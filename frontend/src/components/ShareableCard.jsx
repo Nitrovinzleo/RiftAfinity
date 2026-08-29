@@ -1,0 +1,144 @@
+import React, { useRef, useState } from 'react';
+import { Download, Heart, Sparkles, Trophy, Share2, Check } from 'lucide-react';
+import { toPng } from 'html-to-image';
+
+export default function ShareableCard({ result }) {
+  const cardRef = useRef(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  if (!result) return null;
+
+  const { overallScore, archetype, duoStats, player1Summary, player2Summary } = result;
+
+  const handleDownloadImage = async () => {
+    if (!cardRef.current) return;
+    setIsDownloading(true);
+
+    try {
+      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 });
+      const link = document.createElement('a');
+      link.download = `DuoSync-Affinity-${player1Summary.gameName}-${player2Summary.gameName}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Erreur lors du téléchargement de l\'image:', err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Boutons d'export */}
+      <div className="flex flex-wrap items-center justify-end gap-3">
+        <button
+          onClick={handleCopyLink}
+          className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-200 transition-all flex items-center gap-2"
+        >
+          {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-hextech-cyan" />}
+          <span>{copied ? 'Lien copié !' : 'Partager le Lien'}</span>
+        </button>
+
+        <button
+          onClick={handleDownloadImage}
+          disabled={isDownloading}
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-hextech-pink to-purple-600 hover:opacity-95 text-xs font-semibold text-white shadow-love-glow transition-all flex items-center gap-2 disabled:opacity-50"
+        >
+          <Download className="w-4 h-4" />
+          <span>{isDownloading ? 'Génération...' : 'Télécharger la Carte (PNG)'}</span>
+        </button>
+      </div>
+
+      {/* Carte Visuelle Générée */}
+      <div
+        ref={cardRef}
+        className="w-full max-w-2xl mx-auto rounded-3xl p-8 bg-gradient-to-br from-[#0c0d18] via-[#12162b] to-[#1c142e] border-2 border-hextech-gold/40 shadow-2xl relative overflow-hidden text-slate-100"
+      >
+        {/* Glows d'arrière-plan */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-hextech-pink/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-hextech-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        {/* Filigrane Logo */}
+        <div className="flex items-center justify-between border-b border-slate-700/60 pb-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Heart className="w-5 h-5 text-hextech-pink fill-hextech-pink" />
+            <span className="font-display font-bold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-hextech-gold to-hextech-pink">
+              DuoSync • RiftAffinity
+            </span>
+          </div>
+          <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-hextech-gold">
+            Carte d'Affinité Invocateur
+          </span>
+        </div>
+
+        {/* Bloc Central : Pseudos & Score */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center my-6 text-center">
+          
+          {/* Joueur 1 */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-semibold text-hextech-pink tracking-widest block">Joueur 1</span>
+            <div className="font-display font-bold text-xl text-white truncate">
+              {player1Summary.gameName}
+            </div>
+            <div className="text-xs text-slate-400 font-mono">#{player1Summary.tagLine}</div>
+          </div>
+
+          {/* Badge Score Central */}
+          <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-900/90 border border-hextech-gold/50 shadow-gold-glow">
+            <span className="text-xs uppercase font-bold text-hextech-gold tracking-widest mb-1">Score Global</span>
+            <div className="font-display font-black text-5xl text-white tracking-tight">
+              {overallScore}<span className="text-sm font-sans text-slate-400">/100</span>
+            </div>
+          </div>
+
+          {/* Joueur 2 */}
+          <div className="space-y-1">
+            <span className="text-[10px] uppercase font-semibold text-hextech-cyan tracking-widest block">Joueur 2</span>
+            <div className="font-display font-bold text-xl text-white truncate">
+              {player2Summary.gameName}
+            </div>
+            <div className="text-xs text-slate-400 font-mono">#{player2Summary.tagLine}</div>
+          </div>
+
+        </div>
+
+        {/* Archétype d'Affinité */}
+        <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-700/80 my-4 text-center">
+          <div className="text-[10px] uppercase font-bold tracking-widest text-hextech-gold mb-0.5">
+            Archétype Attribué
+          </div>
+          <div className="font-display font-bold text-lg text-white">
+            {archetype.title}
+          </div>
+          <div className="text-xs text-hextech-cyan font-medium mt-0.5">
+            {archetype.subtitle}
+          </div>
+        </div>
+
+        {/* Pied de Carte & Stat Clefs */}
+        <div className="grid grid-cols-3 gap-2 pt-4 border-t border-slate-700/60 text-center text-xs">
+          <div>
+            <span className="block text-[10px] text-slate-400 uppercase">Winrate Duo</span>
+            <span className="font-bold text-white">{duoStats.winratePercent}%</span>
+          </div>
+          <div>
+            <span className="block text-[10px] text-slate-400 uppercase">Parties Ensemble</span>
+            <span className="font-bold text-white">{duoStats.totalGamesTogether}</span>
+          </div>
+          <div>
+            <span className="block text-[10px] text-slate-400 uppercase">Entraide Kills</span>
+            <span className="font-bold text-white">{duoStats.jointKillParticipationPercent}%</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
