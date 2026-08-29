@@ -4,7 +4,7 @@ import Footer from './components/Footer';
 import RiotForm from './components/RiotForm';
 import LoadingScreen from './components/LoadingScreen';
 import ResultDashboard from './components/ResultDashboard';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Sparkles, ExternalLink } from 'lucide-react';
 
 export default function App() {
   const [viewState, setViewState] = useState('form'); // 'form' | 'loading' | 'result' | 'error'
