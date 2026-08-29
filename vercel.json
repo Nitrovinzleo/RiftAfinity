@@ -1,4 +1,5 @@
 {
+  "regions": ["cdg1"],
   "services": {
     "frontend": {
       "root": "frontend",
