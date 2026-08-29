@@ -4,74 +4,72 @@
 
 @layer base {
   body {
-    background-color: #090a12;
-    background-image: 
-      radial-gradient(at 10% 10%, rgba(138, 43, 226, 0.15) 0px, transparent 50%),
-      radial-gradient(at 90% 80%, rgba(255, 42, 133, 0.15) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(0, 240, 255, 0.08) 0px, transparent 60%);
-    background-attachment: fixed;
+    background-color: #0b0c14;
+    color: #f1f5f9;
+    font-family: 'Inter', sans-serif;
   }
 }
 
-/* Scrollbar personnalisée style Hextech */
+/* Scrollbar épurée */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #090a12;
+  background: #0b0c14;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f294d;
-  border-radius: 4px;
+  background: #1f293d;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #f3c669;
+  background: #ff2a85;
 }
 
-/* Animations personnalisées */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+/* Boutons principaux élégants avec dégradé Rose / Cyan */
+.btn-primary {
+  background: linear-gradient(135deg, #ff2a85 0%, #7c3aed 50%, #00f0ff 100%);
+  transition: all 0.2s ease-in-out;
 }
 
-.animate-float {
-  animation: float 4s ease-in-out infinite;
+.btn-primary:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; filter: blur(20px); }
-  50% { opacity: 0.8; filter: blur(28px); }
+.btn-primary:active {
+  transform: translateY(0px);
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 5s ease-in-out infinite;
-}
-
-/* Effets Verre & Glassmorphism Hextech */
-.glass-panel {
-  background: rgba(16, 20, 38, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Cartes épurées et sobres */
+.clean-card {
+  background: #121524;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  transition: border-color 0.2s ease-in-out;
 }
 
-.glass-panel-gold {
-  background: rgba(20, 24, 45, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(243, 198, 105, 0.3);
+.clean-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
+.clean-card-accent {
+  background: #141729;
+  border: 1px solid rgba(255, 42, 133, 0.3);
+  border-radius: 1.25rem;
+}
+
+/* Champs de formulaire nets */
 .glass-input {
-  background: rgba(9, 10, 18, 0.8);
+  background: #080910;
   border: 1px solid rgba(255, 255, 255, 0.12);
   transition: all 0.2s ease-in-out;
 }
 
 .glass-input:focus {
-  border-color: #00f0ff;
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+  border-color: #ff2a85;
+  box-shadow: 0 0 0 2px rgba(255, 42, 133, 0.2);
   outline: none;
 }
