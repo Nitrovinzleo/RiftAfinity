@@ -84,7 +84,7 @@ class DuoStats(BaseModel):
 
 class CompatibilityResponse(BaseModel):
     """
-    Réponse complète de l'API DuoSync contenant le score d'affinité, les stats et l'archétype.
+    Réponse complète de l'API RiftAffinity contenant le score d'affinité, les stats et l'archétype.
     """
     overallScore: int = Field(..., description="Score final de compatibilité globale entre 0 et 100")
     scoreBreakdown: ScoreBreakdown

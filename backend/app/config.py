@@ -7,7 +7,7 @@ load_dotenv()
 
 class Settings:
     """
-    Configuration globale de l'application FastAPI backend DuoSync.
+    Configuration globale de l'application FastAPI backend RiftAffinity.
     Gère la clé API Riot, les associations de régions et les paramètres de cache.
     """
     # Clé API Riot Games (obtenue sur https://developer.riotgames.com/)

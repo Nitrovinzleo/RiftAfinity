@@ -7,7 +7,7 @@ import logging
 from app.config import settings
 from app.services.cache import cache_service
 
-logger = logging.getLogger("duosync.riot_api")
+logger = logging.getLogger("riftaffinity.riot_api")
 
 class RiotApiError(Exception):
     """Exception personnalisée pour les erreurs liées à l'API Riot Games."""
@@ -31,7 +31,7 @@ class RiotApiClient:
         return {
             "X-Riot-Token": self.api_key,
             "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
-            "User-Agent": "DuoSync-RiftAffinity/1.0"
+            "User-Agent": "RiftAffinity/1.0"
         }
 
     async def _make_request(self, url: str) -> Any:

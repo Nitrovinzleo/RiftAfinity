@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Download, Heart, Sparkles, Trophy, Share2, Check } from 'lucide-react';
+import { Download, Heart, Share2, Check } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
 export default function ShareableCard({ result }) {
@@ -18,7 +18,7 @@ export default function ShareableCard({ result }) {
     try {
       const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2 });
       const link = document.createElement('a');
-      link.download = `DuoSync-Affinity-${player1Summary.gameName}-${player2Summary.gameName}.png`;
+      link.download = `RiftAffinity-${player1Summary.gameName}-${player2Summary.gameName}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -49,14 +49,14 @@ export default function ShareableCard({ result }) {
         <button
           onClick={handleDownloadImage}
           disabled={isDownloading}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-hextech-pink to-purple-600 hover:opacity-95 text-xs font-semibold text-white shadow-love-glow transition-all flex items-center gap-2 disabled:opacity-50"
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-purple-600 hover:opacity-95 text-xs font-semibold text-white shadow-love-glow transition-all flex items-center gap-2 disabled:opacity-50"
         >
           <Download className="w-4 h-4" />
           <span>{isDownloading ? 'Génération...' : 'Télécharger la Carte (PNG)'}</span>
         </button>
       </div>
 
-      {/* Carte Visuelle Générée */}
+      {/* Carte Visuelle Générée avec Logo Officiel */}
       <div
         ref={cardRef}
         className="w-full max-w-2xl mx-auto rounded-3xl p-8 bg-gradient-to-br from-[#0c0d18] via-[#12162b] to-[#1c142e] border-2 border-hextech-gold/40 shadow-2xl relative overflow-hidden text-slate-100"
@@ -65,12 +65,16 @@ export default function ShareableCard({ result }) {
         <div className="absolute top-0 right-0 w-64 h-64 bg-hextech-pink/20 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-hextech-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        {/* Filigrane Logo */}
+        {/* Entête avec Logo Officiel RiftAffinity */}
         <div className="flex items-center justify-between border-b border-slate-700/60 pb-4 mb-6">
-          <div className="flex items-center gap-2">
-            <Heart className="w-5 h-5 text-hextech-pink fill-hextech-pink" />
-            <span className="font-display font-bold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-hextech-gold to-hextech-pink">
-              DuoSync • RiftAffinity
+          <div className="flex items-center gap-3">
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-[#ff2a85] via-[#a855f7] to-[#00f0ff] p-[1.5px]">
+              <div className="w-full h-full bg-[#0b0813] rounded-[9px] flex items-center justify-center">
+                <Heart className="w-4 h-4 text-[#ff2a85] stroke-[2.5]" />
+              </div>
+            </div>
+            <span className="font-display font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[#ff2a85]">
+              RiftAffinity
             </span>
           </div>
           <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-hextech-gold">

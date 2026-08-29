@@ -60,7 +60,7 @@ export default function ArchetypeCard({ archetype }) {
 
       {/* Pied de carte d'archétype */}
       <div className="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-500">
-        <span>Analyse DuoSync v1.0</span>
+        <span>Analyse RiftAffinity v1.0</span>
         <span className="text-hextech-gold font-medium">Algorithme d'Affinité Riot</span>
       </div>
 

@@ -1,6 +1,6 @@
-# 💖 DuoSync (RiftAffinity) — Calculateur d'Affinité Invocateur League of Legends
+# 💖 RiftAffinity — Calculateur d'Affinité Invocateur League of Legends
 
-**DuoSync** (ou *RiftAffinity*) est une application web moderne et gratuite permettant d'analyser et de mesurer la compatibilité amoureuse et amicale entre deux joueurs de League of Legends en interrogeant l'API officielle **Riot Games**.
+**RiftAffinity** est une application web moderne et gratuite permettant d'analyser et de mesurer la compatibilité amoureuse et amicale entre deux joueurs de League of Legends en interrogeant l'API officielle **Riot Games**.
 
 ---
 
@@ -15,7 +15,7 @@
   - **Complémentarité des rôles & champions (max 20 pts)** (Bonus Botlane ADC/Support, Mid/Jungle, duos légendaires comme Lucian & Nami, Xayah & Rakan)
   - **Volume & expérience duo (max 15 pts)**
 - 🏆 **Générateur d'Archétypes Thématiques** : Attribution d'un profil psychologique (*Âmes Sœurs de la Botlane*, *Le Tandem Explosif*, *Protecteur & Carry*, *Duo Toxique & Passionné*...).
-- 🎨 **Interface Hextech & Cyber-Romance (React / Vite)** : Jauge radiale animée en SVG, animations luminescentes, statistiques détaillées et historique des parties communes.
+- 🎨 **Interface Hextech & Cyber-Romance (React / Vite)** : Logo officiel à contour dégradé néon, jauge radiale animée en SVG, animations luminescentes, statistiques détaillées et historique des parties communes.
 - 📸 **Exportation Visuelle Téléchargeable (PNG)** : Génération en un clic d'une carte d'affinité haute définition prête à être partagée sur Discord, Twitter ou Instagram.
 - 🧪 **Mode Démo Intégré** : Possibilité d'essayer instantanément l'application sans clé API Riot.
 
@@ -45,7 +45,7 @@ RIFT AFINITY/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Navbar.jsx            # En-tête avec raccourci Démo
+│   │   │   ├── Navbar.jsx            # En-tête avec Logo Officiel et raccourci Démo
 │   │   │   ├── RiotForm.jsx          # Formulaire avec validation des 2 Riot IDs
 │   │   │   ├── LoadingScreen.jsx     # Écran de chargement dynamique étape par étape
 │   │   │   ├── ResultDashboard.jsx   # Tableau de bord général des résultats
@@ -80,24 +80,11 @@ RIFT AFINITY/
 # Se placer dans le dossier backend
 cd backend
 
-# (Optionnel) Créer un environnement virtuel Python
-python -m venv venv
-# Sur Windows :
-venv\Scripts\activate
-# Sur Linux/Mac :
-source venv/bin/activate
-
 # Installer les dépendances
-pip install -r requirements.txt
-
-# Créer votre fichier .env à partir de l'exemple
-cp .env.example .env
-
-# Ajoutez votre clé API Riot dans le fichier .env :
-# RIOT_API_KEY=RGAPI-xxxx-xxxx-xxxx-xxxx
+python -m pip install -r requirements.txt
 
 # Lancer le serveur backend en mode développement
-uvicorn app.main:app --reload --port 8000
+python -m uvicorn app.main:app --reload --port 8000
 ```
 Le serveur backend est accessible sur : `http://localhost:8000` (Documentation Swagger interactive sur `http://localhost:8000/docs`).
 
@@ -125,7 +112,7 @@ L'application web s'ouvre sur : `http://localhost:3000`.
 
 ### 1. Déploiement du Backend sur Render
 1. Créez un compte gratuit sur [Render.com](https://render.com/).
-2. Créez un nouveau **Web Service** et connectez votre dépôt GitHub.
+2. Créez un nouveau **Web Service** et connectez votre dépôt GitHub `Nitrovinzleo/RiftAfinity`.
 3. Définissez le dossier racine : `backend`.
 4. Renseignez la commande de Build : `pip install -r requirements.txt`.
 5. Renseignez la commande de Démarrage : `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
@@ -134,33 +121,9 @@ L'application web s'ouvre sur : `http://localhost:3000`.
 
 ### 2. Déploiement du Frontend sur Vercel
 1. Créez un compte gratuit sur [Vercel.com](https://vercel.com/).
-2. Importez votre projet GitHub et sélectionnez le dossier `frontend`.
+2. Importez votre projet GitHub `Nitrovinzleo/RiftAfinity` et sélectionnez le dossier `frontend`.
 3. Vercel détectera automatiquement Vite et configurera les commandes de build (`npm run build`).
-4. Ajoutez la variable d'environnement optionnelle `VITE_BACKEND_URL` contenant l'URL de votre backend Render (ex: `https://duosync-backend.onrender.com`).
-
----
-
-## 📦 Procédure de Mettre sur GitHub
-
-Pour publier le projet sur votre compte GitHub :
-
-```bash
-# Initialiser le dépôt git à la racine du projet
-git init
-
-# Ajouter tous les fichiers du projet
-git add .
-
-# Créer le premier commit
-git commit -m "feat: Initial commit DuoSync - RiftAffinity (FastAPI + React)"
-
-# Associer votre dépôt GitHub (remplacez l'URL par le vôtre)
-git branch -M main
-git remote add origin https://github.com/VOTRE_PSEUDO/duosync-riftaffinity.git
-
-# Envoyer le code sur GitHub
-git push -u origin main
-```
+4. Ajoutez la variable d'environnement optionnelle `VITE_BACKEND_URL` contenant l'URL de votre backend Render (ex: `https://riftaffinity-backend.onrender.com`).
 
 ---
 

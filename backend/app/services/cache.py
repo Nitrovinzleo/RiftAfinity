@@ -3,7 +3,7 @@ import asyncio
 from typing import Any, Optional, Dict
 import logging
 
-logger = logging.getLogger("duosync.cache")
+logger = logging.getLogger("riftaffinity.cache")
 
 class MemoryCache:
     """

@@ -12,11 +12,11 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 )
-logger = logging.getLogger("duosync.main")
+logger = logging.getLogger("riftaffinity.main")
 
 # Instanciation de l'application FastAPI avec documentation OpenAPI personnalisée
 app = FastAPI(
-    title="DuoSync - RiftAffinity API",
+    title="RiftAffinity API",
     description="API FastAPI de calcul de compatibilité amoureuse et amicale pour joueurs de League of Legends via l'API Riot Games.",
     version="1.0.0",
     docs_url="/docs",
@@ -39,7 +39,7 @@ async def health_check():
     """
     return {
         "status": "healthy",
-        "service": "DuoSync-RiftAffinity Backend",
+        "service": "RiftAffinity Backend",
         "version": "1.0.0"
     }
 
