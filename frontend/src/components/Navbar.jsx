@@ -1,5 +1,6 @@
 import React from 'react';
-import { Heart, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import Logo from './Logo';
 
 export default function Navbar({ onDemoClick, onReset }) {
   return (
@@ -11,12 +12,8 @@ export default function Navbar({ onDemoClick, onReset }) {
           onClick={onReset}
           className="flex items-center gap-3.5 cursor-pointer group"
         >
-          {/* Logo Officiel RiftAffinity (Carré arrondi, bordure dégradée Rose -> Cyan, Cœur Néon) */}
-          <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-[#ff2a85] via-[#a855f7] to-[#00f0ff] p-[2.5px] shadow-[0_0_20px_rgba(255,42,133,0.4)] group-hover:scale-105 transition-transform duration-300">
-            <div className="w-full h-full bg-[#0b0813] rounded-[13px] flex items-center justify-center">
-              <Heart className="w-6 h-6 text-[#ff2a85] stroke-[2.5] drop-shadow-[0_0_8px_rgba(255,42,133,0.8)] group-hover:scale-110 transition-transform" />
-            </div>
-          </div>
+          {/* Logo Officiel RiftAffinity */}
+          <Logo size="md" className="group-hover:scale-105 transition-transform" />
 
           <div>
             <div className="flex items-center gap-2">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, Sparkles, Globe, Key, User, ShieldAlert, ArrowRight } from 'lucide-react';
+import Logo from './Logo';
 
 const REGIONS = [
   { id: 'euw1', name: 'Europe Ouest (EUW)' },
@@ -49,11 +50,12 @@ export default function RiotForm({ onSubmit, onDemoClick, isLoading }) {
         <div className="absolute -top-24 -left-24 w-60 h-60 bg-hextech-pink/20 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -right-24 w-60 h-60 bg-hextech-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        {/* Entête du Formulaire */}
-        <div className="text-center mb-8">
+        {/* Entête du Formulaire avec Logo Officiel au Sommet */}
+        <div className="flex flex-col items-center text-center mb-8">
+          <Logo size="xl" className="mb-4 animate-float hover:scale-105 transition-transform" />
+          
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hextech-pink/10 border border-hextech-pink/30 text-hextech-pink text-xs font-semibold mb-3">
-            <Heart className="w-3.5 h-3.5 fill-hextech-pink" />
-            <span>Testeur d'Affinité Invocateur</span>
+            <span>RiftAffinity • Calculateur d'Affinité LoL</span>
           </div>
           <h2 className="font-display font-bold text-3xl sm:text-4xl text-white tracking-wide mb-2">
             Mesurez Votre Compatibilité
