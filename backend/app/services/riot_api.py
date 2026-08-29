@@ -62,7 +62,7 @@ class RiotApiClient:
                         if response.status_code == 404:
                             raise RiotApiError(404, "Ressource non trouvée (pseudo introuvable ou match n'existant pas).")
                         elif response.status_code == 401 or response.status_code == 403:
-                            raise RiotApiError(response.status_code, "Clé API Riot invalide ou expirée.")
+                            raise RiotApiError(response.status_code, "Clé API Riot invalide ou expirée. Les clés gratuites de développement expirent toutes les 24h. Veuillez renouveler votre clé sur developer.riotgames.com ou utiliser le Mode Démo !")
                         elif response.status_code != 200:
                             raise RiotApiError(response.status_code, f"Erreur API Riot: {response.text}")
 

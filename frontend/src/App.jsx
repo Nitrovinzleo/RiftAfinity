@@ -149,23 +149,46 @@ export default function App() {
 
         {/* Écran d'Erreur */}
         {viewState === 'error' && (
-          <div className="max-w-md mx-auto my-12 p-8 rounded-2xl glass-panel text-center space-y-4 border border-rose-500/40">
+          <div className="max-w-lg mx-auto my-12 p-8 rounded-2xl glass-panel text-center space-y-5 border border-rose-500/40 shadow-2xl">
             <div className="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto border border-rose-500/40">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <h3 className="font-display font-bold text-xl text-white">
-              Une erreur est survenue
-            </h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              {errorMessage}
-            </p>
-            <button
-              onClick={handleReset}
-              className="mt-4 w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center justify-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              <span>Réessayer avec d'autres pseudos</span>
-            </button>
+            
+            <div className="space-y-1">
+              <h3 className="font-display font-bold text-2xl text-white">
+                Clé API Riot Indisponible ou Expirée
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed max-w-sm mx-auto">
+                {errorMessage}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-left text-xs space-y-2 text-slate-400">
+              <div className="font-semibold text-hextech-gold">💡 Comment résoudre cela ?</div>
+              <ul className="list-disc list-inside space-y-1 text-[11px]">
+                <li>Les clés de développement gratuites Riot (<code className="text-hextech-cyan">RGAPI-...</code>) s'expirent automatiquement toutes les 24h.</li>
+                <li>Générez une nouvelle clé gratuite en 1 clic sur <a href="https://developer.riotgames.com/" target="_blank" rel="noreferrer" className="text-hextech-cyan underline font-semibold">developer.riotgames.com</a>.</li>
+                <li>Ou testez immédiatement l'application sans clé avec le <strong>Mode Démo</strong>.</li>
+              </ul>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <button
+                onClick={handleDemoClick}
+                className="py-3 px-4 rounded-xl bg-gradient-to-r from-hextech-pink to-purple-600 hover:opacity-95 text-white text-xs font-semibold shadow-love-glow transition-all flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-hextech-gold animate-pulse" />
+                <span>Tester le Mode Démo</span>
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Modifier les Pseudos / Clé</span>
+              </button>
+            </div>
           </div>
         )}
 
