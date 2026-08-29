@@ -4,72 +4,101 @@
 
 @layer base {
   body {
-    background-color: #0b0c14;
-    color: #f1f5f9;
+    background-color: #080912;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(255, 42, 133, 0.18) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.18) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(138, 43, 226, 0.1) 0px, transparent 60%);
+    background-attachment: fixed;
+    color: #f8fafc;
     font-family: 'Inter', sans-serif;
   }
 }
 
-/* Scrollbar épurée */
+/* Custom Scrollbar Pink & Cyan */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0c14;
+  background: #080912;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f293d;
+  background: linear-gradient(180deg, #ff2a85 0%, #00f0ff 100%);
   border-radius: 9999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #ff2a85;
+/* Animated Floating Elements */
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
-/* Boutons principaux élégants avec dégradé Rose / Cyan */
-.btn-primary {
-  background: linear-gradient(135deg, #ff2a85 0%, #7c3aed 50%, #00f0ff 100%);
-  transition: all 0.2s ease-in-out;
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
 }
 
-.btn-primary:hover {
+/* Gradient Text Rose & Cyan */
+.gradient-text-pink-cyan {
+  background: linear-gradient(135deg, #ffffff 0%, #ff2a85 55%, #00f0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-vibrant {
+  background: linear-gradient(135deg, #ff2a85 0%, #a855f7 50%, #00f0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Vibrant Action Buttons */
+.btn-pink-cyan {
+  background: linear-gradient(135deg, #ff2a85 0%, #8b5cf6 50%, #00f0ff 100%);
+  box-shadow: 0 0 25px -5px rgba(255, 42, 133, 0.5);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-pink-cyan:hover {
   opacity: 0.95;
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 0 35px -2px rgba(255, 42, 133, 0.7);
 }
 
-.btn-primary:active {
-  transform: translateY(0px);
+.btn-pink-cyan:active {
+  transform: translateY(0px) scale(0.99);
 }
 
-/* Cartes épurées et sobres */
-.clean-card {
-  background: #121524;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  transition: border-color 0.2s ease-in-out;
+/* Premium Glass Cards with Glowing Borders */
+.glass-panel-vibrant {
+  background: rgba(15, 18, 35, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 42, 133, 0.25);
+  border-radius: 1.5rem;
+  box-shadow: 0 20px 40px -15px rgba(9, 10, 18, 0.8), 0 0 25px -10px rgba(255, 42, 133, 0.2);
 }
 
-.clean-card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+.glass-panel-vibrant:hover {
+  border-color: rgba(255, 42, 133, 0.45);
+  box-shadow: 0 25px 50px -12px rgba(9, 10, 18, 0.9), 0 0 35px -5px rgba(0, 240, 255, 0.25);
 }
 
-.clean-card-accent {
-  background: #141729;
-  border: 1px solid rgba(255, 42, 133, 0.3);
-  border-radius: 1.25rem;
+.glass-panel-cyan {
+  background: rgba(15, 18, 35, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 1.5rem;
 }
 
-/* Champs de formulaire nets */
 .glass-input {
-  background: #080910;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(8, 9, 18, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   transition: all 0.2s ease-in-out;
 }
 
 .glass-input:focus {
-  border-color: #ff2a85;
-  box-shadow: 0 0 0 2px rgba(255, 42, 133, 0.2);
+  border-color: #00f0ff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
   outline: none;
 }

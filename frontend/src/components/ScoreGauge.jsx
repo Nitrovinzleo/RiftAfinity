@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Flame } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { translations } from '../utils/translations';
 
 export default function ScoreGauge({ score, breakdown, currentLang }) {
@@ -31,15 +31,16 @@ export default function ScoreGauge({ score, breakdown, currentLang }) {
   const strokeDashoffset = circumference - (displayScore / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 tinder-card relative">
+    <div className="flex flex-col items-center justify-center p-6 glass-panel-vibrant relative">
       
       <div className="relative w-48 h-48 flex items-center justify-center">
-        {/* SVG Gauge Tinder Style */}
+        {/* SVG Gauge Pink-Cyan Gradient */}
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
           <defs>
-            <linearGradient id="tinderGaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fd267d" />
-              <stop offset="100%" stopColor="#ff6036" />
+            <linearGradient id="pinkCyanGaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ff2a85" />
+              <stop offset="50%" stopColor="#a855f7" />
+              <stop offset="100%" stopColor="#00f0ff" />
             </linearGradient>
           </defs>
 
@@ -57,8 +58,8 @@ export default function ScoreGauge({ score, breakdown, currentLang }) {
             cx="80"
             cy="80"
             r={radius}
-            stroke="url(#tinderGaugeGrad)"
-            className="fill-none transition-all duration-1000 ease-out drop-shadow-[0_0_15px_rgba(253,38,125,0.6)]"
+            stroke="url(#pinkCyanGaugeGrad)"
+            className="fill-none transition-all duration-1000 ease-out drop-shadow-[0_0_15px_rgba(255,42,133,0.6)]"
             strokeWidth="12"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
@@ -72,30 +73,30 @@ export default function ScoreGauge({ score, breakdown, currentLang }) {
             <span className="font-display font-black text-5xl tracking-tight text-white">
               {displayScore}
             </span>
-            <span className="text-sm font-semibold text-slate-400 font-sans">%</span>
+            <span className="text-sm font-semibold text-slate-400 font-sans">/100</span>
           </div>
-          <span className="text-[10px] uppercase font-black tracking-widest text-[#fd267d] mt-1 flex items-center gap-1">
-            <Flame className="w-3 h-3 fill-[#fd267d] inline" />
-            <span>IT'S A MATCH!</span>
+          <span className="text-[10px] uppercase font-bold tracking-widest text-[#ff2a85] mt-1 flex items-center gap-1">
+            <Heart className="w-3 h-3 fill-[#ff2a85] inline" />
+            <span>Score Duo</span>
           </span>
         </div>
       </div>
 
       {/* Détail de la répartition des points */}
       <div className="w-full grid grid-cols-2 gap-2.5 mt-6 pt-4 border-t border-slate-800/60 text-xs">
-        <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+        <div className="p-2.5 rounded-lg bg-slate-900/70 border border-slate-800">
           <span className="block text-[10px] text-slate-400 uppercase font-semibold">{t.winrate}</span>
           <span className="font-bold text-slate-200">{breakdown?.winrateScore ?? 0} <span className="text-slate-500 font-normal">/35 pts</span></span>
         </div>
-        <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+        <div className="p-2.5 rounded-lg bg-slate-900/70 border border-slate-800">
           <span className="block text-[10px] text-slate-400 uppercase font-semibold">{t.synergy}</span>
           <span className="font-bold text-slate-200">{breakdown?.synergyScore ?? 0} <span className="text-slate-500 font-normal">/30 pts</span></span>
         </div>
-        <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+        <div className="p-2.5 rounded-lg bg-slate-900/70 border border-slate-800">
           <span className="block text-[10px] text-slate-400 uppercase font-semibold">{t.roles}</span>
           <span className="font-bold text-slate-200">{breakdown?.roleScore ?? 0} <span className="text-slate-500 font-normal">/20 pts</span></span>
         </div>
-        <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+        <div className="p-2.5 rounded-lg bg-slate-900/70 border border-slate-800">
           <span className="block text-[10px] text-slate-400 uppercase font-semibold">{t.volume}</span>
           <span className="font-bold text-slate-200">{breakdown?.volumeScore ?? 0} <span className="text-slate-500 font-normal">/15 pts</span></span>
         </div>

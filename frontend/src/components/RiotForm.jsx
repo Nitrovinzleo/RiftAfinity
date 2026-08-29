@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Globe, Key, User, ShieldAlert, Flame, ArrowRight } from 'lucide-react';
+import { Heart, Globe, Key, User, ShieldAlert, Sparkles, ArrowRight } from 'lucide-react';
 import Logo from './Logo';
 import { translations } from '../utils/translations';
 
@@ -47,45 +47,45 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
 
   return (
     <div className="w-full max-w-3xl mx-auto">
-      <div className="tinder-card p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+      <div className="glass-panel-vibrant p-6 sm:p-10 shadow-2xl relative overflow-hidden">
         
-        {/* Glow de fond Tinder */}
-        <div className="absolute -top-24 -left-24 w-60 h-60 bg-[#fd267d]/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-24 -right-24 w-60 h-60 bg-[#ff6036]/15 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Halos lumineux Rose & Cyan */}
+        <div className="absolute -top-28 -left-28 w-72 h-72 bg-[#ff2a85]/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-28 -right-28 w-72 h-72 bg-[#00f0ff]/20 rounded-full blur-3xl pointer-events-none"></div>
 
-        {/* Entête du Formulaire avec Logo Tinder-Style */}
-        <div className="flex flex-col items-center text-center mb-8">
+        {/* Entête du Formulaire avec Logo Officiel au Sommet */}
+        <div className="flex flex-col items-center text-center mb-8 relative z-10">
           <Logo size="xl" className="mb-4 animate-float hover:scale-105 transition-transform" />
           
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#fd267d]/10 border border-[#fd267d]/30 text-[#fd267d] text-xs font-semibold mb-3">
-            <Flame className="w-3.5 h-3.5 fill-[#fd267d]" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#ff2a85]/15 border border-[#ff2a85]/40 text-[#ff2a85] text-xs font-semibold mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
             <span>{t.tagline}</span>
           </div>
 
           <h2 className="font-display font-black text-3xl sm:text-4xl text-white tracking-wide mb-2">
             {t.title}
           </h2>
-          <p className="text-slate-400 text-sm max-w-md mx-auto">
+          <p className="text-slate-300 text-sm max-w-md mx-auto">
             {t.subtitle}
           </p>
         </div>
 
         {/* Message d'erreur de validation */}
         {validationError && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-950/80 border border-red-500/40 text-red-200 text-sm flex items-center gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-red-950/80 border border-red-500/40 text-red-200 text-sm flex items-center gap-3">
             <ShieldAlert className="w-5 h-5 text-red-400 shrink-0" />
             <span>{validationError}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
           
           {/* Grille des 2 Joueurs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Joueur 1 */}
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-              <div className="flex items-center gap-2 text-[#fd267d] font-bold text-sm">
+            <div className="p-4 rounded-xl bg-[#090b16]/70 border border-[#ff2a85]/30 space-y-3">
+              <div className="flex items-center gap-2 text-[#ff2a85] font-bold text-sm">
                 <User className="w-4 h-4" />
                 <span>{t.p1Label}</span>
               </div>
@@ -98,7 +98,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
                     placeholder={t.pseudoPlaceholder}
                     value={p1Name}
                     onChange={(e) => setP1Name(e.target.value)}
-                    className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+                    className="w-full glass-input px-3 py-2.5 rounded-lg text-sm text-white placeholder-slate-500"
                     required
                   />
                 </div>
@@ -109,7 +109,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
                     placeholder={t.tagPlaceholder}
                     value={p1Tag}
                     onChange={(e) => setP1Tag(e.target.value)}
-                    className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+                    className="w-full glass-input px-3 py-2.5 rounded-lg text-sm text-white placeholder-slate-500"
                     required
                   />
                 </div>
@@ -117,8 +117,8 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
             </div>
 
             {/* Joueur 2 */}
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3">
-              <div className="flex items-center gap-2 text-[#ff6036] font-bold text-sm">
+            <div className="p-4 rounded-xl bg-[#090b16]/70 border border-[#00f0ff]/30 space-y-3">
+              <div className="flex items-center gap-2 text-[#00f0ff] font-bold text-sm">
                 <User className="w-4 h-4" />
                 <span>{t.p2Label}</span>
               </div>
@@ -131,7 +131,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
                     placeholder="ex: Keria"
                     value={p2Name}
                     onChange={(e) => setP2Name(e.target.value)}
-                    className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+                    className="w-full glass-input px-3 py-2.5 rounded-lg text-sm text-white placeholder-slate-500"
                     required
                   />
                 </div>
@@ -142,7 +142,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
                     placeholder="ex: T1"
                     value={p2Tag}
                     onChange={(e) => setP2Tag(e.target.value)}
-                    className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+                    className="w-full glass-input px-3 py-2.5 rounded-lg text-sm text-white placeholder-slate-500"
                     required
                   />
                 </div>
@@ -154,16 +154,16 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
           {/* Sélection de Région */}
           <div>
             <label className="block text-xs text-slate-300 font-medium mb-1.5 flex items-center gap-2">
-              <Globe className="w-3.5 h-3.5 text-[#ff6036]" />
+              <Globe className="w-3.5 h-3.5 text-[#00f0ff]" />
               <span>{t.regionLabel}</span>
             </label>
             <select
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              className="w-full glass-input px-3.5 py-2.5 rounded-xl text-sm text-white bg-[#0d0f17] cursor-pointer"
+              className="w-full glass-input px-3.5 py-2.5 rounded-lg text-sm text-white bg-[#080912] cursor-pointer"
             >
               {REGIONS.map((r) => (
-                <option key={r.id} value={r.id} className="bg-[#0d0f17] text-slate-200">
+                <option key={r.id} value={r.id} className="bg-[#080912] text-slate-200">
                   {r.name}
                 </option>
               ))}
@@ -175,7 +175,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="text-xs text-slate-400 hover:text-[#fd267d] flex items-center gap-1.5 transition-colors"
+              className="text-xs text-slate-400 hover:text-[#ff2a85] flex items-center gap-1.5 transition-colors"
             >
               <Key className="w-3.5 h-3.5" />
               <span>{showAdvanced ? t.advancedHide : t.advancedOptions}</span>
@@ -184,7 +184,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
             {showAdvanced && (
               <div className="mt-3 p-3 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
                 <p className="text-[11px] text-slate-400">
-                  {t.apiKeyNotice} (<code className="text-[#fd267d]">RGAPI-...</code>).
+                  {t.apiKeyNotice} (<code className="text-[#ff2a85]">RGAPI-...</code>).
                 </p>
                 <input
                   type="text"
@@ -197,12 +197,12 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
             )}
           </div>
 
-          {/* Bouton Principal Style Tinder */}
+          {/* Bouton Principal Rose & Cyan */}
           <div className="pt-2">
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full tinder-btn py-4 px-6 rounded-2xl text-white font-bold text-base flex items-center justify-center gap-2 group disabled:opacity-50"
+              className="w-full btn-pink-cyan py-4 px-6 rounded-xl text-white font-bold text-base flex items-center justify-center gap-2 group disabled:opacity-50"
             >
               <Heart className="w-5 h-5 fill-white/20 group-hover:scale-110 transition-transform" />
               <span>{t.submitBtn}</span>
