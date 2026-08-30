@@ -1,7 +1,15 @@
+export const languages = [
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'en', name: 'English', flag: '🇬🇧' }
+];
+
 export const translations = {
   fr: {
     navbar: {
       subtitle: "Compatibilité Invocateur LoL",
+      findDuo: "Trouver un Duo 💘",
+      login: "Se Connecter",
+      profile: "Mon Profil",
       langSwitch: "English 🇬🇧"
     },
     form: {
@@ -58,6 +66,79 @@ export const translations = {
       cardArchetypeLabel: "Profil Attribué",
       cardTitle: "Carte d'Affinité Invocateur"
     },
+    auth: {
+      loginTitle: "Connexion à RiftAffinity",
+      registerTitle: "Créer votre Compte",
+      loginDesc: "Accédez à votre profil et votre badge vérifié LoL",
+      registerDesc: "Rejoignez la communauté de rencontres & affinité LoL",
+      emailLabel: "Adresse E-mail",
+      passwordLabel: "Mot de Passe",
+      riotIdLabel: "Votre Riot ID (Pseudo#TAG)",
+      serverLabel: "Serveur de Jeu (Région)",
+      submitLogin: "Se Connecter",
+      submitRegister: "Créer mon Compte",
+      switchRegister: "S'inscrire",
+      switchLogin: "Se connecter",
+      switchQuestionLogin: "Vous n'avez pas encore de compte ?",
+      switchQuestionRegister: "Vous avez déjà un compte ?",
+      securityBadge: "🔒 Données 100% Chiffrées & Sécurisées"
+    },
+    profile: {
+      title: "Gestion du Profil & Compte LoL",
+      verifiedBadge: "Compte LoL Vérifié",
+      unverifiedBadge: "Non Vérifié",
+      memberNotice: "Membre RiftAffinity",
+      syncBtn: "Tout synchroniser depuis LoL",
+      uploadAvatarBtn: "Importer une photo",
+      changeAvatarTitle: "Changer ma photo de profil",
+      changeAvatarSub: "Format d'image personnalisé (max 5 Mo)",
+      logoutBtn: "Déconnexion",
+      verificationTitle: "Vérification Officielle de Propriété LoL",
+      verificationDesc: "Équipez cette icône d'invocateur dans votre client League of Legends puis cliquez sur le bouton de vérification :",
+      iconRequired: "Icône Requise n°",
+      iconRequiredSub: "Équipez cette icône dans le client League of Legends",
+      verifyBtn: "Vérifier mon Icône LoL & Mon Rang",
+      verifyingBtn: "Vérification en cours chez Riot...",
+      rankTitle: "Classement Solo/Duo Automatique (Riot API)",
+      refreshRankBtn: "Actualiser le Rang & Maîtrise",
+      soloDuo: "Rang Solo/Duo",
+      matchmakingTitle: "Mon Profil & Préférences Matchmaking",
+      displayNameLabel: "Nom / Pseudo d'Affichage Personnalisé (Optionnel)",
+      displayNamePlaceholder: "ex: Alex (Laisser vide pour utiliser le Riot ID)",
+      displayNameHelp: "Si renseigné, ce pseudo sera affiché en priorité et masquera le tag Riot (#TAG) sur vos cartes.",
+      spokenLanguagesTitle: "🗣️ Langues Parlées (Sélectionnez vos badges/tags)",
+      spokenLanguagesHelp: "Ces badges seront affichés sur votre carte de matchmaking pour indiquer les langues que vous parlez.",
+      birthDateLabel: "Date de Naissance",
+      ageCalculated: "ans (calculé dynamiquement)",
+      primaryRoleLabel: "Rôle Principal",
+      favoriteChampLabel: "Champion Favori / Main (Automatique par Maîtrise Riot)",
+      bioLabel: "Description / Bio",
+      socialsTitle: "🌐 Mes Réseaux Sociaux (Débloqués uniquement lors d'un Match)",
+      saveBtn: "Enregistrer mon Profil",
+      savingBtn: "Enregistrement..."
+    },
+    matchmaker: {
+      badgeTitle: "Matchmaking Duo LoL",
+      mainTitle: "Trouvez votre Duo Idéal 💘",
+      subtitle: "Parcourez les profils vérifiés et matchez pour jouer ensemble !",
+      matchTitle: "C'EST UN MATCH !",
+      matchSub: "avez tous les deux liké vos profils !",
+      unlockedTitle: "Contact & Réseaux Débloqués :",
+      emailSent: "✉️ Un e-mail de mise en relation a été envoyé aux deux joueurs !",
+      continueBtn: "Continuer à chercher d'autres Duos",
+      noMoreTitle: "Plus d'autres profils pour le moment !",
+      noMoreDesc: "Vous avez parcouru tous les joueurs disponibles. Revenez un peu plus tard !",
+      reloadBtn: "Recharger la liste",
+      compatibilityBadge: "Compatibilité",
+      rankLabel: "Rang Solo/Duo",
+      roleLabel: "Rôle & Main",
+      passBtn: "Passer (Non)",
+      likeBtn: "Liker (Oui)"
+    },
+    footer: {
+      rights: "Tous droits réservés. Non affilié à Riot Games Inc.",
+      disclaimer: "RiftAffinity est un outil de communauté indépendant."
+    },
     error: {
       title: "Clé API Riot Indisponible ou Expirée",
       howToFix: "💡 Comment résoudre cela ?",
@@ -69,6 +150,9 @@ export const translations = {
   en: {
     navbar: {
       subtitle: "LoL Summoner Compatibility",
+      findDuo: "Find a Duo 💘",
+      login: "Sign In",
+      profile: "My Profile",
       langSwitch: "Français 🇫🇷"
     },
     form: {
@@ -124,6 +208,79 @@ export const translations = {
       cardScoreLabel: "Global Score",
       cardArchetypeLabel: "Assigned Archetype",
       cardTitle: "Summoner Affinity Card"
+    },
+    auth: {
+      loginTitle: "Sign In to RiftAffinity",
+      registerTitle: "Create Your Account",
+      loginDesc: "Access your profile and verified LoL badge",
+      registerDesc: "Join the LoL duo dating & matchmaking community",
+      emailLabel: "Email Address",
+      passwordLabel: "Password",
+      riotIdLabel: "Your Riot ID (Name#TAG)",
+      serverLabel: "Game Server (Region)",
+      submitLogin: "Sign In",
+      submitRegister: "Create Account",
+      switchRegister: "Sign Up",
+      switchLogin: "Sign In",
+      switchQuestionLogin: "Don't have an account yet?",
+      switchQuestionRegister: "Already have an account?",
+      securityBadge: "🔒 100% Encrypted & Secure Data"
+    },
+    profile: {
+      title: "Profile & LoL Account Management",
+      verifiedBadge: "Verified LoL Account",
+      unverifiedBadge: "Unverified",
+      memberNotice: "RiftAffinity Member",
+      syncBtn: "Sync everything from LoL",
+      uploadAvatarBtn: "Upload photo",
+      changeAvatarTitle: "Change profile picture",
+      changeAvatarSub: "Custom image format (max 5 MB)",
+      logoutBtn: "Sign Out",
+      verificationTitle: "Official LoL Ownership Verification",
+      verificationDesc: "Equip this profile icon in your League of Legends client then click verify:",
+      iconRequired: "Required Icon #",
+      iconRequiredSub: "Equip this icon in the League of Legends client",
+      verifyBtn: "Verify LoL Icon & Rank",
+      verifyingBtn: "Verifying with Riot...",
+      rankTitle: "Automatic Solo/Duo Rank (Riot API)",
+      refreshRankBtn: "Refresh Rank & Mastery",
+      soloDuo: "Solo/Duo Rank",
+      matchmakingTitle: "My Profile & Matchmaking Preferences",
+      displayNameLabel: "Custom Display Name / Nickname (Optional)",
+      displayNamePlaceholder: "e.g. Alex (Leave empty to use Riot ID)",
+      displayNameHelp: "If set, this nickname will be shown first and hide your Riot tag (#TAG) on your cards.",
+      spokenLanguagesTitle: "🗣️ Spoken Languages (Select your badges/tags)",
+      spokenLanguagesHelp: "These badges will be displayed on your matchmaking card to show which languages you speak.",
+      birthDateLabel: "Date of Birth",
+      ageCalculated: "years old (calculated)",
+      primaryRoleLabel: "Primary Role",
+      favoriteChampLabel: "Favorite Champion / Main (Automatic via Riot Mastery)",
+      bioLabel: "Bio / Description",
+      socialsTitle: "🌐 My Social Links (Unlocked only on a Match)",
+      saveBtn: "Save My Profile",
+      savingBtn: "Saving..."
+    },
+    matchmaker: {
+      badgeTitle: "LoL Duo Matchmaking",
+      mainTitle: "Find Your Ideal Duo 💘",
+      subtitle: "Browse verified profiles and match to play together!",
+      matchTitle: "IT'S A MATCH!",
+      matchSub: "both liked each other's profiles!",
+      unlockedTitle: "Contact & Socials Unlocked:",
+      emailSent: "✉️ A match notification email was sent to both players!",
+      continueBtn: "Continue searching for Duos",
+      noMoreTitle: "No more profiles for now!",
+      noMoreDesc: "You have reviewed all available players. Check back later!",
+      reloadBtn: "Reload list",
+      compatibilityBadge: "Compatibility",
+      rankLabel: "Solo/Duo Rank",
+      roleLabel: "Role & Main",
+      passBtn: "Pass (No)",
+      likeBtn: "Like (Yes)"
+    },
+    footer: {
+      rights: "All rights reserved. Not affiliated with Riot Games Inc.",
+      disclaimer: "RiftAffinity is an independent community tool."
     },
     error: {
       title: "Riot API Key Expired or Invalid",

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle, Camera } from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
+import { translations } from '../utils/translations';
 
-export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
+export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout, currentLang = 'en' }) {
+  const t = translations[currentLang]?.profile || translations.en.profile;
+
   const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [spokenLangs, setSpokenLangs] = useState(
     user?.spokenLanguages ? user.spokenLanguages.split(',').map(s => s.trim()) : ['FR', 'EN']
@@ -66,13 +69,13 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
 
   const targetIconUrl = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.targetIconId || 28}.png`;
 
-  // Importation d'une photo de profil personnalisée
+  // Gestion de l'upload de photo de profil personnalisée
   const handleCustomAvatarUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert("L'image est trop volumineuse (max 5 Mo).");
+      alert(currentLang === 'fr' ? 'La photo dépasse la taille maximale autorisée de 5 Mo.' : 'Image size exceeds maximum 5 MB limit.');
       return;
     }
 
@@ -92,19 +95,17 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
         });
 
         const data = await res.json();
-        if (data.user) {
+        if (res.ok && data.user) {
           onUserUpdated(data.user);
-          setSaveSuccessMsg('Photo de profil mise à jour avec succès !');
-          setTimeout(() => setSaveSuccessMsg(''), 3000);
         }
       } catch (err) {
-        console.error("Erreur lors de l'envoi de la photo:", err);
+        console.error('Erreur lors de l\'envoi de la photo:', err);
       }
     };
     reader.readAsDataURL(file);
   };
 
-  // Vérification officielle et synchronisation du Rang LoL & Champion Favori
+  // Lancement de la vérification Ori Bot
   const handleVerifyIcon = async () => {
     setIsVerifying(true);
     setVerifyStatusMsg('');
@@ -119,63 +120,40 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
         }
       });
 
-      const contentType = res.headers.get("content-type");
-      let data = {};
-      if (contentType && contentType.includes("application/json")) {
-        data = await res.json();
-      } else {
-        const text = await res.text();
-        throw new Error(text || "Erreur de réponse du serveur.");
-      }
-
-      setVerifyStatusMsg(data.message || 'Vérification effectuée.');
-
-      if (data.user) {
+      const data = await res.json();
+      if (res.ok && data.user) {
         onUserUpdated(data.user);
-        if (data.user.favoriteChampion) {
-          setFavoriteChampion(data.user.favoriteChampion);
-        }
+        setVerifyStatusMsg(data.message);
+      } else {
+        setVerifyStatusMsg(data.detail || (currentLang === 'fr' ? 'Erreur lors de la vérification.' : 'Verification error.'));
       }
     } catch (err) {
-      setVerifyStatusMsg('Erreur lors de la vérification du compte.');
+      setVerifyStatusMsg(currentLang === 'fr' ? 'Erreur de connexion au serveur.' : 'Server connection error.');
     } finally {
       setIsVerifying(false);
     }
   };
 
-  // Synchronisation globale (Pseudo, Photo de profil, Rank & Champions)
+  // Synchronisation globale (Pseudo, Photo, Rank & Main Champion)
   const handleRefreshAllRiotData = async () => {
     setIsVerifying(true);
-    setVerifyStatusMsg('');
-
     try {
       const token = localStorage.getItem('riftaffinity_token');
       const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
       const res = await fetch(`${backendUrl}/api/profile/refresh-all`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
-      const contentType = res.headers.get("content-type");
-      let data = {};
-      if (contentType && contentType.includes("application/json")) {
-        data = await res.json();
-      } else {
-        const text = await res.text();
-        throw new Error(text || "Erreur de réponse du serveur.");
-      }
-
-      if (data.user) {
+      const data = await res.json();
+      if (res.ok && data.user) {
         onUserUpdated(data.user);
-        if (data.user.favoriteChampion) {
-          setFavoriteChampion(data.user.favoriteChampion);
-        }
-        setVerifyStatusMsg(data.message || 'Profil complet synchronisé avec succès !');
+        if (data.user.favoriteChampion) setFavoriteChampion(data.user.favoriteChampion);
+        setVerifyStatusMsg(data.message);
+        setTimeout(() => setVerifyStatusMsg(''), 4000);
       }
     } catch (err) {
-      setVerifyStatusMsg('Erreur lors de la synchronisation.');
+      setVerifyStatusMsg(currentLang === 'fr' ? 'Erreur lors de la synchronisation.' : 'Sync error.');
     } finally {
       setIsVerifying(false);
     }
@@ -214,7 +192,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
       const data = await res.json();
       if (res.ok && data.user) {
         onUserUpdated(data.user);
-        setSaveSuccessMsg('Profil mis à jour avec succès !');
+        setSaveSuccessMsg(currentLang === 'fr' ? 'Profil mis à jour avec succès !' : 'Profile updated successfully!');
         setTimeout(() => setSaveSuccessMsg(''), 3000);
       }
     } catch (err) {
@@ -249,7 +227,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             />
             <label className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white cursor-pointer transition-opacity text-[10px] font-bold gap-1 text-center p-1">
               <Camera className="w-5 h-5 text-[#00f0ff]" />
-              <span>Changer Photo</span>
+              <span>{t.uploadAvatarBtn || "Changer Photo"}</span>
               <input
                 type="file"
                 accept="image/*"
@@ -262,24 +240,27 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           <div className="text-center sm:text-left flex-1 space-y-1">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <h2 className="font-display font-black text-2xl text-white">
-                {user.gameName}#{user.tagLine}
+                {user.displayName || user.gameName}
               </h2>
+              {user.displayName && (
+                <span className="text-xs text-slate-400 font-mono">({user.gameName}#{user.tagLine})</span>
+              )}
 
               {user.isVerified ? (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-bold">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  <span>Compte LoL Vérifié</span>
+                  <span>{t.verifiedBadge || "Compte LoL Vérifié"}</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
                   <Shield className="w-3.5 h-3.5" />
-                  <span>Non Vérifié</span>
+                  <span>{t.unverifiedBadge || "Non Vérifié"}</span>
                 </span>
               )}
             </div>
 
             <p className="text-xs text-slate-400">
-              Région: <span className="text-slate-200 uppercase font-semibold">{user.region}</span> • Membre RiftAffinity
+              {t.serverLabel || "Serveur"}: <span className="text-slate-200 uppercase font-semibold">{user.region}</span> • {t.memberNotice || "Membre RiftAffinity"}
             </p>
 
             <div className="pt-1.5 flex flex-wrap gap-2 justify-center sm:justify-start">
@@ -289,7 +270,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-[#00f0ff]/50 hover:border-[#00f0ff] text-[#00f0ff] hover:text-white text-xs font-semibold transition-all shadow-md"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
-                <span>Tout synchroniser depuis LoL</span>
+                <span>{t.syncBtn || "Tout synchroniser depuis LoL"}</span>
               </button>
             </div>
           </div>
@@ -298,7 +279,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             onClick={onLogout}
             className="px-3 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-500/40 text-red-300 text-xs font-semibold transition-colors"
           >
-            Déconnexion
+            {t.logoutBtn || "Déconnexion"}
           </button>
         </div>
 
@@ -307,11 +288,11 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           <div className="p-4 sm:p-5 rounded-2xl bg-[#0a0d1d] border border-amber-500/40 space-y-3">
             <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
               <Sparkles className="w-4 h-4" />
-              <span>Vérification Officielle de Propriété LoL</span>
+              <span>{t.verificationTitle || "Vérification Officielle de Propriété LoL"}</span>
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              Pour prouver que vous êtes bien le propriétaire de <strong className="text-white">{user.gameName}#{user.tagLine}</strong>, équipez cette icône d'invocateur dans votre client League of Legends puis cliquez sur le bouton de vérification :
+              {t.verificationDesc || "Pour prouver que vous êtes bien le propriétaire de"} <strong className="text-white">{user.gameName}#{user.tagLine}</strong>:
             </p>
 
             <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
@@ -320,8 +301,8 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               </div>
 
               <div>
-                <span className="block text-xs font-bold text-slate-100">Icône Requise n°{user.targetIconId}</span>
-                <span className="text-[11px] text-slate-400">Équipez cette icône dans le client League of Legends</span>
+                <span className="block text-xs font-bold text-slate-100">{t.iconRequired || "Icône Requise n°"}{user.targetIconId}</span>
+                <span className="text-[11px] text-slate-400">{t.iconRequiredSub || "Équipez cette icône dans le client League of Legends"}</span>
               </div>
             </div>
 
@@ -338,7 +319,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               className="w-full btn-pink-cyan py-3 px-4 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${isVerifying ? 'animate-spin' : ''}`} />
-              <span>{isVerifying ? 'Vérification en cours chez Riot...' : 'Vérifier mon Icône LoL & Mon Rang'}</span>
+              <span>{isVerifying ? (t.verifyingBtn || 'Vérification en cours chez Riot...') : (t.verifyBtn || 'Vérifier mon Icône LoL & Mon Rang')}</span>
             </button>
           </div>
         )}
@@ -348,7 +329,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           <div className="flex items-center justify-between">
             <span className="text-xs uppercase font-bold text-[#00f0ff] flex items-center gap-2">
               <Trophy className="w-4 h-4" />
-              <span>Classement Solo/Duo Automatique (Riot API)</span>
+              <span>{t.rankTitle || "Classement Solo/Duo Automatique (Riot API)"}</span>
             </span>
             <button
               onClick={handleRefreshAllRiotData}
@@ -356,7 +337,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               className="text-[11px] text-[#00f0ff] hover:underline flex items-center gap-1 font-semibold"
             >
               <RefreshCw className={`w-3 h-3 ${isVerifying ? 'animate-spin' : ''}`} />
-              <span>Actualiser le Rang & Maîtrise</span>
+              <span>{t.refreshRankBtn || "Actualiser le Rang & Maîtrise"}</span>
             </button>
           </div>
 
@@ -376,7 +357,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                   {user.rankTier ? `${user.rankTier} ${user.rankDivision || ''}` : 'UNRANKED'}
                 </span>
                 <div className="text-xs text-slate-400 font-semibold mt-0.5">
-                  {user.rankLp !== null && user.rankLp !== undefined ? `${user.rankLp} LP • Solo/Duo` : 'Rang Solo/Duo (Riot API)'}
+                  {user.rankLp !== null && user.rankLp !== undefined ? `${user.rankLp} LP • Solo/Duo` : (t.soloDuo || 'Rang Solo/Duo')}
                 </div>
               </div>
             </div>
@@ -392,12 +373,12 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
         <form onSubmit={handleSaveProfile} className="space-y-4 pt-2">
           <h4 className="text-xs uppercase font-bold text-slate-400 tracking-wider flex items-center gap-2">
             <Heart className="w-4 h-4 text-[#ff2a85]" />
-            <span>Mon Profil & Préférences Matchmaking</span>
+            <span>{t.matchmakingTitle || "Mon Profil & Préférences Matchmaking"}</span>
           </h4>
 
           {/* Importation de la Photo de Profil */}
           <div>
-            <label className="block text-[11px] text-slate-400 mb-1">Photo de Profil Personnalisée</label>
+            <label className="block text-[11px] text-slate-400 mb-1">{t.changeAvatarTitle || "Photo de Profil Personnalisée"}</label>
             <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-950">
@@ -408,15 +389,15 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                   />
                 </div>
                 <div className="flex-1">
-                  <span className="block text-xs font-semibold text-white">Changer ma photo de profil</span>
-                  <span className="text-[10px] text-slate-400">Format d'image personnalisé (max 5 Mo)</span>
+                  <span className="block text-xs font-semibold text-white">{t.changeAvatarTitle || "Changer ma photo de profil"}</span>
+                  <span className="text-[10px] text-slate-400">{t.changeAvatarSub || "Format d'image personnalisé (max 5 Mo)"}</span>
                 </div>
               </div>
 
               {/* Bouton d'importation positionné en dessous (en restant 100% à l'intérieur du cadre) */}
               <label className="w-full px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-[#ff2a85] text-slate-200 hover:text-white border border-slate-700 hover:border-[#ff2a85] text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md">
                 <Camera className="w-4 h-4 text-[#ff2a85] group-hover:text-white" />
-                <span>Importer une photo</span>
+                <span>{t.uploadAvatarBtn || "Importer une photo"}</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -430,24 +411,24 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           {/* Nom / Pseudo d'Affichage Personnalisé */}
           <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
             <label className="block text-xs font-bold text-white mb-1">
-              Nom / Pseudo d'Affichage Personnalisé (Optionnel)
+              {t.displayNameLabel || "Nom / Pseudo d'Affichage Personnalisé (Optionnel)"}
             </label>
             <input
               type="text"
-              placeholder="ex: Alex (Laisser vide pour utiliser le Riot ID)"
+              placeholder={t.displayNamePlaceholder || "ex: Alex (Laisser vide pour utiliser le Riot ID)"}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500 font-medium"
             />
             <span className="text-[10px] text-slate-400 block pt-0.5">
-              Si renseigné, ce pseudo sera affiché en priorité et masquera le tag Riot (#TAG) sur vos cartes.
+              {t.displayNameHelp || "Si renseigné, ce pseudo sera affiché en priorité et masquera le tag Riot (#TAG) sur vos cartes."}
             </span>
           </div>
 
           {/* Tags : Langues Parlées */}
           <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
             <label className="block text-xs font-bold text-slate-200 flex items-center gap-1.5">
-              <span>🗣️ Langues Parlées (Sélectionnez vos badges/tags)</span>
+              <span>{t.spokenLanguagesTitle || "🗣️ Langues Parlées (Sélectionnez vos badges/tags)"}</span>
             </label>
             <div className="flex flex-wrap gap-2">
               {[
@@ -477,17 +458,17 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               })}
             </div>
             <span className="text-[10px] text-slate-400 block pt-0.5">
-              Ces badges seront affichés sur votre carte de matchmaking pour indiquer les langues que vous parlez.
+              {t.spokenLanguagesHelp || "Ces badges seront affichés sur votre carte de matchmaking pour indiquer les langues que vous parlez."}
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-[11px] text-slate-400">Date de Naissance</label>
+                <label className="block text-[11px] text-slate-400">{t.birthDateLabel || "Date de Naissance"}</label>
                 {user?.age !== null && user?.age !== undefined && (
                   <span className="text-[10px] text-[#ff2a85] font-bold">
-                    🎂 {user.age} ans (calculé dynamiquement)
+                    🎂 {user.age} {t.ageCalculated || "ans (calculé dynamiquement)"}
                   </span>
                 )}
               </div>
@@ -500,7 +481,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             </div>
 
             <div>
-              <label className="block text-[11px] text-slate-400 mb-1">Rôle Principal</label>
+              <label className="block text-[11px] text-slate-400 mb-1">{t.primaryRoleLabel || "Rôle Principal"}</label>
               <select
                 value={primaryRole}
                 onChange={(e) => setPrimaryRole(e.target.value)}
@@ -517,7 +498,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-[11px] text-slate-400">Champion Favori / Main (Automatique par Maîtrise Riot)</label>
+              <label className="block text-[11px] text-slate-400">{t.favoriteChampLabel || "Champion Favori / Main (Automatique par Maîtrise Riot)"}</label>
               <span className="text-[10px] text-emerald-400 font-medium">✨ Maîtrise #1 Synchro</span>
             </div>
             <input
@@ -530,7 +511,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           </div>
 
           <div>
-            <label className="block text-[11px] text-slate-400 mb-1">Description / Bio</label>
+            <label className="block text-[11px] text-slate-400 mb-1">{t.bioLabel || "Description / Bio"}</label>
             <textarea
               rows="3"
               placeholder="Présentez-vous en quelques mots (Style de jeu, ce que vous cherchez en duo...)"
@@ -542,7 +523,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
 
           {/* Section Réseaux Sociaux */}
           <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
-            <label className="block text-xs font-bold text-[#00f0ff]">🌐 Mes Réseaux Sociaux (Débloqués uniquement lors d'un Match)</label>
+            <label className="block text-xs font-bold text-[#00f0ff]">{t.socialsTitle || "🌐 Mes Réseaux Sociaux (Débloqués uniquement lors d'un Match)"}</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10px] text-slate-400 mb-1">🎮 Discord</label>
@@ -602,7 +583,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               disabled={isSaving}
               className="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold text-xs transition-all flex items-center justify-center gap-2"
             >
-              <span>{isSaving ? 'Enregistrement...' : 'Enregistrer mon Profil'}</span>
+              <span>{isSaving ? (t.savingBtn || 'Enregistrement...') : (t.saveBtn || 'Enregistrer mon Profil')}</span>
             </button>
           </div>
 

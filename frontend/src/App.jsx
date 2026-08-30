@@ -200,6 +200,7 @@ export default function App() {
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         user={currentUser}
+        currentLang={currentLang}
         onUserUpdated={(updatedUser) => setCurrentUser(updatedUser)}
         onLogout={handleLogout}
       />
