@@ -89,10 +89,17 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=dict)
 async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
-    # Protection anti-SQLi via requête ORM paramétrée
-    user = db.query(User).filter(User.email == req.email.strip().lower()).first()
-    if not user or not verify_password(req.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Email ou mot de passe incorrect.")
+    email_clean = req.email.strip().lower()
+    user = db.query(User).filter(User.email == email_clean).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=400, 
+            detail="Aucun compte trouvé avec cette adresse email sur la base de données Neon Cloud. Veuillez cliquer sur 'Créer votre Compte' pour l'inscrire !"
+        )
+
+    if not verify_password(req.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Mot de passe incorrect. Veuillez vérifier la saisie.")
 
     token = create_access_token({"sub": str(user.id), "email": user.email})
 
@@ -107,7 +114,9 @@ async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
             "isVerified": user.is_verified,
             "targetIconId": user.target_icon_id,
             "currentIconId": user.current_icon_id,
-            "age": user.age,
+            "customAvatar": user.custom_avatar,
+            "birthDate": user.birth_date,
+            "age": user.calculated_age,
             "bio": user.bio,
             "primaryRole": user.primary_role,
             "favoriteChampion": user.favorite_champion,
@@ -163,7 +172,9 @@ async def get_current_user(authorization: Optional[str] = Header(None), db: Sess
         "isVerified": user.is_verified,
         "targetIconId": user.target_icon_id,
         "currentIconId": user.current_icon_id,
-        "age": user.age,
+        "customAvatar": user.custom_avatar,
+        "birthDate": user.birth_date,
+        "age": user.calculated_age,
         "bio": user.bio,
         "primaryRole": user.primary_role,
         "favoriteChampion": user.favorite_champion,
