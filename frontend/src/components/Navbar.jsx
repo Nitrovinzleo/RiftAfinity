@@ -60,7 +60,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="max-w-[90px] sm:max-w-[120px] truncate">{currentUser.gameName}</span>
+              <span className="max-w-[90px] sm:max-w-[120px] truncate">{currentUser.displayName || currentUser.gameName}</span>
               {currentUser.isVerified && (
                 <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               )}

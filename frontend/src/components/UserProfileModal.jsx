@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle, Camera } from 'lucide-react';
 
 export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
+  const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [birthDate, setBirthDate] = useState(user?.birthDate || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [primaryRole, setPrimaryRole] = useState(user?.primaryRole || 'MID');
@@ -22,6 +23,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   // Synchronisation des états locaux si l'utilisateur est mis à jour depuis le backend
   useEffect(() => {
     if (user) {
+      if (user.displayName !== undefined) setDisplayName(user.displayName || '');
       if (user.birthDate) setBirthDate(user.birthDate);
       if (user.bio) setBio(user.bio);
       if (user.primaryRole) setPrimaryRole(user.primaryRole);
@@ -192,7 +194,8 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           instagramUsername,
           tiktokUsername,
           twitchUsername,
-          twitterUsername
+          twitterUsername,
+          displayName
         })
       });
 
@@ -395,6 +398,23 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                 />
               </label>
             </div>
+          </div>
+
+          {/* Nom / Pseudo d'Affichage Personnalisé */}
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+            <label className="block text-xs font-bold text-white mb-1">
+              Nom / Pseudo d'Affichage Personnalisé (Optionnel)
+            </label>
+            <input
+              type="text"
+              placeholder="ex: Alex (Laisser vide pour utiliser le Riot ID)"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500 font-medium"
+            />
+            <span className="text-[10px] text-slate-400 block pt-0.5">
+              Si renseigné, ce pseudo sera affiché en priorité et masquera le tag Riot (#TAG) sur vos cartes.
+            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

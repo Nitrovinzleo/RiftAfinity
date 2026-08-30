@@ -39,7 +39,8 @@ DEMO_CANDIDATES = [
         "instagramUsername": "keria_lol",
         "twitchUsername": "keria_live",
         "tiktokUsername": None,
-        "twitterUsername": "Keria_LoL"
+        "twitterUsername": "Keria_LoL",
+        "displayName": "Ryu Min-seok"
     },
     {
         "id": 99902,
@@ -61,7 +62,8 @@ DEMO_CANDIDATES = [
         "instagramUsername": "G2Caps",
         "twitchUsername": "G2Caps",
         "tiktokUsername": "g2caps_official",
-        "twitterUsername": "G2Caps"
+        "twitterUsername": "G2Caps",
+        "displayName": "Rasmus Winther"
     },
     {
         "id": 99903,
@@ -83,7 +85,8 @@ DEMO_CANDIDATES = [
         "instagramUsername": "rekkleslol",
         "twitchUsername": "rekkles",
         "tiktokUsername": None,
-        "twitterUsername": "RekklesLoL"
+        "twitterUsername": "RekklesLoL",
+        "displayName": "Martin Larsson"
     },
     {
         "id": 99904,
@@ -105,7 +108,8 @@ DEMO_CANDIDATES = [
         "instagramUsername": "jojopyun_na",
         "twitchUsername": "jojopyun",
         "tiktokUsername": None,
-        "twitterUsername": "jojopyunlol"
+        "twitterUsername": "jojopyunlol",
+        "displayName": "Joseph Joon Pyun"
     },
     {
         "id": 99905,
@@ -127,7 +131,8 @@ DEMO_CANDIDATES = [
         "instagramUsername": "mikyx_lol",
         "twitchUsername": "mikyx",
         "tiktokUsername": None,
-        "twitterUsername": "G2Mikyx"
+        "twitterUsername": "G2Mikyx",
+        "displayName": "Mihael Mehle"
     }
 ]
 

@@ -63,6 +63,7 @@ class UserResponse(BaseModel):
     tiktokUsername: Optional[str] = None
     twitchUsername: Optional[str] = None
     twitterUsername: Optional[str] = None
+    displayName: Optional[str] = None
 
 class ProfileUpdateRequest(BaseModel):
     customAvatar: Optional[str] = None
@@ -76,6 +77,7 @@ class ProfileUpdateRequest(BaseModel):
     tiktokUsername: Optional[str] = None
     twitchUsername: Optional[str] = None
     twitterUsername: Optional[str] = None
+    displayName: Optional[str] = None
 
 class PlayerMatchPerformance(BaseModel):
     """

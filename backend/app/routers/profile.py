@@ -196,6 +196,8 @@ async def update_profile(
         user.twitch_username = req.twitchUsername
     if req.twitterUsername is not None:
         user.twitter_username = req.twitterUsername
+    if req.displayName is not None:
+        user.display_name = req.displayName.strip() if req.displayName else None
 
     db.commit()
     db.refresh(user)

@@ -48,6 +48,9 @@ class User(Base):
     twitch_username = Column(String, nullable=True)
     twitter_username = Column(String, nullable=True)
 
+    # Nom / Pseudo d'affichage personnalisé
+    display_name = Column(String, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property
@@ -88,7 +91,8 @@ class User(Base):
             "instagramUsername": self.instagram_username,
             "tiktokUsername": self.tiktok_username,
             "twitchUsername": self.twitch_username,
-            "twitterUsername": self.twitter_username
+            "twitterUsername": self.twitter_username,
+            "displayName": self.display_name
         }
 
 class DuoSwipe(Base):

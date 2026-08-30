@@ -191,7 +191,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                 C'EST UN MATCH !
               </h2>
               <p className="text-xs text-slate-300">
-                Vous et <strong className="text-white font-bold">{matchResult.matchedUser.gameName}</strong> avez tous les deux liké vos profils !
+                Vous et <strong className="text-white font-bold">{matchResult.matchedUser.displayName || matchResult.matchedUser.gameName}</strong> avez tous les deux liké vos profils !
               </p>
             </div>
 
@@ -305,11 +305,14 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <h4 className="font-display font-black text-xl text-white">
-                          {currentCandidate.gameName}
+                          {currentCandidate.displayName || currentCandidate.gameName}
                         </h4>
-                        <span className="text-xs text-slate-500 font-mono">#***</span>
+                        {/* Masquer totalement le tag si un pseudo personnalisé est configuré */}
+                        {!currentCandidate.displayName && (
+                          <span className="text-xs text-slate-500 font-mono">#***</span>
+                        )}
                       </div>
                       <p className="text-xs text-slate-400">
                         {currentCandidate.age} ans • Serveur <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
