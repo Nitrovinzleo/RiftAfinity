@@ -76,11 +76,11 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": f"Erreur serveur ({type(exc).__name__}): {str(exc)}"}
     )
 
-# Inclusions des routeurs avec double préfixe pour s'adapter à la réécriture Vercel (/api/auth et /auth)
-app.include_router(auth.router)
+# Inclusions des routeurs avec préfixes universels (/api/auth et /auth)
+app.include_router(auth.router, prefix="/api/auth")
 app.include_router(auth.router, prefix="/auth")
 
-app.include_router(profile.router)
+app.include_router(profile.router, prefix="/api/profile")
 app.include_router(profile.router, prefix="/profile")
 
 @app.get("/api/health", tags=["Système"])

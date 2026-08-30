@@ -10,7 +10,7 @@ from app.services.auth_service import hash_password, verify_password, create_acc
 from app.services.riot_api import RiotApiClient
 
 logger = logging.getLogger("riftaffinity.auth")
-router = APIRouter(prefix="/api/auth", tags=["Authentification"])
+router = APIRouter(tags=["Authentification"])
 
 def parse_riot_id(riot_id_str: str):
     trimmed = riot_id_str.strip()

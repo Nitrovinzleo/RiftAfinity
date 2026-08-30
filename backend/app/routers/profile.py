@@ -10,7 +10,7 @@ from app.services.auth_service import decode_access_token
 from app.services.riot_api import RiotApiClient, RiotApiError
 
 logger = logging.getLogger("riftaffinity.profile")
-router = APIRouter(prefix="/api/profile", tags=["Profil & Vérification Riot"])
+router = APIRouter(tags=["Profil & Vérification Riot"])
 
 def get_current_user_from_token(authorization: Optional[str], db: Session) -> User:
     if not authorization or not authorization.startswith("Bearer "):
