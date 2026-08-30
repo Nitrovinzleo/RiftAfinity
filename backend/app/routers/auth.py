@@ -1,11 +1,13 @@
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from sqlalchemy.orm import Session
+import secrets
+from datetime import datetime, timedelta
 from typing import Optional
 from pydantic import BaseModel, Field
 
 from app.database import get_db
-from app.models.db_models import User
+from app.models.db_models import User, DiscordPendingLink
 from app.models.schemas import UserRegisterRequest, UserLoginRequest, UserResponse
 from app.services.auth_service import hash_password, verify_password, create_access_token, decode_access_token
 from app.services.riot_api import RiotApiClient
@@ -285,4 +287,114 @@ async def unlink_discord_account(discord_id: str, db: Session = Depends(get_db))
     user.discord_id = None
     db.commit()
     return {"message": "Le compte Discord a été délié avec succès."}
+
+
+class CreateDiscordTokenRequest(BaseModel):
+    discordId: str = Field(..., description="ID Discord numérique")
+    discordTag: Optional[str] = Field(None, description="Nom d'utilisateur / Tag Discord")
+
+class ConfirmDiscordLinkRequest(BaseModel):
+    token: str = Field(..., description="Jeton temporaire de liaison")
+
+
+@router.post("/discord-token", response_model=dict)
+async def generate_discord_link_token(req: CreateDiscordTokenRequest, db: Session = Depends(get_db)):
+    """
+    Génère un jeton temporaire (valide 15 min) pour envoyer un lien DM de confirmation d'association.
+    """
+    discord_id_str = str(req.discordId).strip()
+    
+    # Nettoyage des anciens jetons pour cet utilisateur
+    db.query(DiscordPendingLink).filter(DiscordPendingLink.discord_id == discord_id_str).delete()
+
+    token_str = secrets.token_urlsafe(32)
+    expires_at = datetime.utcnow() + timedelta(minutes=15)
+
+    pending = DiscordPendingLink(
+        token=token_str,
+        discord_id=discord_id_str,
+        discord_tag=req.discordTag,
+        expires_at=expires_at
+    )
+    db.add(pending)
+    db.commit()
+
+    return {
+        "token": token_str,
+        "expiresInMinutes": 15
+    }
+
+
+@router.get("/discord-token/{token}", response_model=dict)
+async def check_discord_link_token(token: str, db: Session = Depends(get_db)):
+    """
+    Vérifie la validité d'un jeton temporaire d'association Discord.
+    """
+    pending = db.query(DiscordPendingLink).filter(DiscordPendingLink.token == token.strip()).first()
+    if not pending:
+        raise HTTPException(status_code=404, detail="Ce lien d'association Discord est invalide ou expiré.")
+
+    if datetime.utcnow() > pending.expires_at:
+        db.delete(pending)
+        db.commit()
+        raise HTTPException(status_code=400, detail="Ce lien d'association Discord a expiré. Veuillez relancer /link sur Discord.")
+
+    return {
+        "valid": True,
+        "discordId": pending.discord_id,
+        "discordTag": pending.discord_tag,
+        "expiresAt": pending.expires_at.isoformat()
+    }
+
+
+@router.post("/confirm-discord-link", response_model=dict)
+async def confirm_discord_link(
+    req: ConfirmDiscordLinkRequest,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Validation finale de l'association Discord par un utilisateur connecté sur le site web.
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Veuillez vous connecter à votre compte RiftAffinity sur le site pour valider la liaison.")
+
+    token_jwt = authorization.split(" ")[1]
+    payload = decode_access_token(token_jwt)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Session expirée, veuillez vous reconnecter.")
+
+    user_id = int(payload["sub"])
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Compte utilisateur introuvable.")
+
+    pending = db.query(DiscordPendingLink).filter(DiscordPendingLink.token == req.token.strip()).first()
+    if not pending:
+        raise HTTPException(status_code=404, detail="Le jeton d'association est invalide ou a déjà été utilisé.")
+
+    if datetime.utcnow() > pending.expires_at:
+        db.delete(pending)
+        db.commit()
+        raise HTTPException(status_code=400, detail="Le jeton d'association a expiré. Veuillez relancer /link sur Discord.")
+
+    # 1. Vérifier si l'ID Discord est déjà utilisé par un autre utilisateur
+    other_user = db.query(User).filter(User.discord_id == pending.discord_id, User.id != user.id).first()
+    if other_user:
+        other_user.discord_id = None
+
+    # 2. Associer au compte actuel
+    user.discord_id = pending.discord_id
+    if pending.discord_tag:
+        user.discord_tag = pending.discord_tag
+
+    db.delete(pending)
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "message": f"Félicitations ! Votre compte Discord <@{user.discord_id}> a été lié à votre profil {user.full_riot_id}.",
+        "user": user.to_dict()
+    }
+
 

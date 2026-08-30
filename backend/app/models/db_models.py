@@ -109,3 +109,15 @@ class DuoSwipe(Base):
     is_match = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+
+class DiscordPendingLink(Base):
+    __tablename__ = "discord_pending_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String, unique=True, index=True, nullable=False)
+    discord_id = Column(String, nullable=False)
+    discord_tag = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
+
+

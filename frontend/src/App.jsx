@@ -7,6 +7,7 @@ import ResultDashboard from './components/ResultDashboard';
 import AuthModal from './components/AuthModal';
 import UserProfileModal from './components/UserProfileModal';
 import DuoMatchmakerModal from './components/DuoMatchmakerModal';
+import DiscordLinkModal from './components/DiscordLinkModal';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { translations } from './utils/translations';
 
@@ -22,6 +23,20 @@ export default function App() {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMatchmakerOpen, setIsMatchmakerOpen] = useState(false);
+
+  // Liaison Discord DM Token
+  const [discordToken, setDiscordToken] = useState(null);
+  const [isDiscordLinkOpen, setIsDiscordLinkOpen] = useState(false);
+
+  // Détection automatique du paramètre ?discord_token= dans l'URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenParam = params.get('discord_token') || params.get('token');
+    if (tokenParam) {
+      setDiscordToken(tokenParam);
+      setIsDiscordLinkOpen(true);
+    }
+  }, []);
 
   const t = translations[currentLang]?.error || translations.fr.error;
 
@@ -216,6 +231,19 @@ export default function App() {
           setIsProfileOpen(true);
         }}
       />
+
+      {/* Modale d'Association Discord (DM Token Validation) */}
+      {isDiscordLinkOpen && (
+        <DiscordLinkModal
+          token={discordToken}
+          currentUser={currentUser}
+          onClose={() => setIsDiscordLinkOpen(false)}
+          onOpenAuth={() => setIsAuthOpen(true)}
+          onLinkSuccess={(updatedUser) => {
+            setCurrentUser(updatedUser);
+          }}
+        />
+      )}
 
       {/* Pied de page */}
       <Footer />
