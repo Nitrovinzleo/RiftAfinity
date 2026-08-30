@@ -210,6 +210,7 @@ export default function App() {
         isOpen={isMatchmakerOpen}
         onClose={() => setIsMatchmakerOpen(false)}
         currentUser={currentUser}
+        currentLang={currentLang}
         onOpenProfile={() => {
           setIsMatchmakerOpen(false);
           setIsProfileOpen(true);

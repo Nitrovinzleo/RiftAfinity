@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Heart, HeartOff, Sparkles, Trophy, ShieldCheck, Mail, ArrowRight, UserCheck, Flame, RefreshCw } from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
+import { translations } from '../utils/translations';
 
-export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpenProfile }) {
+export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpenProfile, currentLang = 'en' }) {
+  const t = translations[currentLang]?.matchmaker || translations.en.matchmaker;
+
   const [candidates, setCandidates] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,69 +53,61 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
     }
   };
 
-  // Animation de confettis en canvas HTML5
-  const triggerConfetti = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+  // Animation de confettis en Canvas 2D
+  useEffect(() => {
+    if (matchResult?.isMatch && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      let animationFrameId;
 
-    const particles = [];
-    const colors = ['#ff2a85', '#00f0ff', '#ffd700', '#00ff88', '#ffffff', '#b537f2'];
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
 
-    for (let i = 0; i < 120; i++) {
-      particles.push({
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        vx: (Math.random() - 0.5) * 18,
-        vy: (Math.random() - 0.5) * 18 - 4,
-        size: Math.random() * 8 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        rotation: Math.random() * 360,
-        rSpeed: (Math.random() - 0.5) * 10,
-        opacity: 1
-      });
-    }
+      const particles = Array.from({ length: 60 }).map(() => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 6 + 4,
+        color: ['#ff2a85', '#00f0ff', '#8a2be2', '#ffbd2e', '#00ff88'][Math.floor(Math.random() * 5)],
+        speedY: Math.random() * 3 + 2,
+        speedX: Math.random() * 2 - 1,
+        rotation: Math.random() * 360
+      }));
 
-    let animationFrame;
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      let alive = false;
+      const render = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.25; // Gravité
-        p.rotation += p.rSpeed;
-        p.opacity -= 0.008;
+        particles.forEach((p) => {
+          p.y += p.speedY;
+          p.x += p.speedX;
+          p.rotation += 2;
 
-        if (p.opacity > 0) {
-          alive = true;
+          if (p.y > canvas.height) p.y = -10;
+
           ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate((p.rotation * Math.PI) / 180);
-          ctx.globalAlpha = Math.max(0, p.opacity);
           ctx.fillStyle = p.color;
           ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
           ctx.restore();
-        }
-      });
+        });
 
-      if (alive) {
-        animationFrame = requestAnimationFrame(render);
-      }
-    };
+        animationFrameId = requestAnimationFrame(render);
+      };
 
-    render();
-  };
+      render();
 
-  // Traitement du Swipe (Oui / Non)
+      return () => {
+        cancelAnimationFrame(animationFrameId);
+      };
+    }
+  }, [matchResult]);
+
+  // Action de Swiper (Liker ou Passer)
   const handleSwipe = async (liked) => {
-    if (swiping || currentIndex >= candidates.length) return;
-    setSwiping(true);
+    const currentCandidate = candidates[currentIndex];
+    if (!currentCandidate || swiping) return;
 
-    const candidate = candidates[currentIndex];
+    setSwiping(true);
 
     try {
       const token = localStorage.getItem('riftaffinity_token');
@@ -124,16 +119,21 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          targetId: candidate.id,
+          targetUserId: currentCandidate.id,
           liked: liked
         })
       });
 
-      const data = await res.json();
-
-      if (liked && data.isMatch) {
-        setMatchResult(data);
-        setTimeout(() => triggerConfetti(), 100);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.isMatch) {
+          setMatchResult({
+            isMatch: true,
+            matchedUser: data.matchedUser
+          });
+        } else {
+          setCurrentIndex((prev) => prev + 1);
+        }
       } else {
         setCurrentIndex((prev) => prev + 1);
       }
@@ -147,100 +147,132 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
 
   if (!isOpen) return null;
 
+  // Si l'utilisateur n'est pas connecté
+  if (!currentUser) {
+    return (
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md animate-fadeIn px-4 py-10 sm:py-16 flex justify-center items-center">
+        <div className="relative w-full max-w-md p-6 rounded-3xl glass-panel-vibrant border border-[#ff2a85]/40 text-center space-y-4">
+          <button onClick={onClose} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white">
+            <X className="w-5 h-5" />
+          </button>
+          <div className="w-14 h-14 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] flex items-center justify-center mx-auto border border-[#ff2a85]/40">
+            <Heart className="w-7 h-7 animate-bounce" />
+          </div>
+          <h3 className="font-display font-black text-xl text-white">{t.mainTitle || "Trouvez votre Duo Idéal 💘"}</h3>
+          <p className="text-xs text-slate-300">
+            {currentLang === 'fr' ? 'Vous devez vous connecter à votre compte RiftAffinity pour pouvoir trouver votre duo et tchatter !' : 'You need to sign in to your RiftAffinity account to find a duo!'}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const currentCandidate = candidates[currentIndex];
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md animate-fadeIn px-4 py-8 sm:py-12 flex justify-center items-start">
-      
-      {/* Canvas pour animation confettis */}
-      <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50" />
-
-      <div className="relative w-full max-w-lg my-auto p-6 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#ff2a85]/50 shadow-2xl space-y-5 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md animate-fadeIn px-4 py-8 sm:py-12 flex justify-center items-center">
+      <div className="relative w-full max-w-lg p-5 sm:p-7 rounded-3xl glass-panel-vibrant border border-[#ff2a85]/40 shadow-2xl space-y-5">
         
-        {/* Bouton de Fermeture */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors z-10"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Entête */}
-        <div className="text-center space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff2a85]/15 border border-[#ff2a85]/40 text-[#ff2a85] text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Matchmaking Duo LoL</span>
+        {/* Header Modale */}
+        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-xl bg-gradient-to-br from-[#ff2a85] to-[#8a2be2] text-white shadow-md">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-display font-black text-base sm:text-lg text-white leading-none">
+                {t.mainTitle || "Trouvez votre Duo Idéal 💘"}
+              </h3>
+              <span className="text-[10px] text-slate-400">
+                {t.subtitle || "Parcourez les profils vérifiés et matchez pour jouer ensemble !"}
+              </span>
+            </div>
           </div>
-          <h3 className="font-display font-black text-2xl text-white">
-            Trouvez votre Duo Idéal 💘
-          </h3>
-          <p className="text-xs text-slate-400">
-            Parcourez les profils vérifiés et matchez pour jouer ensemble !
-          </p>
+
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* --- CAS 1 : C'EST UN MATCH 🎉 --- */}
-        {matchResult ? (
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-[#1c0826] to-[#080912] border-2 border-[#ff2a85] text-center space-y-5 animate-scaleUp">
+        {/* --- CAS 1 : ÉCRAN DE CELEBRATION "IT'S A MATCH !" --- */}
+        {matchResult?.isMatch ? (
+          <div className="relative py-6 px-4 rounded-2xl bg-gradient-to-b from-[#1a0826] via-[#090b16] to-[#0d091a] border-2 border-[#ff2a85] text-center space-y-5 overflow-hidden shadow-2xl animate-scaleUp">
             
-            <div className="w-20 h-20 mx-auto rounded-full bg-[#ff2a85]/20 border-2 border-[#ff2a85] flex items-center justify-center text-4xl shadow-xl animate-bounce">
-              💖
-            </div>
+            {/* Canvas Confettis */}
+            <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-10" />
 
-            <div className="space-y-1">
-              <h2 className="font-display font-black text-3xl text-transparent bg-clip-text bg-gradient-to-r from-[#ff2a85] via-amber-300 to-[#00f0ff]">
-                C'EST UN MATCH !
-              </h2>
+            <div className="relative z-20 space-y-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-xs font-black animate-pulse">
+                <Flame className="w-4 h-4 text-amber-400" />
+                <span>{t.matchTitle || "C'EST UN MATCH !"}</span>
+              </div>
+              <h3 className="font-display font-black text-2xl sm:text-3xl text-white tracking-wide">
+                {currentUser.displayName || currentUser.gameName} & {matchResult.matchedUser.displayName || matchResult.matchedUser.gameName}
+              </h3>
               <p className="text-xs text-slate-300">
-                Vous et <strong className="text-white font-bold">{matchResult.matchedUser.displayName || matchResult.matchedUser.gameName}</strong> avez tous les deux liké vos profils !
+                {currentLang === 'fr' ? 'Vous avez tous les deux liké vos profils respectifs !' : 'You both liked each other\'s profiles!'}
               </p>
             </div>
 
-            {/* Carte des coordonnées débloquées */}
-            <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-left space-y-2.5">
-              <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Contact & Réseaux Débloqués :</span>
+            {/* Photos des 2 Duos qui matchent */}
+            <div className="relative z-20 flex items-center justify-center gap-4 py-2">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shadow-lg bg-slate-900">
+                <img
+                  src={currentUser.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || 28}.png`}
+                  alt="You"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              
-              <div className="space-y-1.5 text-xs">
-                <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="text-slate-400">Riot ID :</span>
-                  <span className="font-mono font-bold text-[#00f0ff]">{matchResult.matchedUser.gameName}#{matchResult.matchedUser.tagLine}</span>
-                </div>
 
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] flex items-center justify-center text-white shadow-xl animate-bounce">
+                <Heart className="w-6 h-6 fill-white" />
+              </div>
+
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#ff2a85] shadow-lg bg-slate-900">
+                <img
+                  src={matchResult.matchedUser.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${matchResult.matchedUser.currentIconId || 28}.png`}
+                  alt="Match User"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Réseaux sociaux & Contact Débloqués */}
+            <div className="relative z-20 p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-left space-y-2">
+              <h4 className="text-xs font-bold text-[#00f0ff] uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>{t.unlockedTitle || "Contact & Réseaux Débloqués :"}</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {matchResult.matchedUser.discordTag && (
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400">🎮 Discord :</span>
-                    <span className="font-mono font-bold text-indigo-400">{matchResult.matchedUser.discordTag}</span>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
+                    🎮 Discord: <strong className="text-white">{matchResult.matchedUser.discordTag}</strong>
                   </div>
                 )}
-
                 {matchResult.matchedUser.instagramUsername && (
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400">📷 Instagram :</span>
-                    <span className="font-mono font-bold text-pink-400">{matchResult.matchedUser.instagramUsername}</span>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
+                    📷 Insta: <strong className="text-white">{matchResult.matchedUser.instagramUsername}</strong>
                   </div>
                 )}
-
                 {matchResult.matchedUser.tiktokUsername && (
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400">🎵 TikTok :</span>
-                    <span className="font-mono font-bold text-cyan-400">{matchResult.matchedUser.tiktokUsername}</span>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
+                    🎵 TikTok: <strong className="text-white">{matchResult.matchedUser.tiktokUsername}</strong>
                   </div>
                 )}
-
                 {matchResult.matchedUser.twitchUsername && (
-                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
-                    <span className="text-slate-400">🟣 Twitch :</span>
-                    <span className="font-mono font-bold text-purple-400">{matchResult.matchedUser.twitchUsername}</span>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
+                    🟣 Twitch: <strong className="text-white">{matchResult.matchedUser.twitchUsername}</strong>
                   </div>
                 )}
               </div>
 
-              <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] flex items-center gap-2">
-                <Mail className="w-4 h-4 shrink-0 text-emerald-400" />
-                <span>✉️ Un e-mail de mise en relation a été envoyé aux deux joueurs !</span>
+              <div className="text-[11px] text-emerald-300 font-medium flex items-center gap-1 pt-1">
+                <Mail className="w-3.5 h-3.5" />
+                <span>{t.emailSent || "✉️ Un e-mail de mise en relation a été envoyé aux deux joueurs !"}</span>
               </div>
             </div>
 
@@ -251,7 +283,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
               }}
               className="w-full btn-pink-cyan py-3 px-4 rounded-xl text-white font-bold text-xs flex items-center justify-center gap-2"
             >
-              <span>Continuer à chercher d'autres Duos</span>
+              <span>{t.continueBtn || "Continuer à chercher d'autres Duos"}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
 
@@ -262,7 +294,9 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
             {isLoading ? (
               <div className="py-16 text-center space-y-3">
                 <RefreshCw className="w-8 h-8 text-[#00f0ff] animate-spin mx-auto" />
-                <p className="text-xs text-slate-400">Recherche des meilleurs duos compatibles...</p>
+                <p className="text-xs text-slate-400">
+                  {currentLang === 'fr' ? 'Recherche des meilleurs duos compatibles...' : 'Searching for best compatible duos...'}
+                </p>
               </div>
             ) : currentIndex >= candidates.length ? (
               <div className="py-12 text-center space-y-4">
@@ -270,9 +304,9 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   <UserCheck className="w-7 h-7" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-bold text-white text-lg">Plus d'autres profils pour le moment !</h4>
+                  <h4 className="font-bold text-white text-lg">{t.noMoreTitle || "Plus d'autres profils pour le moment !"}</h4>
                   <p className="text-xs text-slate-400 max-w-xs mx-auto">
-                    Vous avez parcouru tous les joueurs disponibles. Revenez un peu plus tard !
+                    {t.noMoreDesc || "Vous avez parcouru tous les joueurs disponibles. Revenez un peu plus tard !"}
                   </p>
                 </div>
                 <button
@@ -280,7 +314,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition-all inline-flex items-center gap-2"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>Recharger la liste</span>
+                  <span>{t.reloadBtn || "Recharger la liste"}</span>
                 </button>
               </div>
             ) : (
@@ -292,7 +326,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   {/* Badge de compatibilité */}
                   <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-extrabold text-xs shadow-lg flex items-center gap-1.5 animate-pulse">
                     <Flame className="w-3.5 h-3.5 text-amber-300" />
-                    <span>{currentCandidate.compatibilityScore}% Compatibilité</span>
+                    <span>{currentCandidate.compatibilityScore}% {t.compatibilityBadge || "Compatibilité"}</span>
                   </div>
 
                   {/* Header Carte (Avatar + Nom) */}
@@ -317,7 +351,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                       </div>
                       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                         <p className="text-xs text-slate-400">
-                          {currentCandidate.age} ans • Serveur <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
+                          {currentCandidate.age} {currentLang === 'fr' ? 'ans' : 'yo'} • {currentLang === 'fr' ? 'Serveur' : 'Server'} <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
                         </p>
 
                         {/* Badges des langues parlées par le candidat */}
@@ -337,7 +371,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   {/* Badges Statistiques (Rank & Rôle) */}
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
-                      <span className="text-[10px] text-slate-400 block uppercase font-semibold">Rang Solo/Duo</span>
+                      <span className="text-[10px] text-slate-400 block uppercase font-semibold">{t.rankLabel || "Rang Solo/Duo"}</span>
                       <span className="text-xs font-black text-white flex items-center justify-center gap-1.5 mt-0.5">
                         <img
                           src={getRankEmblemUrl(currentCandidate.rankTier)}
@@ -349,7 +383,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                     </div>
 
                     <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
-                      <span className="text-[10px] text-slate-400 block uppercase font-semibold">Rôle & Main</span>
+                      <span className="text-[10px] text-slate-400 block uppercase font-semibold">{t.roleLabel || "Rôle & Main"}</span>
                       <span className="text-xs font-black text-[#00f0ff] block mt-0.5">
                         {currentCandidate.primaryRole} ({currentCandidate.favoriteChampion})
                       </span>
@@ -373,7 +407,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                     className="py-3.5 px-4 rounded-2xl bg-red-950/40 hover:bg-red-900/60 border border-red-500/40 text-red-300 hover:text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 disabled:opacity-50"
                   >
                     <HeartOff className="w-4 h-4 text-red-400" />
-                    <span>Passer (Non)</span>
+                    <span>{t.passBtn || "Passer (Non)"}</span>
                   </button>
 
                   {/* Bouton OUI / LIKER */}
@@ -383,7 +417,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                     className="btn-pink-cyan py-3.5 px-4 rounded-2xl text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 disabled:opacity-50"
                   >
                     <Heart className="w-4 h-4 fill-white" />
-                    <span>Liker (Oui)</span>
+                    <span>{t.likeBtn || "Liker (Oui)"}</span>
                   </button>
 
                 </div>

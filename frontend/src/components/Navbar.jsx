@@ -44,7 +44,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
             className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white transition-all text-xs font-bold shadow-lg shadow-[#ff2a85]/20 animate-pulse hover:animate-none"
           >
             <span>💘</span>
-            <span className="hidden xs:inline sm:inline">Trouver un Duo</span>
+            <span className="hidden xs:inline sm:inline">{t.findDuo || 'Trouver un Duo'}</span>
           </button>
 
           {/* Bouton Authentification / Profil */}
