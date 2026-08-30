@@ -4,7 +4,7 @@ import jwt
 from datetime import datetime, timedelta
 from typing import Optional
 
-SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "riftaffinity_secret_key_987654321_secure")
+SECRET_KEY = os.environ.get("JWT_SECRET_KEY") or os.environ.get("NEON_AUTH_SECRET") or "riftaffinity_secret_key_987654321_secure"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
