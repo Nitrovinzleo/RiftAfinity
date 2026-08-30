@@ -24,7 +24,39 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
     # Protection SQLi : L'ORM SQLAlchemy utilise des requêtes SQL paramétrées
     existing_user = db.query(User).filter(User.email == req.email.strip().lower()).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="Un compte avec cette adresse email existe déjà.")
+        # Mise à jour transparente du mot de passe et des données si le compte existe déjà
+        existing_user.hashed_password = hash_password(req.password)
+        existing_user.game_name = game_name
+        existing_user.tag_line = tag_line
+        existing_user.region = req.region
+        if puuid:
+            existing_user.puuid = puuid
+        db.commit()
+        db.refresh(existing_user)
+
+        token = create_access_token({"sub": str(existing_user.id), "email": existing_user.email})
+        return {
+            "token": token,
+            "user": {
+                "id": existing_user.id,
+                "email": existing_user.email,
+                "gameName": existing_user.game_name,
+                "tagLine": existing_user.tag_line,
+                "region": existing_user.region,
+                "isVerified": existing_user.is_verified,
+                "targetIconId": existing_user.target_icon_id,
+                "currentIconId": existing_user.current_icon_id,
+                "customAvatar": existing_user.custom_avatar,
+                "birthDate": existing_user.birth_date,
+                "age": existing_user.calculated_age,
+                "bio": existing_user.bio,
+                "primaryRole": existing_user.primary_role,
+                "favoriteChampion": existing_user.favorite_champion,
+                "rankTier": existing_user.rank_tier,
+                "rankDivision": existing_user.rank_division,
+                "rankLp": existing_user.rank_lp
+            }
+        }
 
     game_name, tag_line = parse_riot_id(req.riotId)
     if not game_name or not tag_line:
