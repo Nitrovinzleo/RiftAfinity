@@ -3,9 +3,15 @@ from fastapi import FastAPI, HTTPException, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+from app.database import engine, Base
+from app.models import db_models
 from app.models.schemas import CompatibilityRequest, CompatibilityResponse
 from app.services.riot_api import RiotApiClient, RiotApiError
 from app.services.score_calculator import AffinityScoreCalculator
+from app.routers import auth, profile
+
+# Initialisation des tables SQLite avec protection anti-SQLi SQLAlchemy
+Base.metadata.create_all(bind=engine)
 
 # Configuration du logger principal
 logging.basicConfig(
@@ -22,6 +28,10 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+# Inclusions des routeurs d'Authentification et de Profil Dating LoL
+app.include_router(auth.router)
+app.include_router(profile.router)
 
 # Configuration CORS pour autoriser l'accès depuis le Frontend React (Vercel ou local)
 app.add_middleware(

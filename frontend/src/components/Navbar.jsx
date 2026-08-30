@@ -1,9 +1,10 @@
 import React from 'react';
+import { User, CheckCircle, LogIn } from 'lucide-react';
 import Logo from './Logo';
 import { FrenchFlag, UKFlag } from './FlagIcons';
 import { translations } from '../utils/translations';
 
-export default function Navbar({ onReset, currentLang, onToggleLang }) {
+export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, onOpenAuth, onOpenProfile }) {
   const t = translations[currentLang]?.navbar || translations.fr.navbar;
 
   return (
@@ -34,8 +35,38 @@ export default function Navbar({ onReset, currentLang, onToggleLang }) {
           </div>
         </div>
 
-        {/* Bouton de langue : Drapeaux SVG ronds sans double bordure */}
-        <div className="flex items-center gap-2">
+        {/* Boutons d'Action (Connexion/Profil + Langue) */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          
+          {/* Bouton Authentification / Profil */}
+          {currentUser ? (
+            <button
+              onClick={onOpenProfile}
+              className="flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900/90 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-100 hover:text-white transition-all text-xs font-semibold shadow-md"
+            >
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-800">
+                <img 
+                  src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="max-w-[90px] sm:max-w-[120px] truncate">{currentUser.gameName}</span>
+              {currentUser.isVerified && (
+                <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={onOpenAuth}
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl btn-pink-cyan text-white transition-all text-xs font-bold shadow-md"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Se Connecter</span>
+            </button>
+          )}
+
+          {/* Bouton de langue : Drapeaux SVG ronds */}
           <button
             onClick={onToggleLang}
             className="p-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] hover:scale-110 active:scale-95 transition-all shadow-md bg-slate-900 flex items-center justify-center"
@@ -47,6 +78,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang }) {
               <UKFlag className="w-6 h-6 sm:w-7 sm:h-7" />
             )}
           </button>
+
         </div>
 
       </div>

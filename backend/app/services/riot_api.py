@@ -198,3 +198,21 @@ class RiotApiClient:
 
         logger.info(f"Retenu {len(verified_duo_matches)} matchs où les joueurs étaient réellement coéquipiers.")
         return verified_duo_matches
+
+    async def get_summoner_by_puuid(self, puuid: str, platform_region: str) -> Dict[str, Any]:
+        """
+        Récupère les informations de l'invocateur (y compris profileIconId et summonerId) via SUMMONER-V4.
+        """
+        url = f"https://{platform_region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"
+        return await self._make_request(url)
+
+    async def get_league_entries_by_summoner_id(self, summoner_id: str, platform_region: str) -> List[Dict[str, Any]]:
+        """
+        Récupère les classements et le rang (Tier, Rank, LP, Winrate) de l'invocateur via LEAGUE-V4.
+        """
+        url = f"https://{platform_region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}"
+        try:
+            return await self._make_request(url)
+        except Exception as e:
+            logger.warning(f"Impossible de récupérer le classement pour summoner_id {summoner_id}: {e}")
+            return []

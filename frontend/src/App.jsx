@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import RiotForm from './components/RiotForm';
 import LoadingScreen from './components/LoadingScreen';
 import ResultDashboard from './components/ResultDashboard';
+import AuthModal from './components/AuthModal';
+import UserProfileModal from './components/UserProfileModal';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { translations } from './utils/translations';
 
@@ -14,10 +16,46 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [lastSearchInputs, setLastSearchInputs] = useState(null);
 
+  // Authentification et Profil Utilisateur
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   const t = translations[currentLang]?.error || translations.fr.error;
 
   const toggleLanguage = () => {
     setCurrentLang((prev) => (prev === 'fr' ? 'en' : 'fr'));
+  };
+
+  // Chargement automatique du profil utilisateur s'il possède un jeton JWT
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const token = localStorage.getItem('riftaffinity_token');
+      if (!token) return;
+
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+        const res = await fetch(`${backendUrl}/api/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const user = await res.json();
+          setCurrentUser(user);
+        } else {
+          localStorage.removeItem('riftaffinity_token');
+        }
+      } catch (err) {
+        console.error('Impossible de charger la session utilisateur:', err);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('riftaffinity_token');
+    setCurrentUser(null);
+    setIsProfileOpen(false);
   };
 
   // Envoi de la requête au backend FastAPI
@@ -61,7 +99,14 @@ export default function App() {
     <div className="min-h-screen flex flex-col justify-between">
       
       {/* Barre de navigation sticky */}
-      <Navbar onReset={handleReset} currentLang={currentLang} onToggleLang={toggleLanguage} />
+      <Navbar
+        onReset={handleReset}
+        currentLang={currentLang}
+        onToggleLang={toggleLanguage}
+        currentUser={currentUser}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenProfile={() => setIsProfileOpen(true)}
+      />
 
       {/* Contenu Principal */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -121,6 +166,25 @@ export default function App() {
         )}
 
       </main>
+
+      {/* Modale d'Authentification (Inscription / Connexion) */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onAuthSuccess={(user) => {
+          setCurrentUser(user);
+          setIsProfileOpen(true);
+        }}
+      />
+
+      {/* Modale de Profil Utilisateur (Vérification Ori Bot & Profil Dating LoL) */}
+      <UserProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={currentUser}
+        onUserUpdated={(updatedUser) => setCurrentUser(updatedUser)}
+        onLogout={handleLogout}
+      />
 
       {/* Pied de page */}
       <Footer />

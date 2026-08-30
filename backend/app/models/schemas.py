@@ -18,6 +18,51 @@ class CompatibilityRequest(BaseModel):
     region: str = Field(default="euw1", description="Région/Plateforme de jeu (euw1, na1, kr, etc.)")
     apiKey: Optional[str] = Field(None, description="Clé API Riot optionnelle transmise par l'utilisateur")
 
+class ShareableSummaryCard(BaseModel):
+    overallScore: int
+    archetypeTitle: str
+    archetypeSubtitle: str
+    player1Name: str
+    player2Name: str
+    winratePercent: float
+    totalGames: int
+    generatedAt: str
+
+# --- Schémas Authentification & Profil Dating LoL ---
+
+class UserRegisterRequest(BaseModel):
+    email: str = Field(..., description="Adresse e-mail de l'utilisateur")
+    password: str = Field(..., description="Mot de passe sécurisé")
+    riotId: str = Field(..., description="Riot ID au format Pseudo#TAG (ex: Faker#KR1)")
+    region: str = Field(default="euw1", description="Région LoL (ex: euw1, na1, kr)")
+
+class UserLoginRequest(BaseModel):
+    email: str = Field(..., description="Adresse e-mail")
+    password: str = Field(..., description="Mot de passe")
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    gameName: str
+    tagLine: str
+    region: str
+    isVerified: bool
+    targetIconId: int
+    currentIconId: Optional[int] = None
+    age: Optional[int] = None
+    bio: Optional[str] = None
+    primaryRole: Optional[str] = None
+    favoriteChampion: Optional[str] = None
+    rankTier: Optional[str] = None
+    rankDivision: Optional[str] = None
+    rankLp: Optional[int] = None
+
+class ProfileUpdateRequest(BaseModel):
+    age: Optional[int] = None
+    bio: Optional[str] = None
+    primaryRole: Optional[str] = None
+    favoriteChampion: Optional[str] = None
+
 class PlayerMatchPerformance(BaseModel):
     """
     Statistiques individuelles d'un joueur dans une partie commune.

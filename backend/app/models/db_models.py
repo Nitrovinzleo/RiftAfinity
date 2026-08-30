@@ -1,0 +1,45 @@
+import random
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime
+from app.database import Base
+
+# Pool d'icônes d'invocateur de base proposées pour la vérification Ori Bot
+VERIFICATION_ICON_POOL = [5, 6, 7, 10, 12, 14, 28, 29, 30, 31, 32, 50, 52, 54]
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    
+    # Informations LoL / Riot Games
+    game_name = Column(String, nullable=False)
+    tag_line = Column(String, nullable=False)
+    region = Column(String, default="euw1")
+    puuid = Column(String, nullable=True, index=True)
+    summoner_id = Column(String, nullable=True)
+    
+    # Vérification d'icône style Ori Bot
+    is_verified = Column(Boolean, default=False)
+    target_icon_id = Column(Integer, default=lambda: random.choice(VERIFICATION_ICON_POOL))
+    current_icon_id = Column(Integer, nullable=True)
+
+    # Profil Dating / Matchmaking LoL
+    age = Column(Integer, nullable=True)
+    bio = Column(String, nullable=True)
+    primary_role = Column(String, nullable=True)  # TOP, JUNGLE, MID, ADC, SUPPORT
+    favorite_champion = Column(String, nullable=True)
+
+    # Récupération automatique du Rank Solo/Duo via l'API Riot
+    rank_tier = Column(String, nullable=True)  # ex: GOLD, DIAMOND, CHALLENGER
+    rank_division = Column(String, nullable=True)  # ex: II, IV
+    rank_lp = Column(Integer, nullable=True)  # ex: 45
+    rank_wins = Column(Integer, nullable=True)
+    rank_losses = Column(Integer, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    @property
+    def full_riot_id(self) -> str:
+        return f"{self.game_name}#{self.tag_line}"
