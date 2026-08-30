@@ -107,7 +107,9 @@ async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
         token = create_access_token({"sub": str(user.id), "email": user.email})
 
         return {
-            "token": token,
+            "message": "Connexion réussie !",
+            "access_token": token,
+            "token_type": "bearer",
             "user": user.to_dict()
         }
     except HTTPException:
@@ -115,6 +117,34 @@ async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Erreur serveur durant la connexion: {e}")
         raise HTTPException(status_code=500, detail=f"Erreur serveur lors de la connexion: {str(e)}")
+
+@router.get("/admin/users")
+async def get_all_users_admin(db: Session = Depends(get_db)):
+    """
+    Endpoint d'administration pour consulter en direct tous les utilisateurs et comptes créés.
+    """
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    return {
+        "total_users": len(users),
+        "users": [
+            {
+                "id": u.id,
+                "riotId": f"{u.game_name}#{u.tag_line}",
+                "displayName": u.display_name,
+                "email": u.email,
+                "region": u.region,
+                "isVerified": u.is_verified,
+                "rankTier": u.rank_tier,
+                "rankDivision": u.rank_division,
+                "rankLp": u.rank_lp,
+                "favoriteChampion": u.favorite_champion,
+                "primaryRole": u.primary_role,
+                "spokenLanguages": u.spoken_languages,
+                "createdAt": u.created_at.strftime("%Y-%m-%d %H:%M:%S") if u.created_at else None
+            }
+            for u in users
+        ]
+    }
 
 @router.get("/me", response_model=dict)
 async def get_current_user(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
