@@ -357,20 +357,24 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                     </div>
                   </div>
 
-                  {/* Ligne Dédiée : Badges & Tags des Langues Parlées avec Drapeaux */}
+                  {/* Ligne Dédiée : Badges & Tags des Langues Parlées avec Emojis Drapeaux */}
                   <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2">
                     <span className="text-[11px] text-slate-400 font-bold flex items-center gap-1">
                       <span>🗣️</span>
-                      <span>{currentLang === 'fr' ? 'Langues parlées :' : 'Spoken Languages:'}</span>
+                      <span>{currentLang === 'fr' ? 'Langues :' : 'Languages:'}</span>
                     </span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
                       {(currentCandidate.spokenLanguages || 'FR, EN').split(',').map((lang) => {
                         const code = lang.trim().toUpperCase();
                         const flagMap = { FR: '🇫🇷', EN: '🇬🇧', ES: '🇪🇸', KR: '🇰🇷', DE: '🇩🇪', PT: '🇵🇹' };
+                        const nameMap = { FR: 'Français', EN: 'English', ES: 'Español', KR: '한국어', DE: 'Deutsch', PT: 'Português' };
                         return (
-                          <span key={code} className="text-xs font-black px-2 py-0.5 rounded-lg bg-slate-900 text-[#00f0ff] border border-[#00f0ff]/40 shadow-sm flex items-center gap-1">
-                            <span>{flagMap[code] || '🌐'}</span>
-                            <span>{code}</span>
+                          <span
+                            key={code}
+                            title={nameMap[code] || code}
+                            className="text-base sm:text-lg font-black px-2.5 py-0.5 rounded-xl bg-slate-900 border border-[#00f0ff]/50 shadow-md flex items-center justify-center hover:scale-110 transition-transform"
+                          >
+                            {flagMap[code] || '🌐'}
                           </span>
                         );
                       })}

@@ -97,19 +97,13 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
       <div className="sm:hidden border-t border-slate-800/50 bg-[#06070e]/90 px-3 py-1 flex items-center justify-start">
         <button
           onClick={onToggleLang}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] active:scale-95 transition-all shadow-sm bg-slate-900 text-xs font-bold text-slate-200"
+          className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] active:scale-95 transition-all shadow-sm bg-slate-900 text-sm font-bold text-slate-200"
           title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
         >
           {currentLang === 'fr' ? (
-            <>
-              <FrenchFlag className="w-4 h-4" />
-              <span>FR</span>
-            </>
+            <span>🇫🇷</span>
           ) : (
-            <>
-              <UKFlag className="w-4 h-4" />
-              <span>EN</span>
-            </>
+            <span>🇬🇧</span>
           )}
         </button>
       </div>
