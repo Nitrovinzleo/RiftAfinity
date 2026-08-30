@@ -19,27 +19,60 @@ const REGIONS = [
 export default function RiotForm({ onSubmit, isLoading, currentLang }) {
   const t = translations[currentLang]?.form || translations.fr.form;
 
-  const [p1Name, setP1Name] = useState('');
-  const [p1Tag, setP1Tag] = useState('');
-  const [p2Name, setP2Name] = useState('');
-  const [p2Tag, setP2Tag] = useState('');
+  const [p1Input, setP1Input] = useState('');
+  const [p2Input, setP2Input] = useState('');
   const [region, setRegion] = useState('euw1');
   const [apiKey, setApiKey] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [validationError, setValidationError] = useState('');
 
+  // Auto-détection du Pseudo et du Tag# à partir d'une seule chaîne de texte
+  const parseRiotId = (str) => {
+    const trimmed = str.trim();
+    if (!trimmed) return { gameName: '', tagLine: '' };
+
+    if (trimmed.includes('#')) {
+      const hashIndex = trimmed.lastIndexOf('#');
+      const gameName = trimmed.substring(0, hashIndex).trim();
+      const tagLine = trimmed.substring(hashIndex + 1).trim();
+      return { gameName, tagLine };
+    }
+
+    // Si pas de # saisi, tag par défaut selon le serveur
+    const regionTagMap = {
+      euw1: 'EUW',
+      eun1: 'EUNE',
+      na1: 'NA1',
+      kr: 'KR1',
+      br1: 'BR1',
+      tr1: 'TR1',
+      la1: 'LAN',
+      la2: 'LAS',
+      oc1: 'OCE',
+      jp1: 'JP1'
+    };
+
+    return {
+      gameName: trimmed,
+      tagLine: regionTagMap[region] || 'EUW'
+    };
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setValidationError('');
 
-    if (!p1Name.trim() || !p1Tag.trim() || !p2Name.trim() || !p2Tag.trim()) {
+    const player1 = parseRiotId(p1Input);
+    const player2 = parseRiotId(p2Input);
+
+    if (!player1.gameName || !player2.gameName) {
       setValidationError(t.validationErr);
       return;
     }
 
     onSubmit({
-      player1: { gameName: p1Name.trim(), tagLine: p1Tag.trim().replace('#', '') },
-      player2: { gameName: p2Name.trim(), tagLine: p2Tag.trim().replace('#', '') },
+      player1,
+      player2,
       region,
       apiKey: apiKey.trim() || undefined
     });
@@ -81,72 +114,46 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
 
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 relative z-10">
           
-          {/* Grille des 2 Joueurs */}
+          {/* Grille des 2 Joueurs avec UNE SEULE BARRE DE SAISIE PAR JOUEUR */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             
             {/* Joueur 1 */}
-            <div className="p-3.5 sm:p-4 rounded-xl bg-[#090b16]/70 border border-[#ff2a85]/30 space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#090b16]/70 border border-[#ff2a85]/40 space-y-2">
               <div className="flex items-center gap-2 text-[#ff2a85] font-bold text-xs sm:text-sm">
                 <User className="w-4 h-4" />
                 <span>{t.p1Label}</span>
               </div>
               
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                  <label className="block text-[10px] sm:text-[11px] text-slate-400 mb-1">Game Name</label>
-                  <input
-                    type="text"
-                    placeholder={t.pseudoPlaceholder}
-                    value={p1Name}
-                    onChange={(e) => setP1Name(e.target.value)}
-                    className="w-full glass-input px-3 py-2.5 rounded-lg text-base sm:text-sm text-white placeholder-slate-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] sm:text-[11px] text-slate-400 mb-1">Tag (#)</label>
-                  <input
-                    type="text"
-                    placeholder={t.tagPlaceholder}
-                    value={p1Tag}
-                    onChange={(e) => setP1Tag(e.target.value)}
-                    className="w-full glass-input px-2.5 py-2.5 rounded-lg text-base sm:text-sm text-white placeholder-slate-500"
-                    required
-                  />
-                </div>
+              <div>
+                <label className="block text-[10px] sm:text-[11px] text-slate-400 mb-1">Riot ID (Pseudo#TAG)</label>
+                <input
+                  type="text"
+                  placeholder={t.p1Placeholder}
+                  value={p1Input}
+                  onChange={(e) => setP1Input(e.target.value)}
+                  className="w-full glass-input px-3.5 py-3 rounded-xl text-base sm:text-sm text-white placeholder-slate-500 font-medium"
+                  required
+                />
               </div>
             </div>
 
             {/* Joueur 2 */}
-            <div className="p-3.5 sm:p-4 rounded-xl bg-[#090b16]/70 border border-[#00f0ff]/30 space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-2xl bg-[#090b16]/70 border border-[#00f0ff]/40 space-y-2">
               <div className="flex items-center gap-2 text-[#00f0ff] font-bold text-xs sm:text-sm">
                 <User className="w-4 h-4" />
                 <span>{t.p2Label}</span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                  <label className="block text-[10px] sm:text-[11px] text-slate-400 mb-1">Game Name</label>
-                  <input
-                    type="text"
-                    placeholder="ex: Keria"
-                    value={p2Name}
-                    onChange={(e) => setP2Name(e.target.value)}
-                    className="w-full glass-input px-3 py-2.5 rounded-lg text-base sm:text-sm text-white placeholder-slate-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] sm:text-[11px] text-slate-400 mb-1">Tag (#)</label>
-                  <input
-                    type="text"
-                    placeholder="ex: T1"
-                    value={p2Tag}
-                    onChange={(e) => setP2Tag(e.target.value)}
-                    className="w-full glass-input px-2.5 py-2.5 rounded-lg text-base sm:text-sm text-white placeholder-slate-500"
-                    required
-                  />
-                </div>
+              <div>
+                <label className="block text-[10px] sm:text-[11px] text-slate-400 mb-1">Riot ID (Pseudo#TAG)</label>
+                <input
+                  type="text"
+                  placeholder={t.p2Placeholder}
+                  value={p2Input}
+                  onChange={(e) => setP2Input(e.target.value)}
+                  className="w-full glass-input px-3.5 py-3 rounded-xl text-base sm:text-sm text-white placeholder-slate-500 font-medium"
+                  required
+                />
               </div>
             </div>
 
@@ -161,7 +168,7 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
             <select
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              className="w-full glass-input px-3.5 py-3 rounded-lg text-base sm:text-sm text-white bg-[#080912] cursor-pointer"
+              className="w-full glass-input px-3.5 py-3 rounded-xl text-base sm:text-sm text-white bg-[#080912] cursor-pointer"
             >
               {REGIONS.map((r) => (
                 <option key={r.id} value={r.id} className="bg-[#080912] text-slate-200">

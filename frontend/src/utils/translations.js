@@ -7,17 +7,17 @@ export const translations = {
     form: {
       tagline: "Testeur d'Affinité Invocateur",
       title: "Mesurez Votre Compatibilité",
-      subtitle: "Entrez les pseudos de vos deux comptes League of Legends pour analyser votre complicité.",
-      p1Label: "Premier Joueur",
-      p2Label: "Second Joueur",
-      pseudoPlaceholder: "ex: Faker",
-      tagPlaceholder: "ex: KR1",
+      subtitle: "Entrez les Riot IDs des deux joueurs (ex: Pseudo#TAG) pour analyser leur complicité.",
+      p1Label: "Premier Invocateur",
+      p2Label: "Second Invocateur",
+      p1Placeholder: "ex: Faker#KR1 ou PrincessPinkyUp#8ï8",
+      p2Placeholder: "ex: Keria#T1 ou PrincessDarkyUp#8ï8",
       regionLabel: "Serveur de Jeu (Région Riot)",
       advancedOptions: "Options avancées (Clé API Riot optionnelle)",
       advancedHide: "Masquer la clé API",
       apiKeyNotice: "Si le serveur n'a pas de clé API valide configurée, saisissez votre clé de développement Riot.",
       submitBtn: "Analyser notre Compatibilité",
-      validationErr: "Veuillez renseigner le pseudo et le tag (#) pour les deux joueurs."
+      validationErr: "Veuillez renseigner le pseudo et le tag au format Pseudo#TAG (ex: Faker#KR1)."
     },
     loading: {
       title: "Analyse de Votre Compatibilité...",
@@ -74,17 +74,17 @@ export const translations = {
     form: {
       tagline: "Summoner Affinity Tester",
       title: "Check Your Compatibility",
-      subtitle: "Enter two League of Legends Riot IDs to analyze your duo history & chemistry.",
-      p1Label: "First Player",
-      p2Label: "Second Player",
-      pseudoPlaceholder: "e.g. Faker",
-      tagPlaceholder: "e.g. KR1",
+      subtitle: "Enter Riot IDs for both players (e.g. Name#TAG) to analyze your duo history & chemistry.",
+      p1Label: "First Summoner",
+      p2Label: "Second Summoner",
+      p1Placeholder: "e.g. Faker#KR1 or PrincessPinkyUp#8ï8",
+      p2Placeholder: "e.g. Keria#T1 or PrincessDarkyUp#8ï8",
       regionLabel: "Game Server (Riot Region)",
       advancedOptions: "Advanced options (Optional Riot API Key)",
       advancedHide: "Hide API key option",
       apiKeyNotice: "If the server key is missing, enter your developer Riot API key.",
       submitBtn: "Calculate Our Compatibility",
-      validationErr: "Please fill in both player names and taglines (#)."
+      validationErr: "Please enter Riot IDs in Name#TAG format (e.g. Faker#KR1)."
     },
     loading: {
       title: "Calculating Your Duo Affinity...",
