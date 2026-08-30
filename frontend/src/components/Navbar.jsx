@@ -51,16 +51,17 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
           {currentUser ? (
             <button
               onClick={onOpenProfile}
-              className="flex items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900/90 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-100 hover:text-white transition-all text-xs font-semibold shadow-md"
+              className="flex items-center gap-1.5 p-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900/90 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-100 hover:text-white transition-all text-xs font-semibold shadow-md"
+              title={currentUser.displayName || currentUser.gameName}
             >
-              <div className="w-5 h-5 rounded-full overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-800">
+              <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-800">
                 <img 
                   src={currentUser.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="max-w-[90px] sm:max-w-[120px] truncate">{currentUser.displayName || currentUser.gameName}</span>
+              <span className="hidden sm:inline max-w-[120px] truncate">{currentUser.displayName || currentUser.gameName}</span>
               {currentUser.isVerified && (
                 <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               )}
