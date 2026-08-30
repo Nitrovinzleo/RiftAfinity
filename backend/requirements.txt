@@ -8,3 +8,4 @@ sqlalchemy>=2.0.0
 pyjwt>=2.8.0
 passlib>=1.7.4
 psycopg2-binary>=2.9.9
+pg8000>=1.30.0

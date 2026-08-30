@@ -12,19 +12,23 @@ from app.routers import auth, profile
 
 from sqlalchemy import text
 
-# Initialisation des tables SQLite/PostgreSQL avec SQLAlchemy
-Base.metadata.create_all(bind=engine)
+# Initialisation sécurisée des tables et migrations SQLite/PostgreSQL
+def init_db():
+    try:
+        Base.metadata.create_all(bind=engine)
+        with engine.connect() as conn:
+            for col in ["custom_avatar", "birth_date"]:
+                try:
+                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} VARCHAR"))
+                    conn.commit()
+                except Exception:
+                    pass
+    except Exception as e:
+        pass
 
-# Migration automatique transparente des nouvelles colonnes (custom_avatar, birth_date)
 try:
-    with engine.connect() as conn:
-        for col in ["custom_avatar", "birth_date"]:
-            try:
-                conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} VARCHAR"))
-                conn.commit()
-            except Exception:
-                pass
-except Exception as e:
+    init_db()
+except Exception:
     pass
 
 # Configuration du logger principal
