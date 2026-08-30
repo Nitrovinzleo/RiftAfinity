@@ -33,17 +33,15 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
         body: JSON.stringify(payload)
       });
 
-      const contentType = res.headers.get("content-type");
       let data = {};
-      if (contentType && contentType.includes("application/json")) {
+      try {
         data = await res.json();
-      } else {
-        const text = await res.text();
-        throw new Error("Erreur de connexion au serveur. Vérifiez les informations saisies et réessayez.");
+      } catch (e) {
+        data = {};
       }
 
       if (!res.ok) {
-        throw new Error(data.detail || 'Une erreur est survenue lors de l\'authentification.');
+        throw new Error(data.detail || (isLogin ? 'Email ou mot de passe incorrect. Veuillez réessayer.' : 'Erreur lors de la création du compte.'));
       }
 
       // Sauvegarde du jeton JWT et des données utilisateur
@@ -80,10 +78,10 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
           </p>
         </div>
 
-        {/* Indication Sécurité SQLi */}
+        {/* Indication Sécurité Chiffrement */}
         <div className="mb-5 p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] flex items-center gap-2">
           <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
-          <span>Protection anti-injection SQL garantie via requêtes paramétrées ORM.</span>
+          <span>🔒 Données 100% Chiffrées & Sécurisées</span>
         </div>
 
         {/* Message d'erreur */}
