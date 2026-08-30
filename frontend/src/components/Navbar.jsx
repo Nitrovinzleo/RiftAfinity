@@ -1,6 +1,6 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
 import Logo from './Logo';
+import { FrenchFlag, UKFlag } from './FlagIcons';
 import { translations } from '../utils/translations';
 
 export default function Navbar({ onReset, currentLang, onToggleLang }) {
@@ -34,15 +34,18 @@ export default function Navbar({ onReset, currentLang, onToggleLang }) {
           </div>
         </div>
 
-        {/* Language Switcher (FR 🇫🇷 / EN 🇬🇧) */}
+        {/* Bouton de langue : Drapeau SVG uniquement (sans texte) */}
         <div className="flex items-center gap-2">
           <button
             onClick={onToggleLang}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-slate-900/90 border border-slate-700/80 hover:border-[#ff2a85]/50 text-slate-200 hover:text-white transition-all text-xs font-semibold"
-            title="Switch Language"
+            className="p-2.5 rounded-full bg-slate-900/90 border border-slate-700/80 hover:border-[#ff2a85]/60 hover:scale-110 active:scale-95 transition-all shadow-md flex items-center justify-center"
+            title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
           >
-            <Globe className="w-3.5 h-3.5 text-[#ff2a85]" />
-            <span>{t.langSwitch}</span>
+            {currentLang === 'fr' ? (
+              <FrenchFlag className="w-6 h-6 sm:w-7 sm:h-7" />
+            ) : (
+              <UKFlag className="w-6 h-6 sm:w-7 sm:h-7" />
+            )}
           </button>
         </div>
 
