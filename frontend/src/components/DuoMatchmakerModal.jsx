@@ -199,18 +199,42 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
             <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-left space-y-2.5">
               <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4" />
-                <span>Identifiants & Contact Débloqués :</span>
+                <span>Contact & Réseaux Débloqués :</span>
               </div>
               
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1.5 text-xs">
                 <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
                   <span className="text-slate-400">Riot ID :</span>
                   <span className="font-mono font-bold text-[#00f0ff]">{matchResult.matchedUser.gameName}#{matchResult.matchedUser.tagLine}</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="text-slate-400">E-mail :</span>
-                  <span className="font-mono font-semibold text-slate-200">{matchResult.matchedUser.email}</span>
-                </div>
+
+                {matchResult.matchedUser.discordTag && (
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+                    <span className="text-slate-400">🎮 Discord :</span>
+                    <span className="font-mono font-bold text-indigo-400">{matchResult.matchedUser.discordTag}</span>
+                  </div>
+                )}
+
+                {matchResult.matchedUser.instagramUsername && (
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+                    <span className="text-slate-400">📷 Instagram :</span>
+                    <span className="font-mono font-bold text-pink-400">{matchResult.matchedUser.instagramUsername}</span>
+                  </div>
+                )}
+
+                {matchResult.matchedUser.tiktokUsername && (
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+                    <span className="text-slate-400">🎵 TikTok :</span>
+                    <span className="font-mono font-bold text-cyan-400">{matchResult.matchedUser.tiktokUsername}</span>
+                  </div>
+                )}
+
+                {matchResult.matchedUser.twitchUsername && (
+                  <div className="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800">
+                    <span className="text-slate-400">🟣 Twitch :</span>
+                    <span className="font-mono font-bold text-purple-400">{matchResult.matchedUser.twitchUsername}</span>
+                  </div>
+                )}
               </div>
 
               <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] flex items-center gap-2">

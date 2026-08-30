@@ -7,6 +7,13 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   const [primaryRole, setPrimaryRole] = useState(user?.primaryRole || 'MID');
   const [favoriteChampion, setFavoriteChampion] = useState(user?.favoriteChampion || '');
 
+  // Réseaux sociaux
+  const [discordTag, setDiscordTag] = useState(user?.discordTag || '');
+  const [instagramUsername, setInstagramUsername] = useState(user?.instagramUsername || '');
+  const [tiktokUsername, setTiktokUsername] = useState(user?.tiktokUsername || '');
+  const [twitchUsername, setTwitchUsername] = useState(user?.twitchUsername || '');
+  const [twitterUsername, setTwitterUsername] = useState(user?.twitterUsername || '');
+
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyStatusMsg, setVerifyStatusMsg] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -19,6 +26,11 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
       if (user.bio) setBio(user.bio);
       if (user.primaryRole) setPrimaryRole(user.primaryRole);
       if (user.favoriteChampion) setFavoriteChampion(user.favoriteChampion);
+      if (user.discordTag) setDiscordTag(user.discordTag);
+      if (user.instagramUsername) setInstagramUsername(user.instagramUsername);
+      if (user.tiktokUsername) setTiktokUsername(user.tiktokUsername);
+      if (user.twitchUsername) setTwitchUsername(user.twitchUsername);
+      if (user.twitterUsername) setTwitterUsername(user.twitterUsername);
     }
   }, [user]);
 
@@ -175,7 +187,12 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           birthDate,
           bio,
           primaryRole,
-          favoriteChampion
+          favoriteChampion,
+          discordTag,
+          instagramUsername,
+          tiktokUsername,
+          twitchUsername,
+          twitterUsername
         })
       });
 
@@ -437,6 +454,56 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               onChange={(e) => setBio(e.target.value)}
               className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
             ></textarea>
+          </div>
+
+          {/* Section Réseaux Sociaux */}
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+            <label className="block text-xs font-bold text-[#00f0ff]">🌐 Mes Réseaux Sociaux (Débloqués uniquement lors d'un Match)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] text-slate-400 mb-1">🎮 Discord</label>
+                <input
+                  type="text"
+                  placeholder="ex: Faker_T1"
+                  value={discordTag}
+                  onChange={(e) => setDiscordTag(e.target.value)}
+                  className="w-full glass-input px-3 py-2 rounded-xl text-xs text-white placeholder-slate-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-slate-400 mb-1">📷 Instagram</label>
+                <input
+                  type="text"
+                  placeholder="ex: @faker_lol"
+                  value={instagramUsername}
+                  onChange={(e) => setInstagramUsername(e.target.value)}
+                  className="w-full glass-input px-3 py-2 rounded-xl text-xs text-white placeholder-slate-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-slate-400 mb-1">🎵 TikTok</label>
+                <input
+                  type="text"
+                  placeholder="ex: @faker"
+                  value={tiktokUsername}
+                  onChange={(e) => setTiktokUsername(e.target.value)}
+                  className="w-full glass-input px-3 py-2 rounded-xl text-xs text-white placeholder-slate-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-slate-400 mb-1">🟣 Twitch</label>
+                <input
+                  type="text"
+                  placeholder="ex: faker"
+                  value={twitchUsername}
+                  onChange={(e) => setTwitchUsername(e.target.value)}
+                  className="w-full glass-input px-3 py-2 rounded-xl text-xs text-white placeholder-slate-500"
+                />
+              </div>
+            </div>
           </div>
 
           {saveSuccessMsg && (

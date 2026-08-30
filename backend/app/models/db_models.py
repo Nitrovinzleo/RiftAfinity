@@ -41,6 +41,13 @@ class User(Base):
     rank_wins = Column(Integer, nullable=True)
     rank_losses = Column(Integer, nullable=True)
 
+    # Réseaux Sociaux & Contact Matchmaking
+    discord_tag = Column(String, nullable=True)
+    instagram_username = Column(String, nullable=True)
+    tiktok_username = Column(String, nullable=True)
+    twitch_username = Column(String, nullable=True)
+    twitter_username = Column(String, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property
@@ -57,6 +64,32 @@ class User(Base):
     @property
     def full_riot_id(self) -> str:
         return f"{self.game_name}#{self.tag_line}"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "email": self.email,
+            "gameName": self.game_name,
+            "tagLine": self.tag_line,
+            "region": self.region,
+            "isVerified": self.is_verified,
+            "targetIconId": self.target_icon_id,
+            "currentIconId": self.current_icon_id,
+            "customAvatar": self.custom_avatar,
+            "birthDate": self.birth_date,
+            "age": self.calculated_age,
+            "bio": self.bio,
+            "primaryRole": self.primary_role,
+            "favoriteChampion": self.favorite_champion,
+            "rankTier": self.rank_tier,
+            "rankDivision": self.rank_division,
+            "rankLp": self.rank_lp,
+            "discordTag": self.discord_tag,
+            "instagramUsername": self.instagram_username,
+            "tiktokUsername": self.tiktok_username,
+            "twitchUsername": self.twitch_username,
+            "twitterUsername": self.twitter_username
+        }
 
 class DuoSwipe(Base):
     __tablename__ = "duo_swipes"

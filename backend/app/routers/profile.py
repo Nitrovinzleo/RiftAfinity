@@ -131,29 +131,9 @@ async def refresh_all_riot_data(
 
     await perform_full_riot_sync(user, riot_client, db)
 
-    user_dict = {
-        "id": user.id,
-        "email": user.email,
-        "gameName": user.game_name,
-        "tagLine": user.tag_line,
-        "region": user.region,
-        "isVerified": user.is_verified,
-        "targetIconId": user.target_icon_id,
-        "currentIconId": user.current_icon_id,
-        "customAvatar": user.custom_avatar,
-        "birthDate": user.birth_date,
-        "age": user.calculated_age,
-        "bio": user.bio,
-        "primaryRole": user.primary_role,
-        "favoriteChampion": user.favorite_champion,
-        "rankTier": user.rank_tier,
-        "rankDivision": user.rank_division,
-        "rankLp": user.rank_lp
-    }
-
     return {
         "message": "Votre profil (Pseudo, Photo de profil, Rank & Champions) a été entièrement synchronisé avec succès !",
-        "user": user_dict
+        "user": user.to_dict()
     }
 
 @router.post("/verify-icon", response_model=dict)
@@ -169,25 +149,6 @@ async def verify_riot_icon(
 
     is_match = (user.current_icon_id == user.target_icon_id)
 
-    user_dict = {
-        "id": user.id,
-        "email": user.email,
-        "gameName": user.game_name,
-        "tagLine": user.tag_line,
-        "region": user.region,
-        "isVerified": user.is_verified,
-        "targetIconId": user.target_icon_id,
-        "currentIconId": user.current_icon_id,
-        "birthDate": user.birth_date,
-        "age": user.calculated_age,
-        "bio": user.bio,
-        "primaryRole": user.primary_role,
-        "favoriteChampion": user.favorite_champion,
-        "rankTier": user.rank_tier,
-        "rankDivision": user.rank_division,
-        "rankLp": user.rank_lp
-    }
-
     return {
         "isVerified": user.is_verified,
         "targetIconId": user.target_icon_id,
@@ -197,7 +158,7 @@ async def verify_riot_icon(
         "rankDivision": user.rank_division,
         "rankLp": user.rank_lp,
         "favoriteChampion": user.favorite_champion,
-        "user": user_dict,
+        "user": user.to_dict(),
         "message": "Félicitations ! Votre compte Riot Games a été VÉRIFIÉ avec succès !" if is_match else f"Icône actuelle #{user.current_icon_id} différente de l'icône requise #{user.target_icon_id}. Veuillez équiper l'icône #{user.target_icon_id} dans LoL et réessayez !"
     }
 
@@ -225,28 +186,21 @@ async def update_profile(
     if req.favoriteChampion is not None:
         user.favorite_champion = req.favoriteChampion
 
+    if req.discordTag is not None:
+        user.discord_tag = req.discordTag
+    if req.instagramUsername is not None:
+        user.instagram_username = req.instagramUsername
+    if req.tiktokUsername is not None:
+        user.tiktok_username = req.tiktokUsername
+    if req.twitchUsername is not None:
+        user.twitch_username = req.twitchUsername
+    if req.twitterUsername is not None:
+        user.twitter_username = req.twitterUsername
+
     db.commit()
     db.refresh(user)
 
     return {
         "message": "Profil mis à jour avec succès !",
-        "user": {
-            "id": user.id,
-            "email": user.email,
-            "gameName": user.game_name,
-            "tagLine": user.tag_line,
-            "region": user.region,
-            "isVerified": user.is_verified,
-            "targetIconId": user.target_icon_id,
-            "currentIconId": user.current_icon_id,
-            "customAvatar": user.custom_avatar,
-            "birthDate": user.birth_date,
-            "age": user.calculated_age,
-            "bio": user.bio,
-            "primaryRole": user.primary_role,
-            "favoriteChampion": user.favorite_champion,
-            "rankTier": user.rank_tier,
-            "rankDivision": user.rank_division,
-            "rankLp": user.rank_lp
-        }
+        "user": user.to_dict()
     }

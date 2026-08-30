@@ -34,7 +34,12 @@ DEMO_CANDIDATES = [
         "favoriteChampion": "Thresh",
         "rankTier": "CHALLENGER",
         "rankDivision": "I",
-        "rankLp": 1240
+        "rankLp": 1240,
+        "discordTag": "keria_t1",
+        "instagramUsername": "keria_lol",
+        "twitchUsername": "keria_live",
+        "tiktokUsername": None,
+        "twitterUsername": "Keria_LoL"
     },
     {
         "id": 99902,
@@ -51,7 +56,12 @@ DEMO_CANDIDATES = [
         "favoriteChampion": "Sylas",
         "rankTier": "GRANDMASTER",
         "rankDivision": "I",
-        "rankLp": 850
+        "rankLp": 850,
+        "discordTag": "G2Caps#2024",
+        "instagramUsername": "G2Caps",
+        "twitchUsername": "G2Caps",
+        "tiktokUsername": "g2caps_official",
+        "twitterUsername": "G2Caps"
     },
     {
         "id": 99903,
@@ -68,7 +78,12 @@ DEMO_CANDIDATES = [
         "favoriteChampion": "Jinx",
         "rankTier": "MASTER",
         "rankDivision": "I",
-        "rankLp": 320
+        "rankLp": 320,
+        "discordTag": "rekkles_official",
+        "instagramUsername": "rekkleslol",
+        "twitchUsername": "rekkles",
+        "tiktokUsername": None,
+        "twitterUsername": "RekklesLoL"
     },
     {
         "id": 99904,
@@ -85,7 +100,12 @@ DEMO_CANDIDATES = [
         "favoriteChampion": "Jayce",
         "rankTier": "CHALLENGER",
         "rankDivision": "I",
-        "rankLp": 980
+        "rankLp": 980,
+        "discordTag": "jojopyun",
+        "instagramUsername": "jojopyun_na",
+        "twitchUsername": "jojopyun",
+        "tiktokUsername": None,
+        "twitterUsername": "jojopyunlol"
     },
     {
         "id": 99905,
@@ -102,7 +122,12 @@ DEMO_CANDIDATES = [
         "favoriteChampion": "Nautilus",
         "rankTier": "GRANDMASTER",
         "rankDivision": "I",
-        "rankLp": 710
+        "rankLp": 710,
+        "discordTag": "mikyx_g2",
+        "instagramUsername": "mikyx_lol",
+        "twitchUsername": "mikyx",
+        "tiktokUsername": None,
+        "twitterUsername": "G2Mikyx"
     }
 ]
 
@@ -149,6 +174,15 @@ def calculate_compatibility_score(user1: User, candidate_dict: dict) -> int:
     score = min(99, max(72, base + seed_val))
     return score
 
+def sanitize_candidate_for_public(cand_dict: dict) -> dict:
+    """
+    Protection de la vie privée : Supprime l'adresse e-mail avant de renvoyer le profil au frontend.
+    L'e-mail est utilisé uniquement par le serveur pour l'envoi de la notification.
+    """
+    clean = dict(cand_dict)
+    clean.pop("email", None)
+    return clean
+
 @router.get("/candidates", response_model=List[dict])
 async def get_matchmaking_candidates(
     authorization: Optional[str] = Header(None),
@@ -179,32 +213,16 @@ async def get_matchmaking_candidates(
 
     for c in db_candidates:
         if c.id not in swiped_ids:
-            c_dict = {
-                "id": c.id,
-                "gameName": c.game_name,
-                "tagLine": c.tag_line,
-                "email": c.email,
-                "region": c.region,
-                "isVerified": c.is_verified,
-                "currentIconId": c.current_icon_id,
-                "customAvatar": c.custom_avatar,
-                "age": c.calculated_age or 22,
-                "bio": c.bio or "Joueur passionné de League of Legends à la recherche d'un duo sérieux !",
-                "primaryRole": c.primary_role or "MID",
-                "favoriteChampion": c.favorite_champion or "Ahri",
-                "rankTier": c.rank_tier or "GOLD",
-                "rankDivision": c.rank_division or "II",
-                "rankLp": c.rank_lp or 50,
-                "compatibilityScore": calculate_compatibility_score(user, {"primaryRole": c.primary_role, "id": c.id})
-            }
-            candidates.append(c_dict)
+            c_dict = c.to_dict()
+            c_dict["compatibilityScore"] = calculate_compatibility_score(user, c_dict)
+            candidates.append(sanitize_candidate_for_public(c_dict))
 
     # Compléter avec des profils de démonstration si peu d'utilisateurs réels sont trouvés
     for demo in DEMO_CANDIDATES:
         if demo["id"] not in swiped_ids:
             demo_copy = dict(demo)
             demo_copy["compatibilityScore"] = calculate_compatibility_score(user, demo_copy)
-            candidates.append(demo_copy)
+            candidates.append(sanitize_candidate_for_public(demo_copy))
 
     # Mélanger les profils
     random.shuffle(candidates)
@@ -219,7 +237,7 @@ async def process_swipe(
 ):
     """
     Enregistre le choix 'Oui' (Liked) ou 'Non' (Passed).
-    Si le choix est réciproque, déclenche le Match, renvoie le Riot ID et envoie les e-mails !
+    Si le choix est réciproque, déclenche le Match, renvoie le Riot ID & les réseaux sociaux et envoie les e-mails !
     """
     user = get_current_user_from_token(authorization, db)
 
@@ -246,67 +264,35 @@ async def process_swipe(
             db.commit()
 
         if req.liked:
-            # Vérifier si l'autre utilisateur avait aussi liké
-            reciprocal_swipe = db.query(DuoSwipe).filter(
-                DuoSwipe.swiper_id == target_id,
-                DuoSwipe.target_id == user.id,
-                DuoSwipe.liked == True
-            ).first()
-
-            # En cas de match réciproque (ou 1er like dans ce mode pour faciliter les tests)
-            is_match = True  # Détection immédiate du Match pour garantir une excellente expérience utilisateur
-
             target_user = db.query(User).filter(User.id == target_id).first()
             if target_user:
-                target_dict = {
-                    "id": target_user.id,
-                    "gameName": target_user.game_name,
-                    "tagLine": target_user.tag_line,
-                    "email": target_user.email,
-                    "rankTier": target_user.rank_tier or "GOLD",
-                    "primaryRole": target_user.primary_role or "MID"
-                }
-                user_dict = {
-                    "id": user.id,
-                    "gameName": user.game_name,
-                    "tagLine": user.tag_line,
-                    "email": user.email,
-                    "rankTier": user.rank_tier or "GOLD",
-                    "primaryRole": user.primary_role or "MID"
-                }
+                target_dict = target_user.to_dict()
+                user_dict = user.to_dict()
 
-                # Envoi asynchrone des 2 e-mails en arrière-plan
+                # Envoi asynchrone des 2 e-mails en arrière-plan (serveur uniquement)
                 background_tasks.add_task(send_match_emails, user_dict, target_dict)
 
                 return {
                     "isMatch": True,
-                    "matchedUser": target_dict,
-                    "message": "🎉 C'est un MATCH ! Les deux e-mails ont été envoyés !"
+                    "matchedUser": sanitize_candidate_for_public(target_dict),
+                    "message": "🎉 C'est un MATCH !"
                 }
 
     # Si profil de démo ou swipe non liké
     if req.liked:
-        # Recherche du profil démo
         demo_target = next((d for d in DEMO_CANDIDATES if d["id"] == target_id), None)
         if not demo_target:
             demo_target = DEMO_CANDIDATES[0]
 
-        user_dict = {
-            "id": user.id,
-            "gameName": user.game_name,
-            "tagLine": user.tag_line,
-            "email": user.email,
-            "rankTier": user.rank_tier or "GOLD",
-            "primaryRole": user.primary_role or "MID"
-        }
+        user_dict = user.to_dict()
 
         # Envoi asynchrone des e-mails
         background_tasks.add_task(send_match_emails, user_dict, demo_target)
 
         return {
             "isMatch": True,
-            "matchedUser": demo_target,
-            "message": "🎉 C'est un MATCH ! Les deux e-mails ont été envoyés !"
+            "matchedUser": sanitize_candidate_for_public(demo_target),
+            "message": "🎉 C'est un MATCH !"
         }
 
     return {"isMatch": False, "message": "Swipe enregistré."}

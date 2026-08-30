@@ -56,25 +56,7 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
         token = create_access_token({"sub": str(existing_user.id), "email": existing_user.email})
         return {
             "token": token,
-            "user": {
-                "id": existing_user.id,
-                "email": existing_user.email,
-                "gameName": existing_user.game_name,
-                "tagLine": existing_user.tag_line,
-                "region": existing_user.region,
-                "isVerified": existing_user.is_verified,
-                "targetIconId": existing_user.target_icon_id,
-                "currentIconId": existing_user.current_icon_id,
-                "customAvatar": existing_user.custom_avatar,
-                "birthDate": existing_user.birth_date,
-                "age": existing_user.calculated_age,
-                "bio": existing_user.bio,
-                "primaryRole": existing_user.primary_role,
-                "favoriteChampion": existing_user.favorite_champion,
-                "rankTier": existing_user.rank_tier,
-                "rankDivision": existing_user.rank_division,
-                "rankLp": existing_user.rank_lp
-            }
+            "user": existing_user.to_dict()
         }
 
     new_user = User(
@@ -99,23 +81,7 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
 
     return {
         "token": token,
-        "user": {
-            "id": new_user.id,
-            "email": new_user.email,
-            "gameName": new_user.game_name,
-            "tagLine": new_user.tag_line,
-            "region": new_user.region,
-            "isVerified": new_user.is_verified,
-            "targetIconId": new_user.target_icon_id,
-            "currentIconId": new_user.current_icon_id,
-            "age": new_user.age,
-            "bio": new_user.bio,
-            "primaryRole": new_user.primary_role,
-            "favoriteChampion": new_user.favorite_champion,
-            "rankTier": new_user.rank_tier,
-            "rankDivision": new_user.rank_division,
-            "rankLp": new_user.rank_lp
-        }
+        "user": new_user.to_dict()
     }
 
 @router.post("/login", response_model=dict)
@@ -142,25 +108,7 @@ async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
 
         return {
             "token": token,
-            "user": {
-                "id": user.id,
-                "email": user.email,
-                "gameName": user.game_name,
-                "tagLine": user.tag_line,
-                "region": user.region,
-                "isVerified": user.is_verified,
-                "targetIconId": user.target_icon_id,
-                "currentIconId": user.current_icon_id,
-                "customAvatar": user.custom_avatar,
-                "birthDate": user.birth_date,
-                "age": user.calculated_age,
-                "bio": user.bio,
-                "primaryRole": user.primary_role,
-                "favoriteChampion": user.favorite_champion,
-                "rankTier": user.rank_tier,
-                "rankDivision": user.rank_division,
-                "rankLp": user.rank_lp
-            }
+            "user": user.to_dict()
         }
     except HTTPException:
         raise
@@ -205,22 +153,4 @@ async def get_current_user(authorization: Optional[str] = Header(None), db: Sess
         except Exception as e:
             logger.warning(f"Impossible de vérifier le changement de pseudo: {e}")
 
-    return {
-        "id": user.id,
-        "email": user.email,
-        "gameName": user.game_name,
-        "tagLine": user.tag_line,
-        "region": user.region,
-        "isVerified": user.is_verified,
-        "targetIconId": user.target_icon_id,
-        "currentIconId": user.current_icon_id,
-        "customAvatar": user.custom_avatar,
-        "birthDate": user.birth_date,
-        "age": user.calculated_age,
-        "bio": user.bio,
-        "primaryRole": user.primary_role,
-        "favoriteChampion": user.favorite_champion,
-        "rankTier": user.rank_tier,
-        "rankDivision": user.rank_division,
-        "rankLp": user.rank_lp
-    }
+    return user.to_dict()

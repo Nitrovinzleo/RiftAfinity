@@ -48,7 +48,7 @@ class UserResponse(BaseModel):
     region: str
     isVerified: bool
     targetIconId: int
-    currentIconId: Optional[int] = None
+    currentIconId: Optional[str] = None
     customAvatar: Optional[str] = None
     birthDate: Optional[str] = None
     age: Optional[int] = None
@@ -58,6 +58,11 @@ class UserResponse(BaseModel):
     rankTier: Optional[str] = None
     rankDivision: Optional[str] = None
     rankLp: Optional[int] = None
+    discordTag: Optional[str] = None
+    instagramUsername: Optional[str] = None
+    tiktokUsername: Optional[str] = None
+    twitchUsername: Optional[str] = None
+    twitterUsername: Optional[str] = None
 
 class ProfileUpdateRequest(BaseModel):
     customAvatar: Optional[str] = None
@@ -66,6 +71,11 @@ class ProfileUpdateRequest(BaseModel):
     bio: Optional[str] = None
     primaryRole: Optional[str] = None
     favoriteChampion: Optional[str] = None
+    discordTag: Optional[str] = None
+    instagramUsername: Optional[str] = None
+    tiktokUsername: Optional[str] = None
+    twitchUsername: Optional[str] = None
+    twitterUsername: Optional[str] = None
 
 class PlayerMatchPerformance(BaseModel):
     """

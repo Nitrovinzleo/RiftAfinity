@@ -26,7 +26,7 @@ def init_db():
     try:
         Base.metadata.create_all(bind=engine)
         with engine.connect() as conn:
-            for col in ["custom_avatar", "birth_date"]:
+            for col in ["custom_avatar", "birth_date", "discord_tag", "instagram_username", "tiktok_username", "twitch_username", "twitter_username"]:
                 try:
                     conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} VARCHAR"))
                     conn.commit()
