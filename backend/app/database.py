@@ -1,9 +1,16 @@
 import os
+import tempfile
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# Emplacement de la base de données SQLite
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "riftaffinity.db")
+# Détection automatique de l'environnement Vercel / Serverless (lecture seule sur /var/task)
+if os.environ.get("VERCEL") or os.name != 'nt':
+    # Sur Vercel Serverless (Linux), utiliser le dossier /tmp autorisé en écriture
+    DB_PATH = os.path.join(tempfile.gettempdir(), "riftaffinity.db")
+else:
+    # En développement local Windows
+    DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "riftaffinity.db")
+
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 # Utilisation des requêtes paramétrées via l'ORM SQLAlchemy pour une protection intégrale contre les injections SQL

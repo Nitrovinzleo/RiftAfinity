@@ -55,9 +55,14 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
         puuid=puuid
     )
     
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    try:
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Erreur lors de l'enregistrement en BDD: {e}")
+        raise HTTPException(status_code=500, detail="Erreur d'enregistrement du compte en base de données.")
 
     token = create_access_token({"sub": str(new_user.id), "email": new_user.email})
 
