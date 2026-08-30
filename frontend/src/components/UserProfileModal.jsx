@@ -360,10 +360,10 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             </button>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3">
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               {/* Emblème / Logo de Rang LoL (Diamond, Master, Challenger, etc.) */}
-              <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center p-1 bg-slate-950/90 rounded-2xl border border-[#00f0ff]/40 shadow-lg">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center p-1 bg-slate-950/90 rounded-2xl border border-[#00f0ff]/40 shadow-lg">
                 <img
                   src={getRankEmblemUrl(user.rankTier)}
                   alt={user.rankTier || 'Unranked'}
@@ -372,7 +372,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               </div>
 
               <div>
-                <span className="font-display font-black text-xl sm:text-2xl text-white block">
+                <span className="font-display font-black text-lg sm:text-2xl text-white block">
                   {user.rankTier ? `${user.rankTier} ${user.rankDivision || ''}` : 'UNRANKED'}
                 </span>
                 <div className="text-xs text-slate-400 font-semibold mt-0.5">
@@ -381,7 +381,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               </div>
             </div>
 
-            <div className="text-right shrink-0">
+            <div className="text-left sm:text-right shrink-0 pt-2 sm:pt-0 border-t border-slate-800/80 sm:border-0 flex sm:flex-col items-center justify-between sm:justify-center">
               <span className="text-xs text-[#ff2a85] font-bold block">{user.favoriteChampion || 'LoL Player'}</span>
               <span className="text-[10px] text-slate-400 uppercase font-semibold">{user.primaryRole || 'MID'} LANE</span>
             </div>
@@ -398,19 +398,23 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           {/* Importation de la Photo de Profil */}
           <div>
             <label className="block text-[11px] text-slate-400 mb-1">Photo de Profil Personnalisée</label>
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
-              <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-950">
-                <img
-                  src={user.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.currentIconId || user.targetIconId || 28}.png`}
-                  alt="Avatar"
-                  className="w-full h-full object-cover"
-                />
+            <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-950">
+                  <img
+                    src={user.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.currentIconId || user.targetIconId || 28}.png`}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <span className="block text-xs font-semibold text-white">Changer ma photo de profil</span>
+                  <span className="text-[10px] text-slate-400">Format d'image personnalisé (max 5 Mo)</span>
+                </div>
               </div>
-              <div className="flex-1">
-                <span className="block text-xs font-semibold text-white">Changer ma photo de profil</span>
-                <span className="text-[10px] text-slate-400">Format d'image personnalisé (max 5 Mo)</span>
-              </div>
-              <label className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-[#ff2a85] text-slate-200 hover:text-white border border-slate-700 hover:border-[#ff2a85] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 shadow-md">
+
+              {/* Bouton d'importation positionné en dessous (en restant 100% à l'intérieur du cadre) */}
+              <label className="w-full px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-[#ff2a85] text-slate-200 hover:text-white border border-slate-700 hover:border-[#ff2a85] text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md">
                 <Camera className="w-4 h-4 text-[#ff2a85] group-hover:text-white" />
                 <span>Importer une photo</span>
                 <input
