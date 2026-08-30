@@ -132,6 +132,28 @@ async def get_current_user(authorization: Optional[str] = Header(None), db: Sess
     if not user:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
 
+    # Détection automatique du changement de pseudo LoL par PUUID permanent
+    if user.puuid:
+        try:
+            regional_cluster = "europe"
+            if user.region in ["na1", "br1", "la1", "la2"]:
+                regional_cluster = "americas"
+            elif user.region in ["kr", "jp1"]:
+                regional_cluster = "asia"
+
+            riot_client = RiotApiClient()
+            account = await riot_client.get_account_by_puuid(user.puuid, regional_cluster)
+            new_name = account.get("gameName")
+            new_tag = account.get("tagLine")
+            if new_name and new_tag and (new_name != user.game_name or new_tag != user.tag_line):
+                logger.info(f"Nouveau pseudo détecté pour le PUUID permanent {user.puuid}: {new_name}#{new_tag}")
+                user.game_name = new_name
+                user.tag_line = new_tag
+                db.commit()
+                db.refresh(user)
+        except Exception as e:
+            logger.warning(f"Impossible de vérifier le changement de pseudo: {e}")
+
     return {
         "id": user.id,
         "email": user.email,
