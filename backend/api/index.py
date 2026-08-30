@@ -1,17 +1,20 @@
 import os
 import sys
 
-# Ajout dynamique du répertoire backend dans sys.path pour Vercel Serverless
+# Résolution des chemins sys.path pour Vercel Python Serverless
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
+root_dir = os.path.dirname(parent_dir)
 
-try:
-    from app.main import app
-except ImportError:
-    from main import app
+for path in [root_dir, parent_dir, current_dir]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
-__all__ = ["app"]
+# Importation directe au niveau supérieur (Top-level declaration pour l'analyseur Vercel)
+from app.main import app as app
+
+# Alias explicites pour la compatibilité Vercel Serverless
+handler = app
+application = app
+
+__all__ = ["app", "handler", "application"]

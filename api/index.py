@@ -1,21 +1,19 @@
 import os
 import sys
 
-# Obtenir le chemin absolu du dossier racine et du dossier backend
+# Résolution des chemins sys.path pour Vercel Python Serverless
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 backend_dir = os.path.join(root_dir, "backend")
 
-# Inclusion dynamique dans sys.path pour Vercel Python Serverless
 for path in [root_dir, backend_dir]:
     if path not in sys.path:
         sys.path.insert(0, path)
 
-try:
-    from backend.app.main import app
-except ImportError:
-    try:
-        from app.main import app
-    except ImportError:
-        from main import app
+# Importation directe au niveau supérieur (Top-level declaration pour l'analyseur Vercel)
+from backend.app.main import app as app
 
-__all__ = ["app"]
+# Alias explicites pour la compatibilité Vercel Serverless
+handler = app
+application = app
+
+__all__ = ["app", "handler", "application"]
