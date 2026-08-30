@@ -23,9 +23,12 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
       const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
 
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanPassword = password.trim();
+
       const payload = isLogin
-        ? { email, password }
-        : { email, password, riotId, region };
+        ? { email: cleanEmail, password: cleanPassword }
+        : { email: cleanEmail, password: cleanPassword, riotId: riotId.trim(), region };
 
       const res = await fetch(`${backendUrl}${endpoint}`, {
         method: 'POST',
