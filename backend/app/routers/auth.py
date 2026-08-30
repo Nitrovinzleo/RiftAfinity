@@ -21,6 +21,25 @@ def parse_riot_id(riot_id_str: str):
 
 @router.post("/register", response_model=dict)
 async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
+    game_name, tag_line = parse_riot_id(req.riotId)
+    if not game_name or not tag_line:
+        raise HTTPException(status_code=400, detail="Veuillez fournir un Riot ID valide au format Pseudo#TAG.")
+
+    # Tentative optionnelle de récupération du PUUID
+    puuid = None
+    try:
+        riot_client = RiotApiClient()
+        regional_cluster = "europe"
+        if req.region in ["na1", "br1", "la1", "la2"]:
+            regional_cluster = "americas"
+        elif req.region in ["kr", "jp1"]:
+            regional_cluster = "asia"
+            
+        account_data = await riot_client.get_puuid_by_riot_id(game_name, tag_line, regional_cluster)
+        puuid = account_data.get("puuid")
+    except Exception as e:
+        logger.warning(f"Impossible de résoudre le PUUID à l'inscription: {e}")
+
     # Protection SQLi : L'ORM SQLAlchemy utilise des requêtes SQL paramétrées
     existing_user = db.query(User).filter(User.email == req.email.strip().lower()).first()
     if existing_user:
@@ -57,26 +76,6 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
                 "rankLp": existing_user.rank_lp
             }
         }
-
-    game_name, tag_line = parse_riot_id(req.riotId)
-    if not game_name or not tag_line:
-        raise HTTPException(status_code=400, detail="Veuillez fournir un Riot ID valide au format Pseudo#TAG.")
-
-    # Tentative optionnelle de récupération du PUUID
-    puuid = None
-    try:
-        riot_client = RiotApiClient()
-        # Cluster régional par défaut
-        regional_cluster = "europe"
-        if req.region in ["na1", "br1", "la1", "la2"]:
-            regional_cluster = "americas"
-        elif req.region in ["kr", "jp1"]:
-            regional_cluster = "asia"
-            
-        account_data = await riot_client.get_puuid_by_riot_id(game_name, tag_line, regional_cluster)
-        puuid = account_data.get("puuid")
-    except Exception as e:
-        logger.warning(f"Impossible de résoudre le PUUID à l'inscription: {e}")
 
     new_user = User(
         email=req.email.strip().lower(),
