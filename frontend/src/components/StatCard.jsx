@@ -28,7 +28,7 @@ export default function StatCard({ duoStats, player1Summary, player2Summary, cur
         <div className="p-4 rounded-xl glass-panel-vibrant border border-slate-800 space-y-1">
           <div className="flex items-center justify-between text-slate-400 text-xs">
             <span>{t.winrateDuo}</span>
-            <Trophy className="w-4 h-4 text-amber-400" />
+            <Trophy className="w-4 h-4 text-[#00f0ff]" />
           </div>
           <div className="font-display font-bold text-2xl text-white">
             {duoStats.winratePercent}%

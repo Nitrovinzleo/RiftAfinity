@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { Download, Heart, Share2, Check } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { translations } from '../utils/translations';
 
-export default function ShareableCard({ result }) {
+export default function ShareableCard({ result, currentLang }) {
+  const t = translations[currentLang]?.dashboard || translations.fr.dashboard;
   const cardRef = useRef(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -42,28 +44,28 @@ export default function ShareableCard({ result }) {
           onClick={handleCopyLink}
           className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-200 transition-all flex items-center gap-2"
         >
-          {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-hextech-cyan" />}
-          <span>{copied ? 'Lien copié !' : 'Partager le Lien'}</span>
+          {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-[#00f0ff]" />}
+          <span>{copied ? t.copiedMsg : t.copyLinkBtn}</span>
         </button>
 
         <button
           onClick={handleDownloadImage}
           disabled={isDownloading}
-          className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-purple-600 hover:opacity-95 text-xs font-semibold text-white shadow-love-glow transition-all flex items-center gap-2 disabled:opacity-50"
+          className="px-4 py-2 rounded-xl btn-pink-cyan text-xs font-bold text-white shadow-love-glow transition-all flex items-center gap-2 disabled:opacity-50"
         >
           <Download className="w-4 h-4" />
-          <span>{isDownloading ? 'Génération...' : 'Télécharger la Carte (PNG)'}</span>
+          <span>{isDownloading ? '...' : t.shareCardBtn}</span>
         </button>
       </div>
 
-      {/* Carte Visuelle Générée avec Logo Officiel */}
+      {/* Carte Visuelle Générée avec Logo Officiel Rose & Cyan */}
       <div
         ref={cardRef}
-        className="w-full max-w-2xl mx-auto rounded-3xl p-8 bg-gradient-to-br from-[#0c0d18] via-[#12162b] to-[#1c142e] border-2 border-hextech-gold/40 shadow-2xl relative overflow-hidden text-slate-100"
+        className="w-full max-w-2xl mx-auto rounded-3xl p-8 bg-gradient-to-br from-[#0c0d18] via-[#12162b] to-[#1c142e] border-2 border-[#ff2a85]/40 shadow-2xl relative overflow-hidden text-slate-100"
       >
-        {/* Glows d'arrière-plan */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-hextech-pink/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-hextech-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Glows d'arrière-plan Rose & Cyan */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#ff2a85]/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00f0ff]/20 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Entête avec Logo Officiel RiftAffinity */}
         <div className="flex items-center justify-between border-b border-slate-700/60 pb-4 mb-6">
@@ -77,17 +79,17 @@ export default function ShareableCard({ result }) {
               RiftAffinity
             </span>
           </div>
-          <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-hextech-gold">
-            Carte d'Affinité Invocateur
+          <span className="text-[10px] uppercase font-bold px-2.5 py-1 rounded-full bg-slate-900 border border-[#ff2a85]/30 text-[#ff2a85]">
+            {t.cardTitle}
           </span>
         </div>
 
-        {/* Bloc Central : Pseudos & Score */}
+        {/* Bloc Central : Joueur 1 (Rose) & Joueur 2 (Bleu/Cyan) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-center my-6 text-center">
           
-          {/* Joueur 1 */}
+          {/* Joueur 1 (Rose) */}
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-hextech-pink tracking-widest block">Joueur 1</span>
+            <span className="text-[10px] uppercase font-bold text-[#ff2a85] tracking-widest block">Joueur 1</span>
             <div className="font-display font-bold text-xl text-white truncate">
               {player1Summary.gameName}
             </div>
@@ -95,16 +97,16 @@ export default function ShareableCard({ result }) {
           </div>
 
           {/* Badge Score Central */}
-          <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-900/90 border border-hextech-gold/50 shadow-gold-glow">
-            <span className="text-xs uppercase font-bold text-hextech-gold tracking-widest mb-1">Score Global</span>
+          <div className="flex flex-col items-center justify-center p-4 rounded-2xl bg-slate-900/90 border border-[#ff2a85]/40 shadow-[0_0_20px_rgba(255,42,133,0.3)]">
+            <span className="text-xs uppercase font-bold text-[#00f0ff] tracking-widest mb-1">{t.cardScoreLabel}</span>
             <div className="font-display font-black text-5xl text-white tracking-tight">
               {overallScore}<span className="text-sm font-sans text-slate-400">/100</span>
             </div>
           </div>
 
-          {/* Joueur 2 */}
+          {/* Joueur 2 (Bleu / Cyan) */}
           <div className="space-y-1">
-            <span className="text-[10px] uppercase font-semibold text-hextech-cyan tracking-widest block">Joueur 2</span>
+            <span className="text-[10px] uppercase font-bold text-[#00f0ff] tracking-widest block">Joueur 2</span>
             <div className="font-display font-bold text-xl text-white truncate">
               {player2Summary.gameName}
             </div>
@@ -115,13 +117,13 @@ export default function ShareableCard({ result }) {
 
         {/* Archétype d'Affinité */}
         <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-700/80 my-4 text-center">
-          <div className="text-[10px] uppercase font-bold tracking-widest text-hextech-gold mb-0.5">
-            Archétype Attribué
+          <div className="text-[10px] uppercase font-bold tracking-widest text-[#00f0ff] mb-0.5">
+            {t.cardArchetypeLabel}
           </div>
           <div className="font-display font-bold text-lg text-white">
             {archetype.title}
           </div>
-          <div className="text-xs text-hextech-cyan font-medium mt-0.5">
+          <div className="text-xs text-[#ff2a85] font-medium mt-0.5">
             {archetype.subtitle}
           </div>
         </div>
