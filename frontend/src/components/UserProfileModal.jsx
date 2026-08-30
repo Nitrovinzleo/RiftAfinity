@@ -65,6 +65,44 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
     }
   };
 
+  // Synchronisation globale (Pseudo, Photo de profil, Rank & Champions)
+  const handleRefreshAllRiotData = async () => {
+    setIsVerifying(true);
+    setVerifyStatusMsg('');
+
+    try {
+      const token = localStorage.getItem('riftaffinity_token');
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const res = await fetch(`${backendUrl}/api/profile/refresh-all`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const contentType = res.headers.get("content-type");
+      let data = {};
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(text || "Erreur de réponse du serveur.");
+      }
+
+      if (data.user) {
+        onUserUpdated(data.user);
+        if (data.user.favoriteChampion) {
+          setFavoriteChampion(data.user.favoriteChampion);
+        }
+        setVerifyStatusMsg(data.message || 'Profil complet synchronisé avec succès !');
+      }
+    } catch (err) {
+      setVerifyStatusMsg('Erreur lors de la synchronisation.');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
   // Sauvegarde des informations du profil dating
   const handleSaveProfile = async (e) => {
     e.preventDefault();
@@ -146,6 +184,17 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             <p className="text-xs text-slate-400">
               Région: <span className="text-slate-200 uppercase font-semibold">{user.region}</span> • Membre RiftAffinity
             </p>
+
+            <div className="pt-1.5">
+              <button
+                onClick={handleRefreshAllRiotData}
+                disabled={isVerifying}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-[#00f0ff]/50 hover:border-[#00f0ff] text-[#00f0ff] hover:text-white text-xs font-semibold transition-all shadow-md"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
+                <span>Tout synchroniser depuis LoL (Pseudo, Photo, Rank, Champions)</span>
+              </button>
+            </div>
           </div>
 
           <button
@@ -205,7 +254,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               <span>Classement Solo/Duo Automatique (Riot API)</span>
             </span>
             <button
-              onClick={handleVerifyIcon}
+              onClick={handleRefreshAllRiotData}
               disabled={isVerifying}
               className="text-[11px] text-[#00f0ff] hover:underline flex items-center gap-1 font-semibold"
             >
