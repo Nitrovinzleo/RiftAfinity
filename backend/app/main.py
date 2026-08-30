@@ -10,8 +10,22 @@ from app.services.riot_api import RiotApiClient, RiotApiError
 from app.services.score_calculator import AffinityScoreCalculator
 from app.routers import auth, profile
 
-# Initialisation des tables SQLite avec protection anti-SQLi SQLAlchemy
+from sqlalchemy import text
+
+# Initialisation des tables SQLite/PostgreSQL avec SQLAlchemy
 Base.metadata.create_all(bind=engine)
+
+# Migration automatique transparente des nouvelles colonnes (custom_avatar, birth_date)
+try:
+    with engine.connect() as conn:
+        for col in ["custom_avatar", "birth_date"]:
+            try:
+                conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} VARCHAR"))
+                conn.commit()
+            except Exception:
+                pass
+except Exception as e:
+    pass
 
 # Configuration du logger principal
 logging.basicConfig(
