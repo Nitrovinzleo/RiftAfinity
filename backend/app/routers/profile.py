@@ -82,24 +82,61 @@ async def verify_riot_icon(
         user.is_verified = True
         logger.info(f"Compte {user.full_riot_id} VÉRIFIÉ avec succès !")
 
-        # 5. Récupération automatique du Rank Solo/Duo via LEAGUE-V4
-        if summoner_id:
-            try:
-                entries = await riot_client.get_league_entries_by_summoner_id(summoner_id, user.region)
-                solo_entry = next((e for e in entries if e.get("queueType") == "RANKED_SOLO_5x5"), None)
-                
-                if solo_entry:
-                    user.rank_tier = solo_entry.get("tier")
-                    user.rank_division = solo_entry.get("rank")
-                    user.rank_lp = solo_entry.get("leaguePoints")
-                    user.rank_wins = solo_entry.get("wins")
-                    user.rank_losses = solo_entry.get("losses")
-                    logger.info(f"Rank automatique récupéré pour {user.full_riot_id}: {user.rank_tier} {user.rank_division} ({user.rank_lp} LP)")
-            except Exception as e:
-                logger.warning(f"Erreur lors de la récupération du classement: {e}")
+    # 5. Récupération automatique du Rank Solo/Duo via LEAGUE-V4
+    if summoner_id:
+        try:
+            entries = await riot_client.get_league_entries_by_summoner_id(summoner_id, user.region)
+            solo_entry = next((e for e in entries if e.get("queueType") == "RANKED_SOLO_5x5"), None)
+            flex_entry = next((e for e in entries if e.get("queueType") == "RANKED_FLEX_SR"), None)
+            
+            target_entry = solo_entry or flex_entry
+            if target_entry:
+                user.rank_tier = target_entry.get("tier")
+                user.rank_division = target_entry.get("rank")
+                user.rank_lp = target_entry.get("leaguePoints")
+                user.rank_wins = target_entry.get("wins")
+                user.rank_losses = target_entry.get("losses")
+                logger.info(f"Rank automatique récupéré pour {user.full_riot_id}: {user.rank_tier} {user.rank_division} ({user.rank_lp} LP)")
+            else:
+                user.rank_tier = "UNRANKED"
+                user.rank_division = ""
+                user.rank_lp = 0
+        except Exception as e:
+            logger.warning(f"Erreur lors de la récupération du classement: {e}")
+
+    # 6. Récupération automatique du Champion Favori (Maîtrise de Champion #1)
+    if user.puuid:
+        try:
+            top_masteries = await riot_client.get_top_champion_masteries(user.puuid, user.region)
+            if top_masteries:
+                top_champ_id = top_masteries[0].get("championId")
+                if top_champ_id:
+                    top_champ_name = await riot_client.get_champion_name_from_id(top_champ_id)
+                    user.favorite_champion = top_champ_name
+                    logger.info(f"Main Champion automatique détecté pour {user.full_riot_id}: {top_champ_name}")
+        except Exception as e:
+            logger.warning(f"Erreur lors de la récupération des maîtrises de champion: {e}")
 
     db.commit()
     db.refresh(user)
+
+    user_dict = {
+        "id": user.id,
+        "email": user.email,
+        "gameName": user.game_name,
+        "tagLine": user.tag_line,
+        "region": user.region,
+        "isVerified": user.is_verified,
+        "targetIconId": user.target_icon_id,
+        "currentIconId": user.current_icon_id,
+        "age": user.age,
+        "bio": user.bio,
+        "primaryRole": user.primary_role,
+        "favoriteChampion": user.favorite_champion,
+        "rankTier": user.rank_tier,
+        "rankDivision": user.rank_division,
+        "rankLp": user.rank_lp
+    }
 
     return {
         "isVerified": user.is_verified,
@@ -109,6 +146,8 @@ async def verify_riot_icon(
         "rankTier": user.rank_tier,
         "rankDivision": user.rank_division,
         "rankLp": user.rank_lp,
+        "favoriteChampion": user.favorite_champion,
+        "user": user_dict,
         "message": "Félicitations ! Votre compte Riot Games a été VÉRIFIÉ avec succès !" if is_match else f"Icône actuelle #{current_icon_id} différente de l'icône requise #{user.target_icon_id}. Veuillez équiper l'icône #{user.target_icon_id} dans LoL et réessayez !"
     }
 

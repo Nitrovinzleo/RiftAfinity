@@ -224,3 +224,29 @@ class RiotApiClient:
         """
         url = f"https://{regional_cluster}.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}"
         return await self._make_request(url)
+
+    async def get_top_champion_masteries(self, puuid: str, platform_region: str) -> List[Dict[str, Any]]:
+        """
+        Récupère les champions les plus joués (Maîtrise de Champion) via CHAMPION-MASTERY-V4.
+        """
+        url = f"https://{platform_region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/top?count=3"
+        try:
+            return await self._make_request(url)
+        except Exception as e:
+            logger.warning(f"Impossible de récupérer les maîtrises de champions pour {puuid}: {e}")
+            return []
+
+    async def get_champion_name_from_id(self, champion_id: int) -> str:
+        """
+        Convertit un Champion ID numérique (ex: 157) en Nom de Champion (ex: Yasuo) via DataDragon.
+        """
+        url = "https://ddragon.leagueoflegends.com/cdn/14.10.1/data/fr_FR/champion.json"
+        try:
+            dd_data = await self._make_request(url)
+            champs = dd_data.get("data", {})
+            for c_name, c_data in champs.items():
+                if c_data.get("key") == str(champion_id):
+                    return c_data.get("name", c_name)
+        except Exception as e:
+            logger.warning(f"Erreur lors de la résolution du nom de champion pour ID {champion_id}: {e}")
+        return f"Champion #{champion_id}"

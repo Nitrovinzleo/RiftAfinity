@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, CheckCircle, RefreshCw, Trophy, Shield, User, Heart, Sparkles, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
   const [age, setAge] = useState(user?.age || '');
@@ -12,11 +12,21 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
 
+  // Synchronisation des états locaux si l'utilisateur est mis à jour depuis le backend
+  useEffect(() => {
+    if (user) {
+      if (user.age !== undefined && user.age !== null) setAge(user.age);
+      if (user.bio) setBio(user.bio);
+      if (user.primaryRole) setPrimaryRole(user.primaryRole);
+      if (user.favoriteChampion) setFavoriteChampion(user.favoriteChampion);
+    }
+  }, [user]);
+
   if (!isOpen || !user) return null;
 
   const targetIconUrl = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.targetIconId || 28}.png`;
 
-  // Vérification style Ori Bot
+  // Vérification officielle et synchronisation du Rang LoL & Champion Favori
   const handleVerifyIcon = async () => {
     setIsVerifying(true);
     setVerifyStatusMsg('');
@@ -42,18 +52,14 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
 
       setVerifyStatusMsg(data.message || 'Vérification effectuée.');
 
-      if (data.isVerified) {
-        onUserUpdated({
-          ...user,
-          isVerified: true,
-          rankTier: data.rankTier,
-          rankDivision: data.rankDivision,
-          rankLp: data.rankLp,
-          currentIconId: data.currentIconId
-        });
+      if (data.user) {
+        onUserUpdated(data.user);
+        if (data.user.favoriteChampion) {
+          setFavoriteChampion(data.user.favoriteChampion);
+        }
       }
     } catch (err) {
-      setVerifyStatusMsg('Erreur lors de la vérification de l\'icône.');
+      setVerifyStatusMsg('Erreur lors de la vérification du compte.');
     } finally {
       setIsVerifying(false);
     }
@@ -150,16 +156,16 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           </button>
         </div>
 
-        {/* --- SECTION 1 : VÉRIFICATION D'ICÔNE ORI BOT --- */}
+        {/* --- SECTION 1 : VÉRIFICATION D'ICÔNE --- */}
         {!user.isVerified && (
           <div className="p-4 sm:p-5 rounded-2xl bg-[#0a0d1d] border border-amber-500/40 space-y-3">
             <div className="flex items-center gap-2 text-amber-400 font-bold text-sm">
               <Sparkles className="w-4 h-4" />
-              <span>Vérification de Propriété LoL (Méthode Ori Bot)</span>
+              <span>Vérification Officielle de Propriété LoL</span>
             </div>
 
             <p className="text-xs text-slate-300 leading-relaxed">
-              Pour prouver que vous êtes bien le propriétaire de <strong className="text-white">{user.gameName}#{user.tagLine}</strong>, équipez cette icône d'invocateur dans votre client League of Legends puis cliquez sur le bouton de rafraîchissement :
+              Pour prouver que vous êtes bien le propriétaire de <strong className="text-white">{user.gameName}#{user.tagLine}</strong>, équipez cette icône d'invocateur dans votre client League of Legends puis cliquez sur le bouton de vérification :
             </p>
 
             <div className="flex items-center gap-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
@@ -198,16 +204,19 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               <Trophy className="w-4 h-4" />
               <span>Classement Solo/Duo Automatique (Riot API)</span>
             </span>
-            {user.rankTier ? (
-              <span className="text-xs font-bold text-emerald-400">Riot API Synced</span>
-            ) : (
-              <span className="text-[11px] text-slate-400">Vérifiez votre compte pour synchroniser</span>
-            )}
+            <button
+              onClick={handleVerifyIcon}
+              disabled={isVerifying}
+              className="text-[11px] text-[#00f0ff] hover:underline flex items-center gap-1 font-semibold"
+            >
+              <RefreshCw className={`w-3 h-3 ${isVerifying ? 'animate-spin' : ''}`} />
+              <span>Actualiser le Rang & Maîtrise</span>
+            </button>
           </div>
 
-          <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
             <div>
-              <span className="font-display font-black text-xl text-white">
+              <span className="font-display font-black text-2xl text-white">
                 {user.rankTier ? `${user.rankTier} ${user.rankDivision || ''}` : 'UNRANKED'}
               </span>
               <div className="text-xs text-slate-400">
@@ -258,13 +267,16 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           </div>
 
           <div>
-            <label className="block text-[11px] text-slate-400 mb-1">Champion Favori / Main</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] text-slate-400">Champion Favori / Main (Automatique par Maîtrise Riot)</label>
+              <span className="text-[10px] text-emerald-400 font-medium">✨ Maîtrise #1 Synchro</span>
+            </div>
             <input
               type="text"
-              placeholder="ex: Ahri, Lucian, Thresh..."
+              placeholder="Détecté automatiquement via Maîtrise de Champion Riot"
               value={favoriteChampion}
               onChange={(e) => setFavoriteChampion(e.target.value)}
-              className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+              className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500 font-semibold"
             />
           </div>
 
