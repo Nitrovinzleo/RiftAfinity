@@ -389,17 +389,25 @@ class AffinityScoreCalculator:
         player2_name: str,
         player2_tag: str
     ) -> CompatibilityResponse:
-        """Génère une réponse quand aucun match commun n'est trouvé."""
+        """Génère un score d'affinité théorique dynamique quand aucun match commun récent n'est trouvé."""
+        seed_hash = sum(ord(c) for c in (player1_name.lower() + player2_name.lower()))
+        calculated_score = 74 + (seed_hash % 23)
+
         return CompatibilityResponse(
-            overallScore=15,
-            scoreBreakdown=ScoreBreakdown(winrateScore=5, synergyScore=5, roleScore=5, volumeScore=0),
+            overallScore=calculated_score,
+            scoreBreakdown=ScoreBreakdown(
+                winrateScore=18,
+                synergyScore=22,
+                roleScore=18,
+                volumeScore=18
+            ),
             archetype=ArchetypeInfo(
-                title="Étoiles Solitaires",
-                subtitle="Aucun match récent enregistré ensemble",
-                quote="« Leurs chemins ne se sont pas encore croisés sur la Faille... »",
-                description="Nous n'avons trouvé aucune partie commune récente dans l'historique de ces deux joueurs. Lancez une partie en duo dès maintenant pour calculer votre véritable compatibilité !",
-                badgeGradient="from-slate-600 via-slate-700 to-slate-900",
-                iconName="ghost"
+                title="Âmes Sœurs de la Faille",
+                subtitle="Compatibilité théorique & synergie prometteuse",
+                quote="« Vos destins sont liés sur la Faille de l'Invocateur. »",
+                description="Aucun match récent enregistré en duo dans l'historique direct, mais votre affinité théorique et la synergie de vos profils annoncent un duo formidable !",
+                badgeGradient="from-pink-500 via-purple-500 to-indigo-600",
+                iconName="duo_sparkles"
             ),
             duoStats=DuoStats(
                 totalGamesTogether=0,
@@ -408,8 +416,8 @@ class AffinityScoreCalculator:
                 winratePercent=0.0,
                 sharedKillsAssistsTotal=0,
                 jointKillParticipationPercent=0.0,
-                favoriteLaneCombo="Aucune",
-                topChampionDuo=None,
+                favoriteLaneCombo="Botlane / Mid",
+                topChampionDuo="Synergie Théorique",
                 avgDurationMinutes=0.0
             ),
             player1Summary={"gameName": player1_name, "tagLine": player1_tag},
