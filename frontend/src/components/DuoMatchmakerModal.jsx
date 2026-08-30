@@ -353,18 +353,27 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                         <p className="text-xs text-slate-400">
                           {currentCandidate.age} {currentLang === 'fr' ? 'ans' : 'yo'} • {currentLang === 'fr' ? 'Serveur' : 'Server'} <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
                         </p>
-
-                        {/* Badges des langues parlées par le candidat */}
-                        {currentCandidate.spokenLanguages && (
-                          <div className="flex items-center gap-1">
-                            {currentCandidate.spokenLanguages.split(',').map((lang) => (
-                              <span key={lang.trim()} className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-slate-800 text-[#00f0ff] border border-slate-700">
-                                🗣️ {lang.trim()}
-                              </span>
-                            ))}
-                          </div>
-                        )}
                       </div>
+                    </div>
+                  </div>
+
+                  {/* Ligne Dédiée : Badges & Tags des Langues Parlées avec Drapeaux */}
+                  <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between gap-2">
+                    <span className="text-[11px] text-slate-400 font-bold flex items-center gap-1">
+                      <span>🗣️</span>
+                      <span>{currentLang === 'fr' ? 'Langues parlées :' : 'Spoken Languages:'}</span>
+                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {(currentCandidate.spokenLanguages || 'FR, EN').split(',').map((lang) => {
+                        const code = lang.trim().toUpperCase();
+                        const flagMap = { FR: '🇫🇷', EN: '🇬🇧', ES: '🇪🇸', KR: '🇰🇷', DE: '🇩🇪', PT: '🇵🇹' };
+                        return (
+                          <span key={code} className="text-xs font-black px-2 py-0.5 rounded-lg bg-slate-900 text-[#00f0ff] border border-[#00f0ff]/40 shadow-sm flex items-center gap-1">
+                            <span>{flagMap[code] || '🌐'}</span>
+                            <span>{code}</span>
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
 

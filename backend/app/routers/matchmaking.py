@@ -40,7 +40,8 @@ DEMO_CANDIDATES = [
         "twitchUsername": "keria_live",
         "tiktokUsername": None,
         "twitterUsername": "Keria_LoL",
-        "displayName": "Ryu Min-seok"
+        "displayName": "Ryu Min-seok",
+        "spokenLanguages": "KR, EN"
     },
     {
         "id": 99902,
@@ -63,7 +64,8 @@ DEMO_CANDIDATES = [
         "twitchUsername": "G2Caps",
         "tiktokUsername": "g2caps_official",
         "twitterUsername": "G2Caps",
-        "displayName": "Rasmus Winther"
+        "displayName": "Rasmus Winther",
+        "spokenLanguages": "EN, FR, DE"
     },
     {
         "id": 99903,
@@ -86,7 +88,8 @@ DEMO_CANDIDATES = [
         "twitchUsername": "rekkles",
         "tiktokUsername": None,
         "twitterUsername": "RekklesLoL",
-        "displayName": "Martin Larsson"
+        "displayName": "Martin Larsson",
+        "spokenLanguages": "EN, FR"
     },
     {
         "id": 99904,
@@ -109,7 +112,8 @@ DEMO_CANDIDATES = [
         "twitchUsername": "jojopyun",
         "tiktokUsername": None,
         "twitterUsername": "jojopyunlol",
-        "displayName": "Joseph Joon Pyun"
+        "displayName": "Joseph Joon Pyun",
+        "spokenLanguages": "EN, ES"
     },
     {
         "id": 99905,
@@ -132,7 +136,8 @@ DEMO_CANDIDATES = [
         "twitchUsername": "mikyx",
         "tiktokUsername": None,
         "twitterUsername": "G2Mikyx",
-        "displayName": "Mihael Mehle"
+        "displayName": "Mihael Mehle",
+        "spokenLanguages": "EN, DE"
     }
 ]
 
