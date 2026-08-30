@@ -1,5 +1,6 @@
 import random
 from datetime import datetime
+from typing import Optional
 from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime
 from app.database import Base
 
