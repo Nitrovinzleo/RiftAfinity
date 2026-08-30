@@ -49,6 +49,7 @@ class UserResponse(BaseModel):
     isVerified: bool
     targetIconId: int
     currentIconId: Optional[int] = None
+    birthDate: Optional[str] = None
     age: Optional[int] = None
     bio: Optional[str] = None
     primaryRole: Optional[str] = None
@@ -58,6 +59,7 @@ class UserResponse(BaseModel):
     rankLp: Optional[int] = None
 
 class ProfileUpdateRequest(BaseModel):
+    birthDate: Optional[str] = None
     age: Optional[int] = None
     bio: Optional[str] = None
     primaryRole: Optional[str] = None

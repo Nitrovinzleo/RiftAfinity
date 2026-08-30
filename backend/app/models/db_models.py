@@ -26,6 +26,7 @@ class User(Base):
     current_icon_id = Column(Integer, nullable=True)
 
     # Profil Dating / Matchmaking LoL
+    birth_date = Column(String, nullable=True)  # Format YYYY-MM-DD ex: "2002-05-15"
     age = Column(Integer, nullable=True)
     bio = Column(String, nullable=True)
     primary_role = Column(String, nullable=True)  # TOP, JUNGLE, MID, ADC, SUPPORT
@@ -39,6 +40,17 @@ class User(Base):
     rank_losses = Column(Integer, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    @property
+    def calculated_age(self) -> Optional[int]:
+        if not self.birth_date:
+            return self.age
+        try:
+            bdate = datetime.strptime(self.birth_date, "%Y-%m-%d")
+            today = datetime.utcnow()
+            return today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
+        except Exception:
+            return self.age
 
     @property
     def full_riot_id(self) -> str:

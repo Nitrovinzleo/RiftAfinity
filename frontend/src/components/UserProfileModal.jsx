@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
-  const [age, setAge] = useState(user?.age || '');
+  const [birthDate, setBirthDate] = useState(user?.birthDate || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [primaryRole, setPrimaryRole] = useState(user?.primaryRole || 'MID');
   const [favoriteChampion, setFavoriteChampion] = useState(user?.favoriteChampion || '');
@@ -15,7 +15,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   // Synchronisation des états locaux si l'utilisateur est mis à jour depuis le backend
   useEffect(() => {
     if (user) {
-      if (user.age !== undefined && user.age !== null) setAge(user.age);
+      if (user.birthDate) setBirthDate(user.birthDate);
       if (user.bio) setBio(user.bio);
       if (user.primaryRole) setPrimaryRole(user.primaryRole);
       if (user.favoriteChampion) setFavoriteChampion(user.favoriteChampion);
@@ -119,7 +119,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          age: age ? parseInt(age) : null,
+          birthDate,
           bio,
           primaryRole,
           favoriteChampion
@@ -289,13 +289,19 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[11px] text-slate-400 mb-1">Âge</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[11px] text-slate-400">Date de Naissance</label>
+                {user?.age !== null && user?.age !== undefined && (
+                  <span className="text-[10px] text-[#ff2a85] font-bold">
+                    🎂 {user.age} ans (calculé dynamiquement)
+                  </span>
+                )}
+              </div>
               <input
-                type="number"
-                placeholder="ex: 22"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500"
+                type="date"
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+                className="w-full glass-input px-3 py-2.5 rounded-xl text-sm text-white placeholder-slate-500 cursor-pointer font-medium"
               />
             </div>
 

@@ -140,7 +140,8 @@ async def refresh_all_riot_data(
         "isVerified": user.is_verified,
         "targetIconId": user.target_icon_id,
         "currentIconId": user.current_icon_id,
-        "age": user.age,
+        "birthDate": user.birth_date,
+        "age": user.calculated_age,
         "bio": user.bio,
         "primaryRole": user.primary_role,
         "favoriteChampion": user.favorite_champion,
@@ -176,7 +177,8 @@ async def verify_riot_icon(
         "isVerified": user.is_verified,
         "targetIconId": user.target_icon_id,
         "currentIconId": user.current_icon_id,
-        "age": user.age,
+        "birthDate": user.birth_date,
+        "age": user.calculated_age,
         "bio": user.bio,
         "primaryRole": user.primary_role,
         "favoriteChampion": user.favorite_champion,
@@ -206,8 +208,12 @@ async def update_profile(
 ):
     user = get_current_user_from_token(authorization, db)
 
-    if req.age is not None:
+    if req.birthDate is not None:
+        user.birth_date = req.birthDate
+        user.age = user.calculated_age
+    elif req.age is not None:
         user.age = req.age
+
     if req.bio is not None:
         user.bio = req.bio
     if req.primaryRole is not None:
@@ -229,7 +235,8 @@ async def update_profile(
             "isVerified": user.is_verified,
             "targetIconId": user.target_icon_id,
             "currentIconId": user.current_icon_id,
-            "age": user.age,
+            "birthDate": user.birth_date,
+            "age": user.calculated_age,
             "bio": user.bio,
             "primaryRole": user.primary_role,
             "favoriteChampion": user.favorite_champion,
