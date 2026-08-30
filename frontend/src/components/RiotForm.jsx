@@ -16,14 +16,14 @@ const REGIONS = [
   { id: 'jp1', name: 'Japan (JP)' },
 ];
 
-export default function RiotForm({ onSubmit, isLoading, currentLang }) {
+export default function RiotForm({ onSubmit, initialValues, isLoading, currentLang }) {
   const t = translations[currentLang]?.form || translations.fr.form;
 
-  const [p1Input, setP1Input] = useState('');
-  const [p2Input, setP2Input] = useState('');
-  const [region, setRegion] = useState('euw1');
-  const [apiKey, setApiKey] = useState('');
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [p1Input, setP1Input] = useState(initialValues?.p1Input || '');
+  const [p2Input, setP2Input] = useState(initialValues?.p2Input || '');
+  const [region, setRegion] = useState(initialValues?.region || 'euw1');
+  const [apiKey, setApiKey] = useState(initialValues?.apiKey || '');
+  const [showAdvanced, setShowAdvanced] = useState(!!initialValues?.apiKey);
   const [validationError, setValidationError] = useState('');
 
   // Auto-détection du Pseudo et du Tag# à partir d'une seule chaîne de texte
@@ -70,12 +70,15 @@ export default function RiotForm({ onSubmit, isLoading, currentLang }) {
       return;
     }
 
-    onSubmit({
-      player1,
-      player2,
-      region,
-      apiKey: apiKey.trim() || undefined
-    });
+    onSubmit(
+      {
+        player1,
+        player2,
+        region,
+        apiKey: apiKey.trim() || undefined
+      },
+      { p1Input, p2Input, region, apiKey }
+    );
   };
 
   return (

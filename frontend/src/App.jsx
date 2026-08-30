@@ -12,6 +12,7 @@ export default function App() {
   const [viewState, setViewState] = useState('form'); // 'form' | 'loading' | 'result' | 'error'
   const [resultData, setResultData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [lastSearchInputs, setLastSearchInputs] = useState(null);
 
   const t = translations[currentLang]?.error || translations.fr.error;
 
@@ -20,7 +21,8 @@ export default function App() {
   };
 
   // Envoi de la requête au backend FastAPI
-  const handleFormSubmit = async (formData) => {
+  const handleFormSubmit = async (formData, rawInputs) => {
+    setLastSearchInputs(rawInputs);
     setViewState('loading');
     setErrorMessage('');
 
@@ -68,6 +70,7 @@ export default function App() {
         {viewState === 'form' && (
           <RiotForm
             onSubmit={handleFormSubmit}
+            initialValues={lastSearchInputs}
             isLoading={false}
             currentLang={currentLang}
           />
