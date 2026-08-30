@@ -56,6 +56,15 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+# Configuration CORS prioritaire pour autoriser toutes les méthodes (OPTIONS, POST, GET, PUT) depuis Vercel
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
@@ -67,18 +76,12 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": f"Erreur serveur ({type(exc).__name__}): {str(exc)}"}
     )
 
-# Inclusions des routeurs d'Authentification et de Profil Dating LoL
+# Inclusions des routeurs avec double préfixe pour s'adapter à la réécriture Vercel (/api/auth et /auth)
 app.include_router(auth.router)
-app.include_router(profile.router)
+app.include_router(auth.router, prefix="/auth")
 
-# Configuration CORS pour autoriser l'accès depuis le Frontend React (Vercel ou local)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # En production, vous pouvez restreindre à l'URL de votre Vercel
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.include_router(profile.router)
+app.include_router(profile.router, prefix="/profile")
 
 @app.get("/api/health", tags=["Système"])
 async def health_check():
