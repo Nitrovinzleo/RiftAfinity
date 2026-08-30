@@ -1,27 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
   <defs>
-    <linearGradient id="faviconBorderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff2a85" />
-      <stop offset="50%" stop-color="#a855f7" />
-      <stop offset="100%" stop-color="#00f0ff" />
+    <linearGradient id="logoBorderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff2a85"></stop>
+      <stop offset="50%" stop-color="#a855f7"></stop>
+      <stop offset="100%" stop-color="#00f0ff"></stop>
     </linearGradient>
-    <filter id="faviconGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <filter id="neonGlowEffect" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"></feComposite>
     </filter>
   </defs>
-
-  <!-- Fond Sombre Arrondi -->
-  <rect x="5" y="5" width="90" height="90" rx="24" ry="24" fill="#0d0814" stroke="url(#faviconBorderGrad)" stroke-width="6" />
-
-  <!-- Cœur Néon Rose -->
+  <rect 
+    x="6" 
+    y="6" 
+    width="88" 
+    height="88" 
+    rx="24" 
+    ry="24" 
+    fill="#0c0915" 
+    stroke="url(#logoBorderGradient)" 
+    stroke-width="6"
+  ></rect>
   <path 
-    d="M50 75 C30 60 20 45 20 34 C20 23 28 17 37 17 C44 17 48 21 50 24 C52 21 56 17 63 17 C72 17 80 23 80 34 C80 45 70 60 50 75 Z" 
+    d="M50 74 C31 59 21 44 21 34 C21 23 29 17 38 17 C45 17 48 21 50 24 C52 21 55 17 62 17 C71 17 79 23 79 34 C79 44 69 59 50 74 Z" 
     fill="none" 
     stroke="#ff2a85" 
-    stroke-width="5" 
+    stroke-width="5.5" 
     stroke-linecap="round" 
-    stroke-linejoin="round"
-    filter="url(#faviconGlow)"
-  />
+    stroke-linejoin="round" 
+    filter="url(#neonGlowEffect)"
+  ></path>
 </svg>
