@@ -193,8 +193,8 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md animate-fadeIn p-4 sm:p-6 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl my-auto p-6 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#00f0ff]/40 shadow-2xl space-y-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md animate-fadeIn px-4 py-10 sm:py-16 flex justify-center items-start">
+      <div className="relative w-full max-w-2xl p-6 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#00f0ff]/40 shadow-2xl space-y-6">
         
         {/* Bouton de fermeture */}
         <button

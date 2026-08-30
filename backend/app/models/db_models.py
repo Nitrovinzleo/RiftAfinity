@@ -57,3 +57,14 @@ class User(Base):
     @property
     def full_riot_id(self) -> str:
         return f"{self.game_name}#{self.tag_line}"
+
+class DuoSwipe(Base):
+    __tablename__ = "duo_swipes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    swiper_id = Column(Integer, nullable=False, index=True)
+    target_id = Column(Integer, nullable=False, index=True)
+    liked = Column(Boolean, nullable=False)
+    is_match = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+

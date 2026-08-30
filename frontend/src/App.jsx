@@ -6,6 +6,7 @@ import LoadingScreen from './components/LoadingScreen';
 import ResultDashboard from './components/ResultDashboard';
 import AuthModal from './components/AuthModal';
 import UserProfileModal from './components/UserProfileModal';
+import DuoMatchmakerModal from './components/DuoMatchmakerModal';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { translations } from './utils/translations';
 
@@ -16,10 +17,11 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [lastSearchInputs, setLastSearchInputs] = useState(null);
 
-  // Authentification et Profil Utilisateur
+  // Authentification, Profil & Matchmaking Utilisateur
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMatchmakerOpen, setIsMatchmakerOpen] = useState(false);
 
   const t = translations[currentLang]?.error || translations.fr.error;
 
@@ -56,6 +58,21 @@ export default function App() {
     localStorage.removeItem('riftaffinity_token');
     setCurrentUser(null);
     setIsProfileOpen(false);
+    setIsMatchmakerOpen(false);
+  };
+
+  // Contrôle d'accès strict au Matchmaking : Connecté + Compte LoL Vérifié
+  const handleOpenMatchmaker = () => {
+    if (!currentUser) {
+      setIsAuthOpen(true);
+      return;
+    }
+    if (!currentUser.isVerified) {
+      alert("⚠️ Votre compte League of Legends doit être VÉRIFIÉ pour accéder au Matchmaking Duo ! Équipez l'icône requise dans votre profil.");
+      setIsProfileOpen(true);
+      return;
+    }
+    setIsMatchmakerOpen(true);
   };
 
   // Envoi de la requête au backend FastAPI
@@ -106,6 +123,7 @@ export default function App() {
         currentUser={currentUser}
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenMatchmaker={handleOpenMatchmaker}
       />
 
       {/* Contenu Principal */}
@@ -184,6 +202,17 @@ export default function App() {
         user={currentUser}
         onUserUpdated={(updatedUser) => setCurrentUser(updatedUser)}
         onLogout={handleLogout}
+      />
+
+      {/* Modale de Matchmaking Duo ("Trouver un Duo") */}
+      <DuoMatchmakerModal
+        isOpen={isMatchmakerOpen}
+        onClose={() => setIsMatchmakerOpen(false)}
+        currentUser={currentUser}
+        onOpenProfile={() => {
+          setIsMatchmakerOpen(false);
+          setIsProfileOpen(true);
+        }}
       />
 
       {/* Pied de page */}

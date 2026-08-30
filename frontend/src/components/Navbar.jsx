@@ -4,7 +4,7 @@ import Logo from './Logo';
 import { FrenchFlag, UKFlag } from './FlagIcons';
 import { translations } from '../utils/translations';
 
-export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, onOpenAuth, onOpenProfile }) {
+export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, onOpenAuth, onOpenProfile, onOpenMatchmaker }) {
   const t = translations[currentLang]?.navbar || translations.fr.navbar;
 
   return (
@@ -35,9 +35,18 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
           </div>
         </div>
 
-        {/* Boutons d'Action (Connexion/Profil + Langue) */}
+        {/* Boutons d'Action (Matchmaking + Connexion/Profil + Langue) */}
         <div className="flex items-center gap-2 sm:gap-3">
           
+          {/* Bouton Matchmaking Duo */}
+          <button
+            onClick={onOpenMatchmaker}
+            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white transition-all text-xs font-bold shadow-lg shadow-[#ff2a85]/20 animate-pulse hover:animate-none"
+          >
+            <span>💘</span>
+            <span className="hidden xs:inline sm:inline">Trouver un Duo</span>
+          </button>
+
           {/* Bouton Authentification / Profil */}
           {currentUser ? (
             <button

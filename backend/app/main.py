@@ -17,7 +17,7 @@ from app.models import db_models
 from app.models.schemas import CompatibilityRequest, CompatibilityResponse
 from app.services.riot_api import RiotApiClient, RiotApiError
 from app.services.score_calculator import AffinityScoreCalculator
-from app.routers import auth, profile
+from app.routers import auth, profile, matchmaking
 
 from sqlalchemy import text
 
@@ -82,6 +82,9 @@ app.include_router(auth.router, prefix="/auth")
 
 app.include_router(profile.router, prefix="/api/profile")
 app.include_router(profile.router, prefix="/profile")
+
+app.include_router(matchmaking.router, prefix="/api/matchmaking")
+app.include_router(matchmaking.router, prefix="/matchmaking")
 
 @app.get("/api/health", tags=["Système"])
 async def health_check():
