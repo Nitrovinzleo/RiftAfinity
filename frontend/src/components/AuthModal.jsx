@@ -44,7 +44,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
       }
 
       if (!res.ok) {
-        throw new Error(data.detail || (isLogin ? 'Email ou mot de passe incorrect. Veuillez réessayer.' : 'Erreur lors de la création du compte.'));
+        throw new Error(data.detail || data.message || `Erreur de communication avec le serveur (${res.status}).`);
       }
 
       // Sauvegarde du jeton JWT et des données utilisateur

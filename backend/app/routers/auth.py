@@ -89,47 +89,53 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=dict)
 async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
-    email_clean = req.email.strip().lower()
-    
-    # Recherche exacte puis insensible à la casse sur PostgreSQL
-    user = db.query(User).filter(User.email == email_clean).first()
-    if not user:
-        user = db.query(User).filter(User.email.ilike(email_clean)).first()
-    
-    if not user:
-        raise HTTPException(
-            status_code=400, 
-            detail="Aucun compte trouvé avec cette adresse email. Veuillez cliquer sur 'Créer votre Compte' pour inscrire vos identifiants sur le cloud Neon !"
-        )
+    try:
+        email_clean = req.email.strip().lower()
+        
+        # Recherche exacte puis insensible à la casse sur PostgreSQL
+        user = db.query(User).filter(User.email == email_clean).first()
+        if not user:
+            user = db.query(User).filter(User.email.ilike(email_clean)).first()
+        
+        if not user:
+            raise HTTPException(
+                status_code=400, 
+                detail="Aucun compte trouvé avec cette adresse email. Veuillez cliquer sur 'Créer votre Compte' !"
+            )
 
-    pwd_clean = req.password.strip()
-    if not verify_password(pwd_clean, user.hashed_password) and not verify_password(req.password, user.hashed_password):
-        raise HTTPException(status_code=400, detail="Mot de passe incorrect. Veuillez vérifier la saisie.")
+        pwd_clean = req.password.strip()
+        if not verify_password(pwd_clean, user.hashed_password) and not verify_password(req.password, user.hashed_password):
+            raise HTTPException(status_code=400, detail="Mot de passe incorrect. Veuillez vérifier la saisie.")
 
-    token = create_access_token({"sub": str(user.id), "email": user.email})
+        token = create_access_token({"sub": str(user.id), "email": user.email})
 
-    return {
-        "token": token,
-        "user": {
-            "id": user.id,
-            "email": user.email,
-            "gameName": user.game_name,
-            "tagLine": user.tag_line,
-            "region": user.region,
-            "isVerified": user.is_verified,
-            "targetIconId": user.target_icon_id,
-            "currentIconId": user.current_icon_id,
-            "customAvatar": user.custom_avatar,
-            "birthDate": user.birth_date,
-            "age": user.calculated_age,
-            "bio": user.bio,
-            "primaryRole": user.primary_role,
-            "favoriteChampion": user.favorite_champion,
-            "rankTier": user.rank_tier,
-            "rankDivision": user.rank_division,
-            "rankLp": user.rank_lp
+        return {
+            "token": token,
+            "user": {
+                "id": user.id,
+                "email": user.email,
+                "gameName": user.game_name,
+                "tagLine": user.tag_line,
+                "region": user.region,
+                "isVerified": user.is_verified,
+                "targetIconId": user.target_icon_id,
+                "currentIconId": user.current_icon_id,
+                "customAvatar": user.custom_avatar,
+                "birthDate": user.birth_date,
+                "age": user.calculated_age,
+                "bio": user.bio,
+                "primaryRole": user.primary_role,
+                "favoriteChampion": user.favorite_champion,
+                "rankTier": user.rank_tier,
+                "rankDivision": user.rank_division,
+                "rankLp": user.rank_lp
+            }
         }
-    }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur serveur durant la connexion: {e}")
+        raise HTTPException(status_code=500, detail=f"Erreur serveur lors de la connexion: {str(e)}")
 
 @router.get("/me", response_model=dict)
 async def get_current_user(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
