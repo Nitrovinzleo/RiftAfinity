@@ -90,15 +90,20 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
 @router.post("/login", response_model=dict)
 async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
     email_clean = req.email.strip().lower()
+    
+    # Recherche exacte puis insensible à la casse sur PostgreSQL
     user = db.query(User).filter(User.email == email_clean).first()
+    if not user:
+        user = db.query(User).filter(User.email.ilike(email_clean)).first()
     
     if not user:
         raise HTTPException(
             status_code=400, 
-            detail="Aucun compte trouvé avec cette adresse email sur la base de données Neon Cloud. Veuillez cliquer sur 'Créer votre Compte' pour l'inscrire !"
+            detail="Aucun compte trouvé avec cette adresse email. Veuillez cliquer sur 'Créer votre Compte' pour inscrire vos identifiants sur le cloud Neon !"
         )
 
-    if not verify_password(req.password, user.hashed_password):
+    pwd_clean = req.password.strip()
+    if not verify_password(pwd_clean, user.hashed_password) and not verify_password(req.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Mot de passe incorrect. Veuillez vérifier la saisie.")
 
     token = create_access_token({"sub": str(user.id), "email": user.email})
