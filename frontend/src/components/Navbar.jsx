@@ -46,7 +46,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
             >
               <div className="w-5 h-5 rounded-full overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-800">
                 <img 
-                  src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`}
+                  src={currentUser.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                 />

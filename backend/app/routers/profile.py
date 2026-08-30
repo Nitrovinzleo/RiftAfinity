@@ -76,10 +76,10 @@ async def perform_full_riot_sync(user: User, riot_client: RiotApiClient, db: Ses
         except Exception as e:
             logger.warning(f"Impossible de synchroniser l'icône invocateur: {e}")
 
-    # 4. Classement Rank Solo/Duo & Flex
-    if user.summoner_id:
+    # 4. Classement Rank Solo/Duo & Flex via PUUID
+    if user.puuid:
         try:
-            entries = await riot_client.get_league_entries_by_summoner_id(user.summoner_id, user.region)
+            entries = await riot_client.get_league_entries_by_puuid(user.puuid, user.region)
             solo_entry = next((e for e in entries if e.get("queueType") == "RANKED_SOLO_5x5"), None)
             flex_entry = next((e for e in entries if e.get("queueType") == "RANKED_FLEX_SR"), None)
             
@@ -95,7 +95,7 @@ async def perform_full_riot_sync(user: User, riot_client: RiotApiClient, db: Ses
                 user.rank_division = ""
                 user.rank_lp = 0
         except Exception as e:
-            logger.warning(f"Erreur lors de la récupération du classement: {e}")
+            logger.warning(f"Erreur lors de la récupération du classement par PUUID: {e}")
 
     # 5. Champion Favori (#1 Maîtrise)
     if user.puuid:
@@ -140,6 +140,7 @@ async def refresh_all_riot_data(
         "isVerified": user.is_verified,
         "targetIconId": user.target_icon_id,
         "currentIconId": user.current_icon_id,
+        "customAvatar": user.custom_avatar,
         "birthDate": user.birth_date,
         "age": user.calculated_age,
         "bio": user.bio,
@@ -208,6 +209,9 @@ async def update_profile(
 ):
     user = get_current_user_from_token(authorization, db)
 
+    if req.customAvatar is not None:
+        user.custom_avatar = req.customAvatar
+
     if req.birthDate is not None:
         user.birth_date = req.birthDate
         user.age = user.calculated_age
@@ -235,6 +239,7 @@ async def update_profile(
             "isVerified": user.is_verified,
             "targetIconId": user.target_icon_id,
             "currentIconId": user.current_icon_id,
+            "customAvatar": user.custom_avatar,
             "birthDate": user.birth_date,
             "age": user.calculated_age,
             "bio": user.bio,

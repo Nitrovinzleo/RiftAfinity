@@ -26,6 +26,7 @@ class User(Base):
     current_icon_id = Column(Integer, nullable=True)
 
     # Profil Dating / Matchmaking LoL
+    custom_avatar = Column(String, nullable=True)  # URL ou Data URI de la photo importée
     birth_date = Column(String, nullable=True)  # Format YYYY-MM-DD ex: "2002-05-15"
     age = Column(Integer, nullable=True)
     bio = Column(String, nullable=True)

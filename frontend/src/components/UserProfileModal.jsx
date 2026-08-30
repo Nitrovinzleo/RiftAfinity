@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle } from 'lucide-react';
+import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle, Camera } from 'lucide-react';
 
 export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
   const [birthDate, setBirthDate] = useState(user?.birthDate || '');
@@ -25,6 +25,44 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   if (!isOpen || !user) return null;
 
   const targetIconUrl = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.targetIconId || 28}.png`;
+
+  // Importation d'une photo de profil personnalisée
+  const handleCustomAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("L'image est trop volumineuse (max 5 Mo).");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Data = reader.result;
+      try {
+        const token = localStorage.getItem('riftaffinity_token');
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+        const res = await fetch(`${backendUrl}/api/profile/update`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ customAvatar: base64Data })
+        });
+
+        const data = await res.json();
+        if (data.user) {
+          onUserUpdated(data.user);
+          setSaveSuccessMsg('Photo de profil mise à jour avec succès !');
+          setTimeout(() => setSaveSuccessMsg(''), 3000);
+        }
+      } catch (err) {
+        console.error("Erreur lors de l'envoi de la photo:", err);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Vérification officielle et synchronisation du Rang LoL & Champion Favori
   const handleVerifyIcon = async () => {
@@ -153,13 +191,25 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
 
         {/* Entête du Profil */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 pb-4 border-b border-slate-800">
-          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#ff2a85] shadow-lg bg-slate-900 shrink-0">
+          
+          {/* Avatar avec bouton d'importation photo */}
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-[#ff2a85] shadow-lg bg-slate-900 shrink-0 group">
             <img
-              src={`https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.currentIconId || user.targetIconId || 28}.png`}
+              src={user.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.currentIconId || user.targetIconId || 28}.png`}
               alt="Profile Icon"
               className="w-full h-full object-cover"
               onError={(e) => { e.target.src = targetIconUrl; }}
             />
+            <label className="absolute inset-0 bg-black/75 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white cursor-pointer transition-opacity text-[10px] font-bold gap-1 text-center p-1">
+              <Camera className="w-5 h-5 text-[#00f0ff]" />
+              <span>Changer Photo</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleCustomAvatarUpload}
+                className="hidden"
+              />
+            </label>
           </div>
 
           <div className="text-center sm:text-left flex-1 space-y-1">
@@ -174,7 +224,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                   <span>Compte LoL Vérifié</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
                   <Shield className="w-3.5 h-3.5" />
                   <span>Non Vérifié</span>
                 </span>
@@ -185,15 +235,26 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               Région: <span className="text-slate-200 uppercase font-semibold">{user.region}</span> • Membre RiftAffinity
             </p>
 
-            <div className="pt-1.5">
+            <div className="pt-1.5 flex flex-wrap gap-2 justify-center sm:justify-start">
               <button
                 onClick={handleRefreshAllRiotData}
                 disabled={isVerifying}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-[#00f0ff]/50 hover:border-[#00f0ff] text-[#00f0ff] hover:text-white text-xs font-semibold transition-all shadow-md"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
-                <span>Tout synchroniser depuis LoL (Pseudo, Photo, Rank, Champions)</span>
+                <span>Tout synchroniser depuis LoL</span>
               </button>
+
+              <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-[#ff2a85]/50 hover:border-[#ff2a85] text-[#ff2a85] hover:text-white text-xs font-semibold transition-all shadow-md cursor-pointer">
+                <Camera className="w-3.5 h-3.5" />
+                <span>Importer une Photo</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCustomAvatarUpload}
+                  className="hidden"
+                />
+              </label>
             </div>
           </div>
 
