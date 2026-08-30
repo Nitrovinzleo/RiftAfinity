@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Heart, HeartOff, Sparkles, Trophy, ShieldCheck, Mail, ArrowRight, UserCheck, Flame, RefreshCw } from 'lucide-react';
+import { getRankEmblemUrl } from '../utils/rankEmblems';
 
 export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpenProfile }) {
   const [candidates, setCandidates] = useState([]);
@@ -324,8 +325,12 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-center">
                       <span className="text-[10px] text-slate-400 block uppercase font-semibold">Rang Solo/Duo</span>
-                      <span className="text-xs font-black text-white flex items-center justify-center gap-1 mt-0.5">
-                        <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="text-xs font-black text-white flex items-center justify-center gap-1.5 mt-0.5">
+                        <img
+                          src={getRankEmblemUrl(currentCandidate.rankTier)}
+                          alt={currentCandidate.rankTier || 'Rank'}
+                          className="w-5 h-5 object-contain"
+                        />
                         <span>{currentCandidate.rankTier} {currentCandidate.rankDivision}</span>
                       </span>
                     </div>

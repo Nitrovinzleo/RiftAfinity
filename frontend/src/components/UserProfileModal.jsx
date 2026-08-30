@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle, Camera } from 'lucide-react';
+import { getRankEmblemUrl } from '../utils/rankEmblems';
 
 export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
   const [displayName, setDisplayName] = useState(user?.displayName || '');
@@ -348,17 +349,28 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             </button>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
-            <div>
-              <span className="font-display font-black text-2xl text-white">
-                {user.rankTier ? `${user.rankTier} ${user.rankDivision || ''}` : 'UNRANKED'}
-              </span>
-              <div className="text-xs text-slate-400">
-                {user.rankLp !== null && user.rankLp !== undefined ? `${user.rankLp} LP` : 'Rang Solo/Duo'}
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              {/* Emblème / Logo de Rang LoL (Diamond, Master, Challenger, etc.) */}
+              <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center p-1 bg-slate-950/90 rounded-2xl border border-[#00f0ff]/40 shadow-lg">
+                <img
+                  src={getRankEmblemUrl(user.rankTier)}
+                  alt={user.rankTier || 'Unranked'}
+                  className="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(0,240,255,0.4)]"
+                />
+              </div>
+
+              <div>
+                <span className="font-display font-black text-xl sm:text-2xl text-white block">
+                  {user.rankTier ? `${user.rankTier} ${user.rankDivision || ''}` : 'UNRANKED'}
+                </span>
+                <div className="text-xs text-slate-400 font-semibold mt-0.5">
+                  {user.rankLp !== null && user.rankLp !== undefined ? `${user.rankLp} LP • Solo/Duo` : 'Rang Solo/Duo (Riot API)'}
+                </div>
               </div>
             </div>
 
-            <div className="text-right">
+            <div className="text-right shrink-0">
               <span className="text-xs text-[#ff2a85] font-bold block">{user.favoriteChampion || 'LoL Player'}</span>
               <span className="text-[10px] text-slate-400 uppercase font-semibold">{user.primaryRole || 'MID'} LANE</span>
             </div>
