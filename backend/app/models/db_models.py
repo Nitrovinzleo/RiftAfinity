@@ -121,3 +121,19 @@ class DiscordPendingLink(Base):
     expires_at = Column(DateTime, nullable=False)
 
 
+class DuoAffinityHistory(Base):
+    __tablename__ = "duo_affinity_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    player1_riot_id = Column(String, nullable=False, index=True)
+    player2_riot_id = Column(String, nullable=False, index=True)
+    pair_key = Column(String, unique=True, index=True, nullable=False)
+    overall_score = Column(Integer, nullable=False)
+    archetype_title = Column(String, nullable=True)
+    archetype_emoji = Column(String, nullable=True)
+    total_games = Column(Integer, default=0)
+    win_rate = Column(Float, default=0.0)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+

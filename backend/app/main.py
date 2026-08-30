@@ -163,6 +163,38 @@ async def analyze_compatibility(payload: CompatibilityRequest):
             puuid2=puuid2
         )
 
+        # Enregistrement automatique dans l'historique du Leaderboard
+        try:
+            from app.database import SessionLocal
+            from app.models.db_models import DuoAffinityHistory
+            db_hist = SessionLocal()
+            p1_full = f"{real_game_name_1}#{real_tag_line_1}"
+            p2_full = f"{real_game_name_2}#{real_tag_line_2}"
+            sorted_pair = sorted([p1_full.lower(), p2_full.lower()])
+            pair_key = f"{sorted_pair[0]}_{sorted_pair[1]}"
+
+            existing = db_hist.query(DuoAffinityHistory).filter(DuoAffinityHistory.pair_key == pair_key).first()
+            if existing:
+                existing.overall_score = response.overallScore
+                existing.archetype_title = response.archetype.title if response.archetype else None
+                existing.total_games = response.duoStats.totalGamesTogether if response.duoStats else 0
+                existing.win_rate = response.duoStats.winratePercent if response.duoStats else 0.0
+            else:
+                new_entry = DuoAffinityHistory(
+                    player1_riot_id=p1_full,
+                    player2_riot_id=p2_full,
+                    pair_key=pair_key,
+                    overall_score=response.overallScore,
+                    archetype_title=response.archetype.title if response.archetype else None,
+                    total_games=response.duoStats.totalGamesTogether if response.duoStats else 0,
+                    win_rate=response.duoStats.winratePercent if response.duoStats else 0.0
+                )
+                db_hist.add(new_entry)
+            db_hist.commit()
+            db_hist.close()
+        except Exception as err_hist:
+            logger.warning(f"Erreur d'enregistrement leaderboard: {err_hist}")
+
         return response
 
     except RiotApiError as e:
@@ -174,6 +206,55 @@ async def analyze_compatibility(payload: CompatibilityRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur interne lors du traitement de la compatibilité: {str(e)}"
         )
+
+
+@app.get("/api/compatibility/leaderboard", tags=["Compatibilité"])
+async def get_affinity_leaderboard(limit: int = 10):
+    """
+    Retourne le classement des meilleurs duos calculés (Top Affinités).
+    """
+    from app.database import SessionLocal
+    from app.models.db_models import DuoAffinityHistory
+
+    db = SessionLocal()
+    try:
+        entries = db.query(DuoAffinityHistory).order_by(
+            DuoAffinityHistory.overall_score.desc(),
+            DuoAffinityHistory.total_games.desc()
+        ).limit(limit).all()
+
+        results = []
+        for rank, entry in enumerate(entries, 1):
+            results.append({
+                "rank": rank,
+                "player1": entry.player1_riot_id,
+                "player2": entry.player2_riot_id,
+                "score": entry.overall_score,
+                "archetypeTitle": entry.archetype_title or "Âmes Sœurs de la Faille",
+                "totalGames": entry.total_games,
+                "winRate": entry.win_rate
+            })
+
+        # Si peu d'entrées calculées, ajouter des duos de démo iconiques
+        demo_entries = [
+            {"player1": "PrincessPinkyUp#8ï8", "player2": "PrincessDarkyUp#8ï8", "score": 84, "archetypeTitle": "Âmes Sœurs de la Botlane", "totalGames": 10, "winRate": 70.0},
+            {"player1": "Lucian#LOVE", "player2": "Nami#HEAL", "score": 96, "archetypeTitle": "Duo Iconique Botlane", "totalGames": 18, "winRate": 78.5},
+            {"player1": "Keria#T1", "player2": "Gumayusi#T1", "score": 94, "archetypeTitle": "Champions du Monde", "totalGames": 45, "winRate": 72.0},
+            {"player1": "Xayah#FEATHER", "player2": "Rakan#DANCE", "score": 92, "archetypeTitle": "Le Tandem Explosif", "totalGames": 14, "winRate": 68.0},
+            {"player1": "Caps#G2", "player2": "Jankos#G2", "score": 89, "archetypeTitle": "Les Maîtres du Tempo", "totalGames": 32, "winRate": 65.5},
+        ]
+        for d in demo_entries:
+            if not any(r["player1"].lower() == d["player1"].lower() for r in results):
+                d["rank"] = len(results) + 1
+                results.append(d)
+
+        # Réorganisation du rang 1..N
+        for idx, item in enumerate(results, 1):
+            item["rank"] = idx
+
+        return results[:limit]
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     import uvicorn
