@@ -13,9 +13,9 @@ logger = logging.getLogger("riftaffinity.auth")
 router = APIRouter(prefix="/api/auth", tags=["Authentification"])
 
 def parse_riot_id(riot_id_str: str):
-    trimmed = riot_id_str.trim() if hasattr(riot_id_str, 'trim') else riot_id_str.strip()
+    trimmed = riot_id_str.strip()
     if "#" in trimmed:
-        idx = trimmed.lastIndexOf("#") if hasattr(trimmed, 'lastIndexOf') else trimmed.rfind("#")
+        idx = trimmed.rfind("#")
         return trimmed[:idx].strip(), trimmed[idx+1:].strip()
     return trimmed, "EUW"
 

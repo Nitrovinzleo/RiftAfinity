@@ -33,7 +33,15 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
+      const contentType = res.headers.get("content-type");
+      let data = {};
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error("Erreur de connexion au serveur. Vérifiez les informations saisies et réessayez.");
+      }
+
       if (!res.ok) {
         throw new Error(data.detail || 'Une erreur est survenue lors de l\'authentification.');
       }

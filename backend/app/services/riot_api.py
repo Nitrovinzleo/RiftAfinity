@@ -216,3 +216,11 @@ class RiotApiClient:
         except Exception as e:
             logger.warning(f"Impossible de récupérer le classement pour summoner_id {summoner_id}: {e}")
             return []
+
+    async def get_account_by_puuid(self, puuid: str, regional_cluster: str) -> Dict[str, Any]:
+        """
+        Récupère le pseudo et tagLine à jour par PUUID via ACCOUNT-V1.
+        S'adapte automatiquement si le joueur change de pseudo sur League of Legends !
+        """
+        url = f"https://{regional_cluster}.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}"
+        return await self._make_request(url)

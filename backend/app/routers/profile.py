@@ -54,6 +54,20 @@ async def verify_riot_icon(
         user.puuid = account_data.get("puuid")
         db.commit()
 
+    # 2b. Synchronisation automatique du Pseudo / TagLine si le joueur a changé de nom sur LoL
+    if user.puuid:
+        try:
+            account = await riot_client.get_account_by_puuid(user.puuid, regional_cluster)
+            new_name = account.get("gameName")
+            new_tag = account.get("tagLine")
+            if new_name and new_tag and (new_name != user.game_name or new_tag != user.tag_line):
+                logger.info(f"Changement de pseudo détecté : {user.full_riot_id} -> {new_name}#{new_tag}")
+                user.game_name = new_name
+                user.tag_line = new_tag
+                db.commit()
+        except Exception as e:
+            logger.warning(f"Impossible de vérifier le changement de pseudo par PUUID: {e}")
+
     # 3. Récupération des infos d'invocateur via SUMMONER-V4
     summoner_data = await riot_client.get_summoner_by_puuid(user.puuid, user.region)
     current_icon_id = summoner_data.get("profileIconId")

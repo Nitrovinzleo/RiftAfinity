@@ -31,8 +31,16 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
         }
       });
 
-      const data = await res.json();
-      setVerifyStatusMsg(data.message);
+      const contentType = res.headers.get("content-type");
+      let data = {};
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(text || "Erreur de réponse du serveur.");
+      }
+
+      setVerifyStatusMsg(data.message || 'Vérification effectuée.');
 
       if (data.isVerified) {
         onUserUpdated({
