@@ -198,6 +198,8 @@ async def update_profile(
         user.twitter_username = req.twitterUsername
     if req.displayName is not None:
         user.display_name = req.displayName.strip() if req.displayName else None
+    if req.spokenLanguages is not None:
+        user.spoken_languages = req.spokenLanguages.strip() if req.spokenLanguages else None
 
     db.commit()
     db.refresh(user)

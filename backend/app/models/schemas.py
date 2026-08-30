@@ -64,6 +64,7 @@ class UserResponse(BaseModel):
     twitchUsername: Optional[str] = None
     twitterUsername: Optional[str] = None
     displayName: Optional[str] = None
+    spokenLanguages: Optional[str] = None
 
 class ProfileUpdateRequest(BaseModel):
     customAvatar: Optional[str] = None
@@ -78,6 +79,7 @@ class ProfileUpdateRequest(BaseModel):
     twitchUsername: Optional[str] = None
     twitterUsername: Optional[str] = None
     displayName: Optional[str] = None
+    spokenLanguages: Optional[str] = None
 
 class PlayerMatchPerformance(BaseModel):
     """

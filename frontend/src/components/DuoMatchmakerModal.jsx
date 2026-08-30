@@ -315,9 +315,22 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                           <span className="text-xs text-slate-500 font-mono">#***</span>
                         )}
                       </div>
-                      <p className="text-xs text-slate-400">
-                        {currentCandidate.age} ans • Serveur <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
-                      </p>
+                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                        <p className="text-xs text-slate-400">
+                          {currentCandidate.age} ans • Serveur <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
+                        </p>
+
+                        {/* Badges des langues parlées par le candidat */}
+                        {currentCandidate.spokenLanguages && (
+                          <div className="flex items-center gap-1">
+                            {currentCandidate.spokenLanguages.split(',').map((lang) => (
+                              <span key={lang.trim()} className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md bg-slate-800 text-[#00f0ff] border border-slate-700">
+                                🗣️ {lang.trim()}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 

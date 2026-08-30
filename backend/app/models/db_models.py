@@ -48,8 +48,9 @@ class User(Base):
     twitch_username = Column(String, nullable=True)
     twitter_username = Column(String, nullable=True)
 
-    # Nom / Pseudo d'affichage personnalisé
+    # Nom / Pseudo d'affichage personnalisé & Langues parlées
     display_name = Column(String, nullable=True)
+    spoken_languages = Column(String, nullable=True)  # ex: "FR,EN"
 
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -92,7 +93,8 @@ class User(Base):
             "tiktokUsername": self.tiktok_username,
             "twitchUsername": self.twitch_username,
             "twitterUsername": self.twitter_username,
-            "displayName": self.display_name
+            "displayName": self.display_name,
+            "spokenLanguages": self.spoken_languages
         }
 
 class DuoSwipe(Base):

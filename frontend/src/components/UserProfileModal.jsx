@@ -4,6 +4,9 @@ import { getRankEmblemUrl } from '../utils/rankEmblems';
 
 export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout }) {
   const [displayName, setDisplayName] = useState(user?.displayName || '');
+  const [spokenLangs, setSpokenLangs] = useState(
+    user?.spokenLanguages ? user.spokenLanguages.split(',').map(s => s.trim()) : ['FR', 'EN']
+  );
   const [birthDate, setBirthDate] = useState(user?.birthDate || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [primaryRole, setPrimaryRole] = useState(user?.primaryRole || 'MID');
@@ -25,6 +28,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   useEffect(() => {
     if (user) {
       if (user.displayName !== undefined) setDisplayName(user.displayName || '');
+      if (user.spokenLanguages) setSpokenLangs(user.spokenLanguages.split(',').map(s => s.trim()));
       if (user.birthDate) setBirthDate(user.birthDate);
       if (user.bio) setBio(user.bio);
       if (user.primaryRole) setPrimaryRole(user.primaryRole);
@@ -36,6 +40,12 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
       if (user.twitterUsername) setTwitterUsername(user.twitterUsername);
     }
   }, [user]);
+
+  const toggleSpokenLang = (code) => {
+    setSpokenLangs(prev => 
+      prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]
+    );
+  };
 
   // Empêcher totalement le scroll de la page arrière-plan (html & body) lors de l'ouverture du profil
   useEffect(() => {
@@ -196,7 +206,8 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
           tiktokUsername,
           twitchUsername,
           twitterUsername,
-          displayName
+          displayName,
+          spokenLanguages: spokenLangs.join(',')
         })
       });
 
@@ -426,6 +437,43 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             />
             <span className="text-[10px] text-slate-400 block pt-0.5">
               Si renseigné, ce pseudo sera affiché en priorité et masquera le tag Riot (#TAG) sur vos cartes.
+            </span>
+          </div>
+
+          {/* Tags : Langues Parlées */}
+          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <label className="block text-xs font-bold text-slate-200 flex items-center gap-1.5">
+              <span>🗣️ Langues Parlées (Sélectionnez vos badges/tags)</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { code: 'FR', label: 'Français 🇫🇷' },
+                { code: 'EN', label: 'English 🇬🇧' },
+                { code: 'ES', label: 'Español 🇪🇸' },
+                { code: 'KR', label: '한국어 🇰🇷' },
+                { code: 'DE', label: 'Deutsch 🇩🇪' },
+                { code: 'PT', label: 'Português 🇧🇷' }
+              ].map(lang => {
+                const isSelected = spokenLangs.includes(lang.code);
+                return (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => toggleSpokenLang(lang.code)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer ${
+                      isSelected
+                        ? 'bg-[#00f0ff]/20 text-[#00f0ff] border-[#00f0ff]/60 shadow-md shadow-[#00f0ff]/10 scale-105'
+                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700'
+                    }`}
+                  >
+                    <span>{lang.label}</span>
+                    {isSelected && <CheckCircle className="w-3.5 h-3.5 text-[#00f0ff]" />}
+                  </button>
+                );
+              })}
+            </div>
+            <span className="text-[10px] text-slate-400 block pt-0.5">
+              Ces badges seront affichés sur votre carte de matchmaking pour indiquer les langues que vous parlez.
             </span>
           </div>
 
