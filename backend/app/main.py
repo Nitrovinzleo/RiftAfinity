@@ -56,6 +56,17 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Erreur serveur inattendue sur {request.method} {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Erreur serveur ({type(exc).__name__}): {str(exc)}"}
+    )
+
 # Inclusions des routeurs d'Authentification et de Profil Dating LoL
 app.include_router(auth.router)
 app.include_router(profile.router)
