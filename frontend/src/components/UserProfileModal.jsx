@@ -244,17 +244,6 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                 <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
                 <span>Tout synchroniser depuis LoL</span>
               </button>
-
-              <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-[#ff2a85]/50 hover:border-[#ff2a85] text-[#ff2a85] hover:text-white text-xs font-semibold transition-all shadow-md cursor-pointer">
-                <Camera className="w-3.5 h-3.5" />
-                <span>Importer une Photo</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCustomAvatarUpload}
-                  className="hidden"
-                />
-              </label>
             </div>
           </div>
 
@@ -347,6 +336,34 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
             <Heart className="w-4 h-4 text-[#ff2a85]" />
             <span>Mon Profil & Préférences Matchmaking</span>
           </h4>
+
+          {/* Importation de la Photo de Profil */}
+          <div>
+            <label className="block text-[11px] text-slate-400 mb-1">Photo de Profil Personnalisée</label>
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+              <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-950">
+                <img
+                  src={user.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${user.currentIconId || user.targetIconId || 28}.png`}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <span className="block text-xs font-semibold text-white">Changer ma photo de profil</span>
+                <span className="text-[10px] text-slate-400">Format d'image personnalisé (max 5 Mo)</span>
+              </div>
+              <label className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-[#ff2a85] text-slate-200 hover:text-white border border-slate-700 hover:border-[#ff2a85] text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 shrink-0 shadow-md">
+                <Camera className="w-4 h-4 text-[#ff2a85] group-hover:text-white" />
+                <span>Importer une photo</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCustomAvatarUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
