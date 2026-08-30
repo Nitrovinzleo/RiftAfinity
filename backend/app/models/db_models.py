@@ -42,6 +42,7 @@ class User(Base):
     rank_losses = Column(Integer, nullable=True)
 
     # Réseaux Sociaux & Contact Matchmaking
+    discord_id = Column(String, unique=True, index=True, nullable=True)
     discord_tag = Column(String, nullable=True)
     instagram_username = Column(String, nullable=True)
     tiktok_username = Column(String, nullable=True)
@@ -88,6 +89,7 @@ class User(Base):
             "rankTier": self.rank_tier,
             "rankDivision": self.rank_division,
             "rankLp": self.rank_lp,
+            "discordId": self.discord_id,
             "discordTag": self.discord_tag,
             "instagramUsername": self.instagram_username,
             "tiktokUsername": self.tiktok_username,
