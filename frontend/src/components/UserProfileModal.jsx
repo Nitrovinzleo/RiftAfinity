@@ -22,15 +22,18 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
     }
   }, [user]);
 
-  // Empêcher le scroll de la page arrière-plan pour éviter la double barre de défilement
+  // Empêcher totalement le scroll de la page arrière-plan (html & body) lors de l'ouverture du profil
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -190,8 +193,8 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn overflow-hidden">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#00f0ff]/40 shadow-2xl space-y-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md animate-fadeIn p-4 sm:p-6 flex items-center justify-center">
+      <div className="relative w-full max-w-2xl my-auto p-6 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#00f0ff]/40 shadow-2xl space-y-6">
         
         {/* Bouton de fermeture */}
         <button
