@@ -34,11 +34,11 @@ export default function Navbar({ onReset, currentLang, onToggleLang }) {
           </div>
         </div>
 
-        {/* Bouton de langue : Drapeau SVG uniquement (sans texte) */}
+        {/* Bouton de langue : Drapeaux SVG ronds sans double bordure */}
         <div className="flex items-center gap-2">
           <button
             onClick={onToggleLang}
-            className="p-2.5 rounded-full bg-slate-900/90 border border-slate-700/80 hover:border-[#ff2a85]/60 hover:scale-110 active:scale-95 transition-all shadow-md flex items-center justify-center"
+            className="p-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] hover:scale-110 active:scale-95 transition-all shadow-md bg-slate-900 flex items-center justify-center"
             title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
           >
             {currentLang === 'fr' ? (

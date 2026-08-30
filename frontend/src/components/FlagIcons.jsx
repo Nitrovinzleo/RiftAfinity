@@ -1,8 +1,8 @@
 import React from 'react';
 
-export function FrenchFlag({ className = "w-5 h-5" }) {
+export function FrenchFlag({ className = "w-7 h-7" }) {
   return (
-    <svg className={`rounded-full overflow-hidden shadow-md shrink-0 border border-slate-700 ${className}`} viewBox="0 0 3 2">
+    <svg className={`rounded-full overflow-hidden shrink-0 ${className}`} viewBox="0 0 3 2">
       <rect width="1" height="2" fill="#002395" />
       <rect x="1" width="1" height="2" fill="#FFFFFF" />
       <rect x="2" width="1" height="2" fill="#ED2939" />
@@ -10,9 +10,9 @@ export function FrenchFlag({ className = "w-5 h-5" }) {
   );
 }
 
-export function UKFlag({ className = "w-5 h-5" }) {
+export function UKFlag({ className = "w-7 h-7" }) {
   return (
-    <svg className={`rounded-full overflow-hidden shadow-md shrink-0 border border-slate-700 ${className}`} viewBox="0 0 60 30">
+    <svg className={`rounded-full overflow-hidden shrink-0 ${className}`} viewBox="0 0 60 30">
       <rect width="60" height="30" fill="#012169"/>
       <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" strokeWidth="8"/>
       <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" strokeWidth="4"/>
