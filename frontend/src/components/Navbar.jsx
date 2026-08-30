@@ -35,7 +35,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
           </div>
         </div>
 
-        {/* Boutons d'Action (Matchmaking + Connexion/Profil + Langue) */}
+        {/* Boutons d'Action (Matchmaking + Connexion/Profil + Langue Desktop) */}
         <div className="flex items-center gap-2 sm:gap-3">
           
           {/* Bouton Matchmaking Duo */}
@@ -76,22 +76,44 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
             </button>
           )}
 
-          {/* Bouton de langue : Drapeaux SVG ronds */}
+          {/* Bouton de langue DESKTOP uniquement (à droite dans la Navbar) */}
           <button
             onClick={onToggleLang}
-            className="p-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] hover:scale-110 active:scale-95 transition-all shadow-md bg-slate-900 flex items-center justify-center"
+            className="hidden sm:flex p-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] hover:scale-110 active:scale-95 transition-all shadow-md bg-slate-900 items-center justify-center"
             title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
           >
             {currentLang === 'fr' ? (
-              <FrenchFlag className="w-6 h-6 sm:w-7 sm:h-7" />
+              <FrenchFlag className="w-7 h-7" />
             ) : (
-              <UKFlag className="w-6 h-6 sm:w-7 sm:h-7" />
+              <UKFlag className="w-7 h-7" />
             )}
           </button>
 
         </div>
 
       </div>
+
+      {/* Bouton de langue MOBILE uniquement : Positionné à GAUCHE en dessous de la Navbar */}
+      <div className="sm:hidden border-t border-slate-800/50 bg-[#06070e]/90 px-3 py-1 flex items-center justify-start">
+        <button
+          onClick={onToggleLang}
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] active:scale-95 transition-all shadow-sm bg-slate-900 text-xs font-bold text-slate-200"
+          title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
+        >
+          {currentLang === 'fr' ? (
+            <>
+              <FrenchFlag className="w-4 h-4" />
+              <span>FR</span>
+            </>
+          ) : (
+            <>
+              <UKFlag className="w-4 h-4" />
+              <span>EN</span>
+            </>
+          )}
+        </button>
+      </div>
+
     </header>
   );
 }
