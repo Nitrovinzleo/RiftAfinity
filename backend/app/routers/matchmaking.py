@@ -255,3 +255,39 @@ async def process_swipe(
 
     return {"isMatch": False, "message": "Swipe enregistré avec succès."}
 
+@router.get("/matches", response_model=List[dict])
+async def get_user_matches(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Retourne la liste complète de tous les matchs de l'utilisateur avec les profils et réseaux sociaux débloqués.
+    """
+    user = get_current_user_from_token(authorization, db)
+
+    # Récupérer tous les swipes réciproques où is_match est Vrai
+    matched_swipes = db.query(DuoSwipe).filter(
+        ((DuoSwipe.swiper_id == user.id) | (DuoSwipe.target_id == user.id)),
+        DuoSwipe.is_match == True
+    ).all()
+
+    # Extraire les IDs des partenaires de match uniques
+    matched_user_ids = set()
+    for s in matched_swipes:
+        partner_id = s.target_id if s.swiper_id == user.id else s.swiper_id
+        matched_user_ids.add(partner_id)
+
+    if not matched_user_ids:
+        return []
+
+    matched_users = db.query(User).filter(User.id.in_(matched_user_ids)).all()
+
+    result = []
+    for u in matched_users:
+        u_dict = u.to_dict()
+        u_dict["compatibilityScore"] = calculate_compatibility_score(user, u_dict)
+        result.append(sanitize_candidate_for_public(u_dict))
+
+    return result
+
+

@@ -1,10 +1,10 @@
 import React from 'react';
-import { User, CheckCircle, LogIn } from 'lucide-react';
+import { User, CheckCircle, LogIn, Heart } from 'lucide-react';
 import Logo from './Logo';
 import { FrenchFlag, UKFlag } from './FlagIcons';
 import { translations } from '../utils/translations';
 
-export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, onOpenAuth, onOpenProfile, onOpenMatchmaker }) {
+export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, onOpenAuth, onOpenProfile, onOpenMatchmaker, onOpenMyMatches }) {
   const t = translations[currentLang]?.navbar || translations.fr.navbar;
 
   return (
@@ -35,7 +35,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
           </div>
         </div>
 
-        {/* Boutons d'Action (Matchmaking + Connexion/Profil + Langue Desktop) */}
+        {/* Boutons d'Action (Matchmaking + Notifications Matchs + Connexion/Profil + Langue Desktop) */}
         <div className="flex items-center gap-2 sm:gap-3">
           
           {/* Bouton Matchmaking Duo */}
@@ -46,6 +46,19 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
             <span>💘</span>
             <span className="hidden xs:inline sm:inline">{t.findDuo || 'Trouver un Duo'}</span>
           </button>
+
+          {/* Bouton Mes Matchs (si connecté) */}
+          {currentUser && (
+            <button
+              onClick={onOpenMyMatches}
+              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-200 hover:text-white transition-all text-xs font-bold shadow-md"
+              title="Mes Matchs & Notifications"
+            >
+              <Heart className="w-4 h-4 text-[#ff2a85] fill-[#ff2a85]" />
+              <span className="hidden sm:inline">{currentLang === 'fr' ? 'Mes Matchs' : 'My Matches'}</span>
+            </button>
+          )}
+
 
           {/* Bouton Authentification / Profil */}
           {currentUser ? (
