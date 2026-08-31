@@ -30,7 +30,6 @@ def send_match_emails(user1_dict: dict, user2_dict: dict):
       <div style="background-color: #121528; padding: 16px; border-radius: 12px; border-left: 4px solid #00f0ff; margin: 20px 0;">
         <h4 style="margin: 0 0 8px 0; color: #00f0ff;">Détails de votre partenaire Duo :</h4>
         <p style="margin: 4px 0;">🎮 <strong>Riot ID :</strong> {u2_name}</p>
-        <p style="margin: 4px 0;">✉️ <strong>Adresse E-mail :</strong> {user2_dict.get('email')}</p>
         <p style="margin: 4px 0;">🏆 <strong>Rang Solo/Duo :</strong> {user2_dict.get('rankTier', 'UNRANKED')} {user2_dict.get('rankDivision', '')}</p>
         <p style="margin: 4px 0;">⚔️ <strong>Rôle principal :</strong> {user2_dict.get('primaryRole', 'Non spécifié')}</p>
       </div>
@@ -49,7 +48,6 @@ def send_match_emails(user1_dict: dict, user2_dict: dict):
       <div style="background-color: #121528; padding: 16px; border-radius: 12px; border-left: 4px solid #ff2a85; margin: 20px 0;">
         <h4 style="margin: 0 0 8px 0; color: #ff2a85;">Détails de votre partenaire Duo :</h4>
         <p style="margin: 4px 0;">🎮 <strong>Riot ID :</strong> {u1_name}</p>
-        <p style="margin: 4px 0;">✉️ <strong>Adresse E-mail :</strong> {user1_dict.get('email')}</p>
         <p style="margin: 4px 0;">🏆 <strong>Rang Solo/Duo :</strong> {user1_dict.get('rankTier', 'UNRANKED')} {user1_dict.get('rankDivision', '')}</p>
         <p style="margin: 4px 0;">⚔️ <strong>Rôle principal :</strong> {user1_dict.get('primaryRole', 'Non spécifié')}</p>
       </div>
