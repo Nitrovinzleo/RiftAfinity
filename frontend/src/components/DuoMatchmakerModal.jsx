@@ -119,6 +119,7 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          targetId: currentCandidate.id,
           targetUserId: currentCandidate.id,
           liked: liked
         })

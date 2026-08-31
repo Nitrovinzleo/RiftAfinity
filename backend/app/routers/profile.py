@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.database import get_db
-from app.models.db_models import User
-from app.models.schemas import ProfileUpdateRequest
-from app.services.auth_service import decode_access_token
+from app.models.db_models import User, DuoSwipe, DiscordPendingLink
+from app.models.schemas import ProfileUpdateRequest, ChangePasswordRequest, ChangeEmailRequest
+from app.services.auth_service import decode_access_token, hash_password, verify_password, create_access_token
 from app.services.riot_api import RiotApiClient, RiotApiError
 
 logger = logging.getLogger("riftaffinity.profile")
@@ -208,3 +208,77 @@ async def update_profile(
         "message": "Profil mis à jour avec succès !",
         "user": user.to_dict()
     }
+
+@router.put("/change-password", response_model=dict)
+async def change_password(
+    req: ChangePasswordRequest,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    user = get_current_user_from_token(authorization, db)
+    
+    pwd_clean = req.currentPassword.strip()
+    if not verify_password(pwd_clean, user.hashed_password) and not verify_password(req.currentPassword, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Le mot de passe actuel est incorrect.")
+
+    if len(req.newPassword.strip()) < 4:
+        raise HTTPException(status_code=400, detail="Le nouveau mot de passe doit contenir au moins 4 caractères.")
+
+    user.hashed_password = hash_password(req.newPassword.strip())
+    db.commit()
+    db.refresh(user)
+
+    return {"message": "Mot de passe mis à jour avec succès !"}
+
+@router.put("/change-email", response_model=dict)
+async def change_email(
+    req: ChangeEmailRequest,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    user = get_current_user_from_token(authorization, db)
+
+    pwd_clean = req.password.strip()
+    if not verify_password(pwd_clean, user.hashed_password) and not verify_password(req.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Mot de passe incorrect pour valider le changement d'email.")
+
+    new_email_clean = req.newEmail.strip().lower()
+    if "@" not in new_email_clean or "." not in new_email_clean:
+        raise HTTPException(status_code=400, detail="Veuillez fournir une adresse e-mail valide.")
+
+    existing = db.query(User).filter(User.email == new_email_clean, User.id != user.id).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Cette adresse e-mail est déjà utilisée par un autre compte.")
+
+    user.email = new_email_clean
+    db.commit()
+    db.refresh(user)
+
+    new_token = create_access_token({"sub": str(user.id), "email": user.email})
+
+    return {
+        "message": "Adresse e-mail mise à jour avec succès !",
+        "token": new_token,
+        "user": user.to_dict()
+    }
+
+@router.delete("/delete-account", response_model=dict)
+async def delete_account(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    user = get_current_user_from_token(authorization, db)
+
+    # Nettoyage des swipes où l'utilisateur est swiper ou cible
+    db.query(DuoSwipe).filter((DuoSwipe.swiper_id == user.id) | (DuoSwipe.target_id == user.id)).delete(synchronize_session=False)
+
+    # Nettoyage des pending links discord
+    if user.discord_id:
+        db.query(DiscordPendingLink).filter(DiscordPendingLink.discord_id == user.discord_id).delete(synchronize_session=False)
+
+    # Suppression du compte
+    db.delete(user)
+    db.commit()
+
+    return {"message": "Votre compte a été supprimé définitivement."}
+

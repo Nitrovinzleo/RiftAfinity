@@ -81,6 +81,15 @@ class ProfileUpdateRequest(BaseModel):
     displayName: Optional[str] = None
     spokenLanguages: Optional[str] = None
 
+class ChangePasswordRequest(BaseModel):
+    currentPassword: str = Field(..., description="Mot de passe actuel")
+    newPassword: str = Field(..., description="Nouveau mot de passe")
+
+class ChangeEmailRequest(BaseModel):
+    newEmail: str = Field(..., description="Nouvelle adresse e-mail")
+    password: str = Field(..., description="Mot de passe actuel pour confirmation")
+
+
 class PlayerMatchPerformance(BaseModel):
     """
     Statistiques individuelles d'un joueur dans une partie commune.

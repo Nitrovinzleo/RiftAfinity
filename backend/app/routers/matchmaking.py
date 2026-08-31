@@ -14,132 +14,28 @@ logger = logging.getLogger("riftaffinity.matchmaking")
 router = APIRouter(tags=["Matchmaking Duo"])
 
 class SwipeRequest(BaseModel):
-    targetId: Any = Field(..., description="ID ou identifiant du joueur cible")
-    liked: bool = Field(..., description="True si le joueur a cliqué sur 'Oui', False pour 'Non'")
+    targetId: Optional[Any] = Field(None, description="ID numérique du joueur cible")
+    targetUserId: Optional[Any] = Field(None, description="ID numérique du joueur cible")
 
-# Pool de profils de démonstration iconiques pour garantir de toujours trouver des duos
-DEMO_CANDIDATES = [
-    {
-        "id": 99901,
-        "gameName": "Keria",
-        "tagLine": "T1",
-        "email": "keria.t1@example.com",
-        "region": "kr",
-        "isVerified": True,
-        "currentIconId": 588,
-        "customAvatar": "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/588.png",
-        "age": 21,
-        "bio": "Support agressif T1. Cherche un ADC mécanique avec une vision de jeu parfaite pour rush le Challenger.",
-        "primaryRole": "SUPPORT",
-        "favoriteChampion": "Thresh",
-        "rankTier": "CHALLENGER",
-        "rankDivision": "I",
-        "rankLp": 1240,
-        "discordTag": "keria_t1",
-        "instagramUsername": "keria_lol",
-        "twitchUsername": "keria_live",
-        "tiktokUsername": None,
-        "twitterUsername": "Keria_LoL",
-        "displayName": "Ryu Min-seok",
-        "spokenLanguages": "KR, EN"
-    },
-    {
-        "id": 99902,
-        "gameName": "Caps",
-        "tagLine": "G2",
-        "email": "caps.g2@example.com",
-        "region": "euw1",
-        "isVerified": True,
-        "currentIconId": 548,
-        "customAvatar": "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/548.png",
-        "age": 24,
-        "bio": "Claps or Craps ! Midlaner inventif, toujours prêt pour des picks décalés et du dived en duo.",
-        "primaryRole": "MID",
-        "favoriteChampion": "Sylas",
-        "rankTier": "GRANDMASTER",
-        "rankDivision": "I",
-        "rankLp": 850,
-        "discordTag": "G2Caps#2024",
-        "instagramUsername": "G2Caps",
-        "twitchUsername": "G2Caps",
-        "tiktokUsername": "g2caps_official",
-        "twitterUsername": "G2Caps",
-        "displayName": "Rasmus Winther",
-        "spokenLanguages": "EN, FR, DE"
-    },
-    {
-        "id": 99903,
-        "gameName": "Rekkles",
-        "tagLine": "T1",
-        "email": "rekkles.t1@example.com",
-        "region": "euw1",
-        "isVerified": True,
-        "currentIconId": 560,
-        "customAvatar": "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/560.png",
-        "age": 27,
-        "bio": "ADC & Support méthodique. Jeu propre, gestion des vagues irréprochable et tryhard garanti.",
-        "primaryRole": "ADC",
-        "favoriteChampion": "Jinx",
-        "rankTier": "MASTER",
-        "rankDivision": "I",
-        "rankLp": 320,
-        "discordTag": "rekkles_official",
-        "instagramUsername": "rekkleslol",
-        "twitchUsername": "rekkles",
-        "tiktokUsername": None,
-        "twitterUsername": "RekklesLoL",
-        "displayName": "Martin Larsson",
-        "spokenLanguages": "EN, FR"
-    },
-    {
-        "id": 99904,
-        "gameName": "Jojopyun",
-        "tagLine": "NA1",
-        "email": "jojo.na@example.com",
-        "region": "na1",
-        "isVerified": True,
-        "currentIconId": 512,
-        "customAvatar": "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/512.png",
-        "age": 19,
-        "bio": "Midlaner NA dominant. Je cherche un Jungler agressif pour des dived niveau 3 répétitifs !",
-        "primaryRole": "MID",
-        "favoriteChampion": "Jayce",
-        "rankTier": "CHALLENGER",
-        "rankDivision": "I",
-        "rankLp": 980,
-        "discordTag": "jojopyun",
-        "instagramUsername": "jojopyun_na",
-        "twitchUsername": "jojopyun",
-        "tiktokUsername": None,
-        "twitterUsername": "jojopyunlol",
-        "displayName": "Joseph Joon Pyun",
-        "spokenLanguages": "EN, ES"
-    },
-    {
-        "id": 99905,
-        "gameName": "Mikyx",
-        "tagLine": "G2",
-        "email": "mikyx.g2@example.com",
-        "region": "euw1",
-        "isVerified": True,
-        "currentIconId": 532,
-        "customAvatar": "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/532.png",
-        "age": 25,
-        "bio": "Support playmaker. Fan de Naut & Leona, j'aime engager et faire des rages quit en face !",
-        "primaryRole": "SUPPORT",
-        "favoriteChampion": "Nautilus",
-        "rankTier": "GRANDMASTER",
-        "rankDivision": "I",
-        "rankLp": 710,
-        "discordTag": "mikyx_g2",
-        "instagramUsername": "mikyx_lol",
-        "twitchUsername": "mikyx",
-        "tiktokUsername": None,
-        "twitterUsername": "G2Mikyx",
-        "displayName": "Mihael Mehle",
-        "spokenLanguages": "EN, DE"
-    }
-]
+    def get_target_id(self):
+        val = self.targetId if self.targetId is not None else self.targetUserId
+        if val is None:
+            raise HTTPException(status_code=400, detail="Identifiant du joueur cible manquant.")
+        return val
+
+
+RANK_TIER_ORDER = {
+    "IRON": 1,
+    "BRONZE": 2,
+    "SILVER": 3,
+    "GOLD": 4,
+    "PLATINUM": 5,
+    "EMERALD": 6,
+    "DIAMOND": 7,
+    "MASTER": 8,
+    "GRANDMASTER": 9,
+    "CHALLENGER": 10,
+}
 
 def get_current_user_from_token(authorization: Optional[str], db: Session) -> User:
     if not authorization or not authorization.startswith("Bearer "):
@@ -158,31 +54,79 @@ def get_current_user_from_token(authorization: Optional[str], db: Session) -> Us
 
 def calculate_compatibility_score(user1: User, candidate_dict: dict) -> int:
     """
-    Calcule un score d'affinité contextuel (entre 72% et 99%) selon les rôles et rangs.
+    Calcule un score d'affinité multi-facteurs dynamique (entre 45% et 99%)
+    basé sur la synergie des rôles, la proximité des rangs, les langues et la région.
     """
-    base = 75
+    score = 0
+
+    # 1. Synergie des rôles (max 35 pts)
     r1 = (user1.primary_role or "MID").upper()
     r2 = (candidate_dict.get("primaryRole") or "MID").upper()
 
-    # Synergie des rôles
     role_synergies = {
-        ("ADC", "SUPPORT"): 20,
-        ("SUPPORT", "ADC"): 20,
-        ("JUNGLE", "MID"): 18,
-        ("MID", "JUNGLE"): 18,
-        ("TOP", "JUNGLE"): 15,
-        ("JUNGLE", "TOP"): 15,
-        ("MID", "ADC"): 12,
-        ("ADC", "MID"): 12,
+        ("ADC", "SUPPORT"): 35,
+        ("SUPPORT", "ADC"): 35,
+        ("JUNGLE", "MID"): 32,
+        ("MID", "JUNGLE"): 32,
+        ("TOP", "JUNGLE"): 28,
+        ("JUNGLE", "TOP"): 28,
+        ("MID", "ADC"): 25,
+        ("ADC", "MID"): 25,
+        ("TOP", "MID"): 22,
+        ("MID", "TOP"): 22,
     }
+    if r1 == r2:
+        role_pts = 15
+    else:
+        role_pts = role_synergies.get((r1, r2), 20)
 
-    bonus_role = role_synergies.get((r1, r2), 8)
-    base += bonus_role
+    score += role_pts
 
-    # Variabilité aléatoire déterministe basée sur les IDs
-    seed_val = (user1.id * 17 + int(candidate_dict.get("id", 1)) * 31) % 10
-    score = min(99, max(72, base + seed_val))
-    return score
+    # 2. Proximité des rangs Solo/Duo (max 30 pts)
+    tier1 = RANK_TIER_ORDER.get((user1.rank_tier or "GOLD").upper(), 4)
+    tier2 = RANK_TIER_ORDER.get((candidate_dict.get("rankTier") or "GOLD").upper(), 4)
+
+    tier_diff = abs(tier1 - tier2)
+    if tier_diff == 0:
+        rank_pts = 30
+    elif tier_diff == 1:
+        rank_pts = 25
+    elif tier_diff == 2:
+        rank_pts = 18
+    elif tier_diff == 3:
+        rank_pts = 12
+    else:
+        rank_pts = 5
+
+    score += rank_pts
+
+    # 3. Langues parlées en commun (max 20 pts)
+    langs1 = set(l.strip().upper() for l in (user1.spoken_languages or "FR,EN").split(","))
+    langs2 = set(l.strip().upper() for l in (candidate_dict.get("spokenLanguages") or "FR,EN").split(","))
+    shared = langs1.intersection(langs2)
+
+    if len(shared) >= 2:
+        lang_pts = 20
+    elif len(shared) == 1:
+        lang_pts = 15
+    else:
+        lang_pts = 5
+
+    score += lang_pts
+
+    # 4. Région & Bio (max 15 pts)
+    reg1 = (user1.region or "euw1").lower()
+    reg2 = (candidate_dict.get("region") or "euw1").lower()
+
+    if reg1 == reg2:
+        score += 10
+    else:
+        score += 3
+
+    if candidate_dict.get("bio"):
+        score += 5
+
+    return min(99, max(45, score))
 
 def sanitize_candidate_for_public(cand_dict: dict) -> dict:
     """
@@ -199,7 +143,7 @@ async def get_matchmaking_candidates(
     db: Session = Depends(get_db)
 ):
     """
-    Retourne la liste des profils d'autres joueurs pour le matchmaking Duo.
+    Retourne la liste des profils d'autres joueurs réels pour le matchmaking Duo.
     Exige un utilisateur connecté et au compte LoL vérifié.
     """
     user = get_current_user_from_token(authorization, db)
@@ -213,7 +157,7 @@ async def get_matchmaking_candidates(
     # Récupérer les IDs déjà swipés par l'utilisateur
     swiped_ids = [s.target_id for s in db.query(DuoSwipe).filter(DuoSwipe.swiper_id == user.id).all()]
 
-    # Chercher d'autres utilisateurs réels enregistrés et vérifiés
+    # Chercher d'autres utilisateurs réels enregistrés et vérifiés uniquement (sans profils de test)
     db_candidates = db.query(User).filter(
         User.id != user.id,
         User.is_verified == True
@@ -227,14 +171,7 @@ async def get_matchmaking_candidates(
             c_dict["compatibilityScore"] = calculate_compatibility_score(user, c_dict)
             candidates.append(sanitize_candidate_for_public(c_dict))
 
-    # Compléter avec des profils de démonstration si peu d'utilisateurs réels sont trouvés
-    for demo in DEMO_CANDIDATES:
-        if demo["id"] not in swiped_ids:
-            demo_copy = dict(demo)
-            demo_copy["compatibilityScore"] = calculate_compatibility_score(user, demo_copy)
-            candidates.append(sanitize_candidate_for_public(demo_copy))
-
-    # Mélanger les profils
+    # Mélanger les profils réels
     random.shuffle(candidates)
     return candidates
 
@@ -247,62 +184,74 @@ async def process_swipe(
 ):
     """
     Enregistre le choix 'Oui' (Liked) ou 'Non' (Passed).
-    Si le choix est réciproque, déclenche le Match, renvoie le Riot ID & les réseaux sociaux et envoie les e-mails !
+    Si le choix est réciproque (les deux utilisateurs se sont likés), déclenche le Match,
+    débloque les contacts et envoie un e-mail de mise en relation aux deux joueurs !
     """
     user = get_current_user_from_token(authorization, db)
 
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="Compte non vérifié.")
 
-    target_id = req.targetId
+    try:
+        target_id = int(req.get_target_id())
+    except (ValueError, TypeError):
+        raise HTTPException(status_code=400, detail="ID de joueur cible invalide.")
 
-    # Si c'est un utilisateur réel en base
-    if isinstance(target_id, int) and target_id < 90000:
-        # Enregistrer le swipe
-        existing_swipe = db.query(DuoSwipe).filter(
-            DuoSwipe.swiper_id == user.id,
-            DuoSwipe.target_id == target_id
+    # Vérifier l'existence de l'utilisateur cible en base
+    target_user = db.query(User).filter(User.id == target_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Joueur cible introuvable.")
+
+    # Enregistrer ou mettre à jour le swipe
+    existing_swipe = db.query(DuoSwipe).filter(
+        DuoSwipe.swiper_id == user.id,
+        DuoSwipe.target_id == target_id
+    ).first()
+
+    if existing_swipe:
+        existing_swipe.liked = req.liked
+    else:
+        new_swipe = DuoSwipe(
+            swiper_id=user.id,
+            target_id=target_id,
+            liked=req.liked
+        )
+        db.add(new_swipe)
+    
+    db.commit()
+
+    # Si le swipe actuel est un "Like", vérifier si l'utilisateur cible a également liké l'utilisateur actuel
+    if req.liked:
+        reciprocal_swipe = db.query(DuoSwipe).filter(
+            DuoSwipe.swiper_id == target_id,
+            DuoSwipe.target_id == user.id,
+            DuoSwipe.liked == True
         ).first()
 
-        if not existing_swipe:
-            new_swipe = DuoSwipe(
-                swiper_id=user.id,
-                target_id=target_id,
-                liked=req.liked
-            )
-            db.add(new_swipe)
+        if reciprocal_swipe:
+            # Marquer le match
+            if existing_swipe:
+                existing_swipe.is_match = True
+            else:
+                db.query(DuoSwipe).filter(
+                    DuoSwipe.swiper_id == user.id,
+                    DuoSwipe.target_id == target_id
+                ).update({"is_match": True})
+            
+            reciprocal_swipe.is_match = True
             db.commit()
 
-        if req.liked:
-            target_user = db.query(User).filter(User.id == target_id).first()
-            if target_user:
-                target_dict = target_user.to_dict()
-                user_dict = user.to_dict()
+            target_dict = target_user.to_dict()
+            user_dict = user.to_dict()
 
-                # Envoi asynchrone des 2 e-mails en arrière-plan (serveur uniquement)
-                background_tasks.add_task(send_match_emails, user_dict, target_dict)
+            # Envoi asynchrone des 2 e-mails de notification en arrière-plan
+            background_tasks.add_task(send_match_emails, user_dict, target_dict)
 
-                return {
-                    "isMatch": True,
-                    "matchedUser": sanitize_candidate_for_public(target_dict),
-                    "message": "🎉 C'est un MATCH !"
-                }
+            return {
+                "isMatch": True,
+                "matchedUser": sanitize_candidate_for_public(target_dict),
+                "message": "🎉 C'est un MATCH !"
+            }
 
-    # Si profil de démo ou swipe non liké
-    if req.liked:
-        demo_target = next((d for d in DEMO_CANDIDATES if d["id"] == target_id), None)
-        if not demo_target:
-            demo_target = DEMO_CANDIDATES[0]
+    return {"isMatch": False, "message": "Swipe enregistré avec succès."}
 
-        user_dict = user.to_dict()
-
-        # Envoi asynchrone des e-mails
-        background_tasks.add_task(send_match_emails, user_dict, demo_target)
-
-        return {
-            "isMatch": True,
-            "matchedUser": sanitize_candidate_for_public(demo_target),
-            "message": "🎉 C'est un MATCH !"
-        }
-
-    return {"isMatch": False, "message": "Swipe enregistré."}
