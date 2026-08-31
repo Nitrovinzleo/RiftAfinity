@@ -23,3 +23,8 @@ yarn-error.log*
 .vscode/
 .idea/
 Thumbs.db
+
+# Local guides & private configs
+CONFIG_EMAIL_LOCAL.md
+GUIDE_CONFIGURATION_EMAIL.md
+
