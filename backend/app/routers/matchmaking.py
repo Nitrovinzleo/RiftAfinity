@@ -387,6 +387,7 @@ async def get_public_stats(db: Session = Depends(get_db)):
         "verifiedPlayers": max(150, total_verified),
         "onlinePlayers": max(48, int(total_count * 0.75) if total_count else 48),
         "activeInGame": max(19, int(total_count * 0.35) if total_count else 19),
+        "rankTiers": 10,
         "regionsCount": 4,
         "featuredPlayers": cand_list
     }

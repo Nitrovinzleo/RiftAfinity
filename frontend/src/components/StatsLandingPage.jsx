@@ -51,6 +51,7 @@ export default function StatsLandingPage({
     { name: 'Emerald', tier: 'emerald' },
     { name: 'Diamond', tier: 'diamond' },
     { name: 'Master', tier: 'master' },
+    { name: 'Grandmaster', tier: 'grandmaster' },
     { name: 'Challenger', tier: 'challenger' },
   ];
 
