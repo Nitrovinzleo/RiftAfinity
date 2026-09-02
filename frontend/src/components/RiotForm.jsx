@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Globe, Key, User, ShieldAlert, Sparkles, ArrowRight } from 'lucide-react';
+import { Heart, Globe, Key, User, ShieldAlert, Sparkles, ArrowRight, Bot } from 'lucide-react';
 import Logo from './Logo';
 import { translations } from '../utils/translations';
 
@@ -16,7 +16,7 @@ const REGIONS = [
   { id: 'jp1', name: 'Japan (JP)' },
 ];
 
-export default function RiotForm({ onSubmit, initialValues, isLoading, currentLang }) {
+export default function RiotForm({ onSubmit, initialValues, isLoading, currentLang, onOpenDiscordGuide }) {
   const t = translations[currentLang]?.form || translations.fr.form;
 
   const [p1Input, setP1Input] = useState(initialValues?.p1Input || '');
@@ -208,16 +208,28 @@ export default function RiotForm({ onSubmit, initialValues, isLoading, currentLa
             )}
           </div>
 
-          {/* Bouton Principal Rose & Cyan */}
-          <div className="pt-2">
+          {/* Boutons d'Action (Analyser + Bot Discord Direct) */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+            {/* Bouton Principal Rose & Cyan */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full btn-pink-cyan py-3.5 sm:py-4 px-5 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 group disabled:opacity-50 touch-manipulation"
+              className="w-full sm:flex-1 btn-pink-cyan py-3.5 sm:py-4 px-5 rounded-xl text-white font-bold text-sm sm:text-base flex items-center justify-center gap-2 group disabled:opacity-50 touch-manipulation shadow-lg"
             >
               <Heart className="w-4 h-4 sm:w-5 sm:h-5 fill-white/20 group-hover:scale-110 transition-transform" />
               <span>{t.submitBtn}</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            {/* Bouton Secondaire Bot Discord */}
+            <button
+              type="button"
+              onClick={onOpenDiscordGuide}
+              className="w-full sm:w-auto py-3.5 sm:py-4 px-4 rounded-xl bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-500/50 text-indigo-300 hover:text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all shrink-0"
+              title={currentLang === 'fr' ? 'Tester directement sur Discord' : 'Test directly on Discord'}
+            >
+              <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400" />
+              <span>{currentLang === 'fr' ? '🤖 Via le Bot Discord ⚡' : '🤖 Via Discord Bot ⚡'}</span>
             </button>
           </div>
 

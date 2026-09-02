@@ -241,6 +241,7 @@ export default function App() {
             initialValues={lastSearchInputs}
             isLoading={false}
             currentLang={currentLang}
+            onOpenDiscordGuide={() => setIsDiscordGuideOpen(true)}
           />
         )}
 
