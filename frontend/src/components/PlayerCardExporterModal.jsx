@@ -56,9 +56,35 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
     setTimeout(() => setCopiedLink(false), 2500);
   };
 
+  const getSpokenLangsDisplay = (user) => {
+    const LANG_FLAGS = {
+      'FR': { code: 'FR', flagUrl: 'https://flagcdn.com/24x18/fr.png' },
+      'EN': { code: 'EN', flagUrl: 'https://flagcdn.com/24x18/gb.png' },
+      'ES': { code: 'ES', flagUrl: 'https://flagcdn.com/24x18/es.png' },
+      'KR': { code: 'KR', flagUrl: 'https://flagcdn.com/24x18/kr.png' },
+      'DE': { code: 'DE', flagUrl: 'https://flagcdn.com/24x18/de.png' },
+      'PT': { code: 'PT', flagUrl: 'https://flagcdn.com/24x18/br.png' }
+    };
+
+    let rawLangs = user?.spokenLanguages;
+    if (!rawLangs) return [LANG_FLAGS['FR'], LANG_FLAGS['EN']];
+
+    if (typeof rawLangs === 'string') {
+      rawLangs = rawLangs.split(',').map(s => s.trim().toUpperCase());
+    }
+
+    if (Array.isArray(rawLangs) && rawLangs.length > 0) {
+      const formatted = rawLangs.map(code => LANG_FLAGS[code] || { code, flagUrl: null }).filter(Boolean);
+      if (formatted.length > 0) return formatted;
+    }
+
+    return [LANG_FLAGS['FR'], LANG_FLAGS['EN']];
+  };
+
   const avatarUrl = user.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${user.currentIconId || 28}.jpg`;
   const rankTier = (user.rankTier || 'GOLD').toUpperCase();
   const rankDiv = user.rankDivision || 'III';
+  const spokenBadges = getSpokenLangsDisplay(user);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md animate-fadeIn px-3 sm:px-4 py-6 sm:py-10 flex justify-center items-start">
@@ -232,13 +258,24 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                 <span>{isFr ? 'Swipe-moi sur rift-afinity.vercel.app 💖' : 'Swipe me on rift-afinity.vercel.app 💖'}</span>
               </div>
               
-              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-300 uppercase tracking-wider bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700/60 shadow-sm">
-                <span>🗣️</span>
-                <span>
-                  {Array.isArray(user.spokenLanguages) && user.spokenLanguages.length > 0
-                    ? user.spokenLanguages.join(' • ')
-                    : (isFr ? 'FR 🇫🇷 • EN 🇬🇧' : 'EN 🇬🇧 • FR 🇫🇷')}
-                </span>
+              <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                {spokenBadges.map((langItem, idx) => (
+                  <span 
+                    key={idx}
+                    className="text-[10px] font-black text-[#00f0ff] uppercase tracking-wider bg-slate-950/90 border border-[#00f0ff]/40 px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1.5"
+                  >
+                    <span>🗣️</span>
+                    <span>{langItem.code}</span>
+                    {langItem.flagUrl && (
+                      <img 
+                        src={langItem.flagUrl} 
+                        alt={langItem.code} 
+                        className="w-4 h-3 rounded-[2px] object-cover shadow-sm"
+                        crossOrigin="anonymous"
+                      />
+                    )}
+                  </span>
+                ))}
               </div>
             </div>
 

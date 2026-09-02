@@ -648,12 +648,12 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { code: 'FR', label: 'Français 🇫🇷' },
-                    { code: 'EN', label: 'English 🇬🇧' },
-                    { code: 'ES', label: 'Español 🇪🇸' },
-                    { code: 'KR', label: '한국어 🇰🇷' },
-                    { code: 'DE', label: 'Deutsch 🇩🇪' },
-                    { code: 'PT', label: 'Português 🇧🇷' }
+                    { code: 'FR', label: 'Français', flagUrl: 'https://flagcdn.com/24x18/fr.png' },
+                    { code: 'EN', label: 'English', flagUrl: 'https://flagcdn.com/24x18/gb.png' },
+                    { code: 'ES', label: 'Español', flagUrl: 'https://flagcdn.com/24x18/es.png' },
+                    { code: 'KR', label: '한국어', flagUrl: 'https://flagcdn.com/24x18/kr.png' },
+                    { code: 'DE', label: 'Deutsch', flagUrl: 'https://flagcdn.com/24x18/de.png' },
+                    { code: 'PT', label: 'Português', flagUrl: 'https://flagcdn.com/24x18/br.png' }
                   ].map(lang => {
                     const isSelected = spokenLangs.includes(lang.code);
                     return (
@@ -668,6 +668,7 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                         }`}
                       >
                         <span>{lang.label}</span>
+                        <img src={lang.flagUrl} alt={lang.code} className="w-4 h-3 rounded-[2px] object-cover shadow-sm" />
                         {isSelected && <CheckCircle className="w-3.5 h-3.5 text-[#00f0ff]" />}
                       </button>
                     );
