@@ -155,16 +155,16 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#8a2be2]/15 rounded-full blur-3xl pointer-events-none" />
 
             {/* Header de la Carte */}
-            <div className="relative z-10 flex items-center justify-between border-b border-slate-700/60 pb-3 mb-4">
-              <div className="flex items-center gap-2.5">
+            <div className="relative z-10 flex items-center justify-between border-b border-slate-700/60 pb-3 mb-4 gap-3">
+              <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
                 <Logo size="sm" />
-                <span className="font-display font-black text-lg tracking-wider gradient-text-vibrant">
+                <span className="font-display font-black text-base sm:text-lg tracking-wider gradient-text-vibrant">
                   RiftAffinity
                 </span>
               </div>
 
-              <span className="px-3 py-1 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-[11px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1">
-                <Heart className="w-3 h-3 fill-[#ff2a85]" />
+              <span className="px-2.5 sm:px-3 py-1 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-[10px] sm:text-[11px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1 shrink-0 ml-auto">
+                <Heart className="w-3 h-3 fill-[#ff2a85] shrink-0" />
                 <span>{isFr ? 'Cherche son Duo LoL' : 'Looking for a LoL Duo'}</span>
               </span>
             </div>
