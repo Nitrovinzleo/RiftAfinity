@@ -491,9 +491,11 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   </div>
 
                   {/* Bio Description */}
-                  <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs text-slate-300 italic leading-relaxed">
-                    "{currentCandidate.bio}"
-                  </div>
+                  {currentCandidate.bio && (
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 text-[11px] sm:text-xs text-slate-200 italic leading-relaxed break-words max-h-32 overflow-y-auto">
+                      "{currentCandidate.bio}"
+                    </div>
+                  )}
 
                 </div>
 

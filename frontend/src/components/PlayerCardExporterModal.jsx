@@ -210,9 +210,11 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
 
                 {/* Bio si présente */}
                 {user.bio && (
-                  <p className="text-xs text-slate-300 italic bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60 line-clamp-2">
-                    "{user.bio}"
-                  </p>
+                  <div className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 text-left">
+                    <p className="text-[11px] sm:text-xs leading-relaxed text-slate-200 italic break-words">
+                      "{user.bio}"
+                    </p>
+                  </div>
                 )}
               </div>
 

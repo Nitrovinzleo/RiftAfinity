@@ -294,7 +294,7 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
 
                 {/* Bio si présente */}
                 {cand.bio && (
-                  <p className="text-xs text-slate-300 italic bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60">
+                  <p className="text-[11px] sm:text-xs text-slate-200 italic leading-relaxed bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/60 break-words">
                     "{cand.bio}"
                   </p>
                 )}
