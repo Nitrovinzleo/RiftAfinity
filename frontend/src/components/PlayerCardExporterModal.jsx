@@ -231,9 +231,15 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>{isFr ? 'Swipe-moi sur rift-afinity.vercel.app 💖' : 'Swipe me on rift-afinity.vercel.app 💖'}</span>
               </div>
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                {isFr ? 'Invocateur Vérifié • RiftAffinity' : 'Verified Summoner • RiftAffinity'}
-              </span>
+              
+              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-300 uppercase tracking-wider bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700/60 shadow-sm">
+                <span>🗣️</span>
+                <span>
+                  {Array.isArray(user.spokenLanguages) && user.spokenLanguages.length > 0
+                    ? user.spokenLanguages.join(' • ')
+                    : (isFr ? 'FR 🇫🇷 • EN 🇬🇧' : 'EN 🇬🇧 • FR 🇫🇷')}
+                </span>
+              </div>
             </div>
 
           </div>
