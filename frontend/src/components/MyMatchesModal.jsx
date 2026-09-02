@@ -135,12 +135,12 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                 <div className="flex items-center gap-3">
                   <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shrink-0 bg-slate-950 shadow-md">
                     <img
-                      src={cand.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${cand.currentIconId || 28}.png`}
+                      src={cand.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${cand.currentIconId || 28}.jpg`}
                       alt="Avatar"
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${cand.currentIconId || 28}.png`;
+                        e.target.src = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${cand.currentIconId || 28}.jpg`;
                       }}
                     />
                   </div>

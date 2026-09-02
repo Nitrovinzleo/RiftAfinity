@@ -368,7 +368,7 @@ async def get_public_stats(db: Session = Depends(get_db)):
         avatar_url = u.custom_avatar
         if not avatar_url:
             icon_id = u.current_icon_id or 28
-            avatar_url = f"https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/{icon_id}.png"
+            avatar_url = f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{icon_id}.jpg"
 
         cand_list.append({
             "id": u.id,

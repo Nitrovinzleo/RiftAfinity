@@ -86,7 +86,7 @@ class User(Base):
             "isVerified": self.is_verified,
             "targetIconId": self.target_icon_id,
             "currentIconId": self.current_icon_id,
-            "customAvatar": self.custom_avatar or f"https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/{self.current_icon_id or 28}.png",
+            "customAvatar": self.custom_avatar or f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{self.current_icon_id or 28}.jpg",
             "birthDate": self.birth_date,
             "age": self.calculated_age,
             "bio": self.bio,

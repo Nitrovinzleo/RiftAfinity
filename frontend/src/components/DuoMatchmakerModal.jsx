@@ -389,12 +389,12 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                   <div className="flex items-center gap-4">
                     <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shrink-0 bg-slate-950 shadow-md">
                       <img
-                        src={currentCandidate.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentCandidate.currentIconId || 28}.png`}
+                        src={currentCandidate.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${currentCandidate.currentIconId || 28}.jpg`}
                         alt="Avatar Candidate"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentCandidate.currentIconId || 28}.png`;
+                          e.target.src = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${currentCandidate.currentIconId || 28}.jpg`;
                         }}
                       />
                     </div>

@@ -104,12 +104,12 @@ export default function Navbar({
             >
               <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-800">
                 <img 
-                  src={currentUser.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`}
+                  src={currentUser.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${currentUser.currentIconId || currentUser.targetIconId || 28}.jpg`}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`;
+                    e.target.src = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${currentUser.currentIconId || currentUser.targetIconId || 28}.jpg`;
                   }}
                 />
               </div>

@@ -67,7 +67,8 @@ export default function StatsLandingPage({
       losses: 48,
       role: 'ADC',
       mainChamp: 'Twitch',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/7196.png',
+      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg',
+      currentIconId: 7196,
       region: 'EUW',
       badge: 'TOP WINRATE'
     },
@@ -81,7 +82,8 @@ export default function StatsLandingPage({
       losses: 99,
       role: 'JUNGLE',
       mainChamp: 'Lillia',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/6024.png',
+      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg',
+      currentIconId: 6024,
       region: 'EUW',
       badge: 'JUNGLE KING'
     },
@@ -95,7 +97,8 @@ export default function StatsLandingPage({
       losses: 571,
       role: 'MID',
       mainChamp: 'Singed',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/7.png',
+      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7.jpg',
+      currentIconId: 7,
       region: 'EUW',
       badge: 'MASTER DUO'
     }
@@ -113,7 +116,7 @@ export default function StatsLandingPage({
         losses: p.losses || 30,
         role: p.primaryRole,
         mainChamp: p.favoriteChampion,
-        avatar: p.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${p.currentIconId || 28}.png`,
+        avatar: p.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${p.currentIconId || 28}.jpg`,
         currentIconId: p.currentIconId || 28,
         region: p.region,
         badge: idx === 0 ? 'TOP DUO' : idx === 1 ? 'ACTIVE PLAYER' : 'PRO CARRY'
@@ -212,7 +215,7 @@ export default function StatsLandingPage({
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${player.currentIconId || 28}.png`;
+                      e.target.src = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${player.currentIconId || 28}.jpg`;
                     }}
                   />
                 </div>
