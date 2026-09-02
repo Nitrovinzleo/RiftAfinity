@@ -135,11 +135,11 @@ export default function StatsLandingPage({
       winrate: '54%',
       wins: 143,
       losses: 123,
-      role: 'MID',
+      role: 'SUPPORT',
       mainChamp: 'Lux',
       avatar: '/avatars/julie.jpg',
       currentIconId: 7196,
-      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'support', label: '🛡️ Support' }],
       region: 'EUW',
       badge: 'TOP WINRATE'
     }
