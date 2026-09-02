@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Heart, HeartOff, Sparkles, Trophy, ShieldCheck, Mail, ArrowRight, UserCheck, Flame, RefreshCw } from 'lucide-react';
+import { X, Heart, HeartOff, Sparkles, Trophy, ShieldCheck, Mail, ArrowRight, UserCheck, Flame, RefreshCw, Copy, Check } from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
 import { translations } from '../utils/translations';
 
@@ -11,6 +11,13 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
   const [isLoading, setIsLoading] = useState(false);
   const [swiping, setSwiping] = useState(false);
   const [matchResult, setMatchResult] = useState(null); // { isMatch: true, matchedUser: {...} }
+  const [copiedKey, setCopiedKey] = useState('');
+
+  const handleCopy = (text, key) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(''), 2000);
+  };
 
   const canvasRef = useRef(null);
 
@@ -249,24 +256,63 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {/* Riot ID (LoL) - Débloqué & Copiable */}
+                <div className="p-2.5 rounded-lg bg-slate-950/90 border border-[#00f0ff]/50 font-mono text-slate-200 col-span-1 sm:col-span-2 flex items-center justify-between shadow-md">
+                  <span className="truncate text-slate-300">
+                    ⚔️ Riot ID : <strong className="text-[#00f0ff] font-bold">{matchResult.matchedUser.gameName}#{matchResult.matchedUser.tagLine}</strong>
+                  </span>
+                  <button
+                    onClick={() => handleCopy(`${matchResult.matchedUser.gameName}#${matchResult.matchedUser.tagLine}`, 'riot-celebration')}
+                    className="px-2.5 py-1 rounded-lg bg-[#00f0ff]/10 hover:bg-[#00f0ff]/20 text-[#00f0ff] text-[11px] font-bold transition-colors flex items-center gap-1 shrink-0 border border-[#00f0ff]/30"
+                    title="Copier le Riot ID"
+                  >
+                    {copiedKey === 'riot-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedKey === 'riot-celebration' ? (currentLang === 'fr' ? 'Copié !' : 'Copied!') : (currentLang === 'fr' ? 'Copier' : 'Copy')}</span>
+                  </button>
+                </div>
+
                 {matchResult.matchedUser.discordTag && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
-                    🎮 Discord: <strong className="text-white">{matchResult.matchedUser.discordTag}</strong>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
+                    <span>🎮 Discord: <strong className="text-white">{matchResult.matchedUser.discordTag}</strong></span>
+                    <button
+                      onClick={() => handleCopy(matchResult.matchedUser.discordTag, 'discord-celebration')}
+                      className="p-1 text-slate-400 hover:text-white transition-colors"
+                    >
+                      {copiedKey === 'discord-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
                   </div>
                 )}
                 {matchResult.matchedUser.instagramUsername && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
-                    📷 Insta: <strong className="text-white">{matchResult.matchedUser.instagramUsername}</strong>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
+                    <span>📷 Insta: <strong className="text-white">{matchResult.matchedUser.instagramUsername}</strong></span>
+                    <button
+                      onClick={() => handleCopy(matchResult.matchedUser.instagramUsername, 'insta-celebration')}
+                      className="p-1 text-slate-400 hover:text-white transition-colors"
+                    >
+                      {copiedKey === 'insta-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
                   </div>
                 )}
                 {matchResult.matchedUser.tiktokUsername && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
-                    🎵 TikTok: <strong className="text-white">{matchResult.matchedUser.tiktokUsername}</strong>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
+                    <span>🎵 TikTok: <strong className="text-white">{matchResult.matchedUser.tiktokUsername}</strong></span>
+                    <button
+                      onClick={() => handleCopy(matchResult.matchedUser.tiktokUsername, 'tiktok-celebration')}
+                      className="p-1 text-slate-400 hover:text-white transition-colors"
+                    >
+                      {copiedKey === 'tiktok-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
                   </div>
                 )}
                 {matchResult.matchedUser.twitchUsername && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200">
-                    🟣 Twitch: <strong className="text-white">{matchResult.matchedUser.twitchUsername}</strong>
+                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
+                    <span>🟣 Twitch: <strong className="text-white">{matchResult.matchedUser.twitchUsername}</strong></span>
+                    <button
+                      onClick={() => handleCopy(matchResult.matchedUser.twitchUsername, 'twitch-celebration')}
+                      className="p-1 text-slate-400 hover:text-white transition-colors"
+                    >
+                      {copiedKey === 'twitch-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
                   </div>
                 )}
               </div>

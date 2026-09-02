@@ -16,6 +16,7 @@ router = APIRouter(tags=["Matchmaking Duo"])
 class SwipeRequest(BaseModel):
     targetId: Optional[Any] = Field(None, description="ID numérique du joueur cible")
     targetUserId: Optional[Any] = Field(None, description="ID numérique du joueur cible")
+    liked: bool = Field(True, description="Indique si le joueur aime (True) ou passe (False)")
 
     def get_target_id(self):
         val = self.targetId if self.targetId is not None else self.targetUserId
@@ -272,6 +273,19 @@ async def get_user_matches(
     Retourne la liste complète de tous les matchs de l'utilisateur avec les profils et réseaux sociaux débloqués.
     """
     user = get_current_user_from_token(authorization, db)
+
+    # Auto-réparation : Détection et validation automatique de tous les likes réciproques
+    my_likes = db.query(DuoSwipe).filter(DuoSwipe.swiper_id == user.id, DuoSwipe.liked == True).all()
+    for like in my_likes:
+        reciprocal = db.query(DuoSwipe).filter(
+            DuoSwipe.swiper_id == like.target_id,
+            DuoSwipe.target_id == user.id,
+            DuoSwipe.liked == True
+        ).first()
+        if reciprocal and (not like.is_match or not reciprocal.is_match):
+            like.is_match = True
+            reciprocal.is_match = True
+            db.commit()
 
     # Récupérer tous les swipes réciproques où is_match est Vrai
     matched_swipes = db.query(DuoSwipe).filter(

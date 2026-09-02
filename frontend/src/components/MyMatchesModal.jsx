@@ -190,6 +190,21 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                   </h5>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {/* Riot ID (LoL) - Toujours affiché & copiables en 1 clic */}
+                    <div className="p-2.5 rounded-lg bg-slate-950 border border-[#00f0ff]/40 flex items-center justify-between font-mono text-xs col-span-1 sm:col-span-2 shadow-sm">
+                      <span className="truncate text-slate-300">
+                        ⚔️ Riot ID LoL : <strong className="text-[#00f0ff] font-bold">{cand.gameName}#{cand.tagLine}</strong>
+                      </span>
+                      <button
+                        onClick={() => handleCopy(`${cand.gameName}#${cand.tagLine}`, `riot-${cand.id}`)}
+                        className="px-2.5 py-1 rounded-lg bg-[#00f0ff]/10 hover:bg-[#00f0ff]/20 text-[#00f0ff] text-[11px] font-bold transition-colors flex items-center gap-1 shrink-0 border border-[#00f0ff]/30"
+                        title="Copier le Riot ID"
+                      >
+                        {copiedKey === `riot-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{copiedKey === `riot-${cand.id}` ? (currentLang === 'fr' ? 'Copié !' : 'Copied!') : (currentLang === 'fr' ? 'Copier' : 'Copy')}</span>
+                      </button>
+                    </div>
+
                     {cand.discordTag && (
                       <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono">
                         <span className="truncate text-slate-300">🎮 <strong className="text-white">{cand.discordTag}</strong></span>
