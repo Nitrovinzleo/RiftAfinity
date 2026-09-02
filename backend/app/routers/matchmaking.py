@@ -382,11 +382,13 @@ async def get_public_stats(db: Session = Depends(get_db)):
         if len(cand_list) >= 6:
             break
 
+    total_matches = db.query(DuoSwipe).filter(DuoSwipe.is_match == True).count() // 2
+
     return {
-        "totalPlayers": max(212, total_count),
-        "verifiedPlayers": max(150, total_verified),
-        "onlinePlayers": max(48, int(total_count * 0.75) if total_count else 48),
-        "activeInGame": max(19, int(total_count * 0.35) if total_count else 19),
+        "totalPlayers": total_count,
+        "verifiedPlayers": total_verified,
+        "onlinePlayers": total_verified,
+        "totalMatches": max(5, total_matches),
         "rankTiers": 10,
         "regionsCount": 4,
         "featuredPlayers": cand_list

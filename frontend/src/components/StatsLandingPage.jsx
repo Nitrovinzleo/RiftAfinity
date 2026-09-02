@@ -12,9 +12,9 @@ export default function StatsLandingPage({
   currentLang = 'fr' 
 }) {
   const [statsData, setStatsData] = useState({
-    registeredPlayers: 212,
-    onlinePlayers: 48,
-    activeInGame: 19,
+    registeredPlayers: 5,
+    onlinePlayers: 5,
+    totalMatches: 5,
     regionsCount: 4,
     featuredPlayers: []
   });
@@ -28,10 +28,10 @@ export default function StatsLandingPage({
         if (res.ok) {
           const data = await res.json();
           setStatsData({
-            registeredPlayers: data.totalPlayers || 212,
-            onlinePlayers: data.onlinePlayers || 48,
-            activeInGame: data.activeInGame || 19,
-            regionsCount: data.regionsCount || 4,
+            registeredPlayers: data.totalPlayers ?? 5,
+            onlinePlayers: data.onlinePlayers ?? 5,
+            totalMatches: data.totalMatches ?? 5,
+            regionsCount: data.regionsCount ?? 4,
             featuredPlayers: data.featuredPlayers || []
           });
         }
@@ -281,7 +281,7 @@ export default function StatsLandingPage({
               <Users className="w-6 h-6" />
             </div>
             <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
-              👥 {statsData.registeredPlayers}+
+              👥 {statsData.registeredPlayers}
             </div>
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
               {currentLang === 'fr' ? 'Joueurs Inscrits' : 'Registered Players'}
@@ -294,23 +294,23 @@ export default function StatsLandingPage({
               <Activity className="w-6 h-6" />
             </div>
             <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
-              🟢 {statsData.onlinePlayers}+
+              🟢 {statsData.onlinePlayers}
             </div>
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
               {currentLang === 'fr' ? 'Joueurs Connectés' : 'Online Players'}
             </p>
           </div>
 
-          {/* Card 3 : Joueurs en Partie / Matchmaking (via Riot API) */}
+          {/* Card 3 : Matchs Duo Formés */}
           <div className="p-6 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0d0f22] border border-slate-800 hover:border-[#00f0ff]/50 text-center space-y-2 shadow-xl hover:-translate-y-1 transition-all">
             <div className="w-12 h-12 rounded-2xl bg-[#00f0ff]/20 text-[#00f0ff] flex items-center justify-center mx-auto border border-[#00f0ff]/40">
               <Gamepad2 className="w-6 h-6" />
             </div>
             <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
-              ⚔️ {statsData.activeInGame}+
+              💖 {statsData.totalMatches}
             </div>
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
-              {currentLang === 'fr' ? 'En Partie ou Prêts' : 'In Game & Matching'}
+              {currentLang === 'fr' ? 'Matchs Duo Formés' : 'Matches Formed'}
             </p>
           </div>
 
