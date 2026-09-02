@@ -92,14 +92,14 @@ class User(Base):
         role = (self.primary_role or "").upper()
         if role == "SUPPORT":
             badges.append({"id": "support", "label": "🛡️ Support Main", "color": "blue"})
-        elif role == "JUNGLE":
-            badges.append({"id": "jungle", "label": "🐉 Dragon Slayer", "color": "emerald"})
+        elif role in ["JUNGLE", "JUNGLER"]:
+            badges.append({"id": "jungle", "label": "🐉 Jungler", "color": "emerald"})
         elif role == "MID":
             badges.append({"id": "mid", "label": "⚡ Carry Mid", "color": "cyan"})
-        elif role in ["ADC", "BOTTOM"]:
+        elif role in ["ADC", "BOTTOM", "BOT"]:
             badges.append({"id": "adc", "label": "🏹 ADC Carry", "color": "pink"})
         elif role == "TOP":
-            badges.append({"id": "top", "label": "🛡️ Top Titan", "color": "orange"})
+            badges.append({"id": "top", "label": "🔨 Top Raidboss", "color": "orange"})
 
         return badges
 

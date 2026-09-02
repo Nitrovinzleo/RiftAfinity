@@ -429,6 +429,17 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               {t.serverLabel || "Serveur"}: <span className="text-slate-200 uppercase font-semibold">{user.region}</span> • {t.memberNotice || "Membre RiftAffinity"}
             </p>
 
+            {/* Badges Automatiques Riot API (💎 High Elo, 🥇 Climber Duo, 🛡️ Support Main, 🐉 Jungler, 🔨 Top Raidboss...) */}
+            {user.badges && user.badges.length > 0 && (
+              <div className="flex items-center gap-1.5 flex-wrap justify-center sm:justify-start pt-1">
+                {user.badges.map((b) => (
+                  <span key={b.id} className="px-2.5 py-0.5 rounded-full bg-slate-950 border border-slate-700/80 text-xs font-black text-amber-300 shadow-md">
+                    {b.label}
+                  </span>
+                ))}
+              </div>
+            )}
+
             <div className="pt-1.5 flex flex-wrap gap-2 justify-center sm:justify-start">
               <button
                 onClick={handleRefreshAllRiotData}

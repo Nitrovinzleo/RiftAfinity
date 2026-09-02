@@ -118,6 +118,7 @@ export default function StatsLandingPage({
         mainChamp: p.favoriteChampion,
         avatar: p.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${p.currentIconId || 28}.jpg`,
         currentIconId: p.currentIconId || 28,
+        badges: p.badges || [],
         region: p.region,
         badge: idx === 0 ? 'TOP DUO' : idx === 1 ? 'ACTIVE PLAYER' : 'PRO CARRY'
       }))
@@ -238,6 +239,17 @@ export default function StatsLandingPage({
                       {player.rankTier} {player.rankDivision}
                     </span>
                   </div>
+
+                  {/* Badges Automatiques Riot API (💎 High Elo, 🥇 Climber Duo...) */}
+                  {player.badges && player.badges.length > 0 && (
+                    <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                      {player.badges.map((b, bIdx) => (
+                        <span key={bIdx} className="px-2.5 py-0.5 rounded-full bg-slate-950 border border-slate-700/80 text-[11px] font-black text-amber-300 shadow-sm">
+                          {b.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
