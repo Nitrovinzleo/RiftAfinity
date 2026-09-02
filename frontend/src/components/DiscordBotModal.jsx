@@ -118,7 +118,7 @@ export default function DiscordBotModal({ isOpen, onClose, currentLang = 'fr' })
           <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-1.5 shadow-md">
             <div className="flex items-center gap-2 text-indigo-400 font-bold">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>{currentLang === 'fr' ? 'Vérification Ori Bot' : 'Ori Bot Verification'}</span>
+              <span>{currentLang === 'fr' ? 'Vérification Riot' : 'Riot Verification'}</span>
             </div>
             <p className="text-slate-400 leading-relaxed text-[11px]">
               {currentLang === 'fr'
