@@ -73,9 +73,9 @@ async def perform_full_riot_sync(user: User, riot_client: RiotApiClient, db: Ses
             user.current_icon_id = icon_id
             user.summoner_id = summoner_data.get("id")
 
-            # Met automatiquement à jour la photo de profil avec l'icône LoL active
-            if icon_id:
-                user.custom_avatar = f"https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/{icon_id}.png"
+            # Ne met à jour la photo avec l'icône LoL que si l'utilisateur n'a pas mis de photo de profil personnalisée
+            if icon_id and not user.custom_avatar:
+                user.custom_avatar = f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{icon_id}.jpg"
 
             # Statut vérification icône
             if user.current_icon_id == user.target_icon_id:
