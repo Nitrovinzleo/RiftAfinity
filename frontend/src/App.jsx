@@ -12,6 +12,7 @@ import DiscordLinkModal from './components/DiscordLinkModal';
 import DiscordBotModal from './components/DiscordBotModal';
 import AboutUsModal from './components/AboutUsModal';
 import PlayerCardExporterModal from './components/PlayerCardExporterModal';
+import LeaderboardModal from './components/LeaderboardModal';
 import StatsLandingPage from './components/StatsLandingPage';
 import { AlertCircle, RefreshCw, Heart } from 'lucide-react';
 import { translations } from './utils/translations';
@@ -33,6 +34,7 @@ export default function App() {
   const [isDiscordGuideOpen, setIsDiscordGuideOpen] = useState(false);
   const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
   const [isCardExporterOpen, setIsCardExporterOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
 
 
   // Liaison Discord DM Token
@@ -233,6 +235,7 @@ export default function App() {
           <StatsLandingPage
             onOpenAuth={() => setIsAuthOpen(true)}
             onOpenMatchmaker={handleOpenMatchmaker}
+            onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
             currentUser={currentUser}
             currentLang={currentLang}
           />
@@ -375,6 +378,13 @@ export default function App() {
       <AboutUsModal
         isOpen={isAboutUsOpen}
         onClose={() => setIsAboutUsOpen(false)}
+        currentLang={currentLang}
+      />
+
+      {/* Modale Classement Pop-up Top 10 Duos */}
+      <LeaderboardModal
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
         currentLang={currentLang}
       />
 
