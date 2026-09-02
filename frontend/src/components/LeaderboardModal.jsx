@@ -141,13 +141,42 @@ export default function LeaderboardModal({ isOpen, onClose, topDuos = [], curren
                     {isTop1 ? '🥇' : isTop2 ? '🥈' : isTop3 ? '🥉' : `#${idx + 1}`}
                   </div>
 
-                  {/* Noms des 2 Invocateurs */}
-                  <div className="space-y-0.5">
-                    <div className="font-display font-bold text-sm sm:text-base text-white flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[#ff2a85] font-extrabold">{duo.player1Name}</span>
-                      <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500 shrink-0" />
-                      <span className="text-[#00f0ff] font-extrabold">{duo.player2Name}</span>
+                  {/* Noms & Avatars des 2 Invocateurs */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Joueur 1 */}
+                      <div className="flex items-center gap-1.5">
+                        {duo.player1Avatar && (
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border border-[#ff2a85] shadow-sm bg-slate-950 shrink-0">
+                            <img 
+                              src={duo.player1Avatar} 
+                              alt={duo.player1Name} 
+                              className="w-full h-full object-cover"
+                              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                            />
+                          </div>
+                        )}
+                        <span className="text-[#ff2a85] font-extrabold text-sm sm:text-base">{duo.player1Name}</span>
+                      </div>
+
+                      <Heart className="w-3.5 h-3.5 text-pink-500 fill-pink-500 shrink-0 mx-0.5 animate-pulse" />
+
+                      {/* Joueur 2 */}
+                      <div className="flex items-center gap-1.5">
+                        {duo.player2Avatar && (
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border border-[#00f0ff] shadow-sm bg-slate-950 shrink-0">
+                            <img 
+                              src={duo.player2Avatar} 
+                              alt={duo.player2Name} 
+                              className="w-full h-full object-cover"
+                              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                            />
+                          </div>
+                        )}
+                        <span className="text-[#00f0ff] font-extrabold text-sm sm:text-base">{duo.player2Name}</span>
+                      </div>
                     </div>
+
                     <span className="text-[11px] text-amber-300 font-semibold block italic">
                       {duo.archetype}
                     </span>

@@ -486,20 +486,40 @@ async def get_public_stats(db: Session = Depends(get_db)):
 
     total_matches = db.query(DuoSwipe).filter(DuoSwipe.is_match == True).count() // 2
 
-    # Hall of Fame : Récupérer les Duos avec les plus forts scores d'affinité
-    top_history = db.query(DuoAffinityHistory).order_by(DuoAffinityHistory.overall_score.desc(), DuoAffinityHistory.updated_at.desc()).limit(6).all()
+    # Hall of Fame : Récupérer les 10 Duos avec les plus forts scores d'affinité
+    top_history = db.query(DuoAffinityHistory).order_by(DuoAffinityHistory.overall_score.desc(), DuoAffinityHistory.updated_at.desc()).limit(10).all()
     top_duos_list = []
 
     if top_history and len(top_history) > 0:
         for entry in top_history:
             p1_name = entry.player1_riot_id.split('#')[0] if '#' in entry.player1_riot_id else entry.player1_riot_id
             p2_name = entry.player2_riot_id.split('#')[0] if '#' in entry.player2_riot_id else entry.player2_riot_id
+            
+            p1_avatar = None
+            p2_avatar = None
+            
+            # Recherche si Joueur 1 a un compte inscrit
+            if '#' in entry.player1_riot_id:
+                g1, t1 = entry.player1_riot_id.split('#', 1)
+                u1 = db.query(User).filter(User.game_name.ilike(g1), User.tag_line.ilike(t1)).first()
+                if u1:
+                    p1_avatar = u1.custom_avatar or f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{u1.current_icon_id or 28}.jpg"
+
+            # Recherche si Joueur 2 a un compte inscrit
+            if '#' in entry.player2_riot_id:
+                g2, t2 = entry.player2_riot_id.split('#', 1)
+                u2 = db.query(User).filter(User.game_name.ilike(g2), User.tag_line.ilike(t2)).first()
+                if u2:
+                    p2_avatar = u2.custom_avatar or f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{u2.current_icon_id or 28}.jpg"
+
             top_duos_list.append({
                 "id": entry.id,
                 "player1": entry.player1_riot_id,
                 "player1Name": p1_name,
+                "player1Avatar": p1_avatar,
                 "player2": entry.player2_riot_id,
                 "player2Name": p2_name,
+                "player2Avatar": p2_avatar,
                 "score": entry.overall_score,
                 "archetype": entry.archetype_title or "Duo Mythique",
                 "winrate": f"{round(entry.win_rate or 68)}%",
@@ -508,9 +528,9 @@ async def get_public_stats(db: Session = Depends(get_db)):
     else:
         # Fallback aux Duos phares de la communauté
         top_duos_list = [
-          { "id": 1, "player1": "Faker#KR1", "player1Name": "Faker", "player2": "Keria#T1", "player2Name": "Keria", "score": 98, "archetype": "🏆 Duo de Légende T1", "winrate": "82%", "games": 45 },
-          { "id": 2, "player1": "PrincessPinkyUp#8ï8", "player1Name": "PrincessPinkyUp", "player2": "Lesbian princess#UwU", "player2Name": "Lesbian princess", "score": 95, "archetype": "💎 High Elo Duo", "winrate": "74%", "games": 38 },
-          { "id": 3, "player1": "Doakes#slice", "player1Name": "Doakes", "player2": "ILoveN#MOMY", "player2Name": "ILoveN", "score": 91, "archetype": "🔥 Climber Duo", "winrate": "68%", "games": 29 }
+          { "id": 1, "player1": "Faker#KR1", "player1Name": "Faker", "player1Avatar": None, "player2": "Keria#T1", "player2Name": "Keria", "player2Avatar": None, "score": 98, "archetype": "🏆 Duo de Légende T1", "winrate": "82%", "games": 45 },
+          { "id": 2, "player1": "PrincessPinkyUp#8ï8", "player1Name": "Julie", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg", "player2": "Lesbian princess#UwU", "player2Name": "Alanood", "player2Avatar": "/avatars/alanood.jpg", "score": 95, "archetype": "💎 High Elo Duo", "winrate": "74%", "games": 38 },
+          { "id": 3, "player1": "Doakes#slice", "player1Name": "tibo", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg", "player2": "ILoveN#MOMY", "player2Name": "ILoveN", "player2Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg", "score": 91, "archetype": "🔥 Climber Duo", "winrate": "68%", "games": 29 }
         ]
 
     return {
