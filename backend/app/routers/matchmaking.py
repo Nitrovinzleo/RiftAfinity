@@ -380,6 +380,7 @@ async def get_public_stats(db: Session = Depends(get_db)):
             "primaryRole": u.primary_role or "MID",
             "favoriteChampion": u.favorite_champion or "LoL",
             "customAvatar": avatar_url,
+            "currentIconId": u.current_icon_id or 28,
             "region": (u.region or "euw1").upper(),
             "winrate": f"{winrate}%",
             "wins": wins,

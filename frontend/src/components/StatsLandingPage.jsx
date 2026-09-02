@@ -113,7 +113,8 @@ export default function StatsLandingPage({
         losses: p.losses || 30,
         role: p.primaryRole,
         mainChamp: p.favoriteChampion,
-        avatar: p.customAvatar,
+        avatar: p.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${p.currentIconId || 28}.png`,
+        currentIconId: p.currentIconId || 28,
         region: p.region,
         badge: idx === 0 ? 'TOP DUO' : idx === 1 ? 'ACTIVE PLAYER' : 'PRO CARRY'
       }))
@@ -211,7 +212,7 @@ export default function StatsLandingPage({
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/28.png";
+                      e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${player.currentIconId || 28}.png`;
                     }}
                   />
                 </div>
