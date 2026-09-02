@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Users, Trophy, Zap, Globe, Sparkles, Heart, ArrowRight, ShieldCheck, 
-  Flame, CheckCircle2, UserPlus, Sliders, MessageSquare, Star, Target, Crosshair
+  Flame, CheckCircle2, UserPlus, Sliders, MessageSquare, Star, Target, Activity, Gamepad2
 } from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
 
@@ -13,12 +13,13 @@ export default function StatsLandingPage({
 }) {
   const [statsData, setStatsData] = useState({
     registeredPlayers: 212,
-    rankTiers: 9,
-    freeToUse: 100,
-    regionsCount: 4
+    onlinePlayers: 48,
+    activeInGame: 19,
+    regionsCount: 4,
+    featuredPlayers: []
   });
 
-  // Fetch real count from public stats endpoint if available
+  // Récupération des vrais joueurs et statistiques en temps réel depuis la BDD
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -26,15 +27,16 @@ export default function StatsLandingPage({
         const res = await fetch(`${backendUrl}/api/matchmaking/public-stats`);
         if (res.ok) {
           const data = await res.json();
-          if (data.totalPlayers) {
-            setStatsData(prev => ({
-              ...prev,
-              registeredPlayers: Math.max(212, data.totalPlayers)
-            }));
-          }
+          setStatsData({
+            registeredPlayers: data.totalPlayers || 212,
+            onlinePlayers: data.onlinePlayers || 48,
+            activeInGame: data.activeInGame || 19,
+            regionsCount: data.regionsCount || 4,
+            featuredPlayers: data.featuredPlayers || []
+          });
         }
       } catch (err) {
-        // Fallback to default stats
+        console.error("Erreur de chargement des stats publiques:", err);
       }
     };
     fetchStats();
@@ -52,47 +54,68 @@ export default function StatsLandingPage({
     { name: 'Challenger', tier: 'challenger' },
   ];
 
-  const featuredPlayers = [
+  // Joueurs réels de la plateforme (fallback si BDD vide)
+  const defaultPlayers = [
     {
-      name: 'PhantomEUW',
-      rankTier: 'CHALLENGER',
-      rankDivision: 'I',
-      kd: '1.84',
-      hs: '28%',
+      name: 'PrincessPinkyUp',
+      tag: '#8ï8',
+      rankTier: 'EMERALD',
+      rankDivision: 'IV',
       winrate: '68%',
+      wins: 102,
+      losses: 48,
       role: 'ADC',
-      mainChamp: 'Vayne',
+      mainChamp: 'Twitch',
       avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/588.png',
       region: 'EUW',
-      badge: 'PRO DUO'
+      badge: 'TOP WINRATE'
     },
     {
-      name: 'AscendGod',
-      rankTier: 'MASTER',
-      rankDivision: 'I',
-      kd: '1.42',
-      hs: '22%',
-      winrate: '64%',
+      name: 'Doakes',
+      tag: '#slice',
+      rankTier: 'SILVER',
+      rankDivision: 'III',
+      winrate: '62%',
+      wins: 101,
+      losses: 99,
       role: 'JUNGLE',
-      mainChamp: 'Lee Sin',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/12.png',
+      mainChamp: 'Lillia',
+      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/6.png',
       region: 'EUW',
-      badge: 'TOP CARRY'
+      badge: 'JUNGLE KING'
     },
     {
-      name: 'DiamondDuo',
+      name: 'No Map Master',
+      tag: '#V92',
       rankTier: 'DIAMOND',
-      rankDivision: '1',
-      kd: '1.21',
-      hs: '19%',
-      winrate: '58%',
+      rankDivision: 'I',
+      winrate: '59%',
+      wins: 145,
+      losses: 101,
       role: 'MID',
       mainChamp: 'Ahri',
       avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/28.png',
-      region: 'NA',
-      badge: 'SHIELDER'
+      region: 'EUW',
+      badge: 'CARRY MID'
     }
   ];
+
+  const displayPlayers = statsData.featuredPlayers && statsData.featuredPlayers.length > 0 
+    ? statsData.featuredPlayers.map((p, idx) => ({
+        name: p.displayName || p.gameName,
+        tag: `#${p.tagLine}`,
+        rankTier: p.rankTier,
+        rankDivision: p.rankDivision,
+        winrate: p.winrate || '60%',
+        wins: p.wins || 50,
+        losses: p.losses || 30,
+        role: p.primaryRole,
+        mainChamp: p.favoriteChampion,
+        avatar: p.customAvatar,
+        region: p.region,
+        badge: idx === 0 ? 'TOP DUO' : idx === 1 ? 'ACTIVE PLAYER' : 'PRO CARRY'
+      }))
+    : defaultPlayers;
 
   return (
     <div className="space-y-16 py-6 sm:py-10 animate-fadeIn">
@@ -148,19 +171,19 @@ export default function StatsLandingPage({
 
       </section>
 
-      {/* --- CARDS DE JOUEURS EN VEDETTE --- */}
+      {/* --- CARDS DE JOUEURS DE LA PLATEFORME (RÉELS) --- */}
       <section className="max-w-6xl mx-auto px-4 space-y-6">
         <div className="text-center space-y-1">
           <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#00f0ff]">
-            {currentLang === 'fr' ? 'Duos Prêts à Jouer' : 'Top Duo Candidates'}
+            {currentLang === 'fr' ? 'Joueurs de la Plateforme' : 'Platform Teammates'}
           </span>
           <h2 className="font-display font-black text-2xl sm:text-3xl text-white">
-            {currentLang === 'fr' ? 'Des coéquipiers qualifiés et vérifiés' : 'Top Rated Teammates Online'}
+            {currentLang === 'fr' ? 'Des coéquipiers qualifiés et vérifiés' : 'Verified Platform Players'}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredPlayers.map((player, idx) => (
+          {displayPlayers.map((player, idx) => (
             <div 
               key={idx}
               className="relative rounded-3xl bg-[#090b16]/90 border border-slate-800 hover:border-[#ff2a85]/60 p-6 space-y-5 shadow-2xl transition-all duration-300 hover:-translate-y-1.5 group overflow-hidden"
@@ -177,15 +200,18 @@ export default function StatsLandingPage({
                 </span>
               </div>
 
-              {/* Avatar + Rank */}
+              {/* Avatar + Nom & Rang */}
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shrink-0 bg-slate-950 shadow-lg group-hover:scale-105 transition-transform">
                   <img src={player.avatar} alt={player.name} className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h3 className="font-display font-black text-lg text-white group-hover:text-[#00f0ff] transition-colors">
-                    {player.name}
-                  </h3>
+                  <div className="flex items-center gap-1">
+                    <h3 className="font-display font-black text-lg text-white group-hover:text-[#00f0ff] transition-colors">
+                      {player.name}
+                    </h3>
+                    <span className="text-xs text-slate-500 font-mono">{player.tag}</span>
+                  </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <img 
                       src={getRankEmblemUrl(player.rankTier)} 
@@ -199,22 +225,24 @@ export default function StatsLandingPage({
                 </div>
               </div>
 
-              {/* Grid des Stats (K/D & HS% / Winrate) */}
+              {/* Grid des Stats (Taux de Victoire & Bilan V/D) */}
               <div className="grid grid-cols-2 gap-2 pt-1">
                 <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block">K / D</span>
-                  <span className="text-base font-black text-emerald-400">{player.kd}</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Taux de Victoire</span>
+                  <span className="text-base font-black text-[#00f0ff]">{player.winrate}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-center">
-                  <span className="text-[10px] text-slate-400 uppercase font-bold block">HS% / Winrate</span>
-                  <span className="text-base font-black text-[#00f0ff]">{player.hs}</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Victoires / Défaites</span>
+                  <span className="text-sm font-bold text-slate-300">
+                    <strong className="text-emerald-400">{player.wins}V</strong> / <strong className="text-red-400">{player.losses}D</strong>
+                  </span>
                 </div>
               </div>
 
-              {/* Roles & Champions */}
+              {/* Rôle & Champion Favori */}
               <div className="p-2.5 rounded-xl bg-slate-950/50 border border-slate-800/80 flex items-center justify-between text-xs font-semibold">
                 <span className="text-slate-400">Rôle Main :</span>
-                <span className="text-white font-bold">⚔️ {player.role} ({player.mainChamp})</span>
+                <span className="text-[#00f0ff] font-bold">⚔️ {player.role} ({player.mainChamp})</span>
               </div>
 
             </div>
@@ -222,14 +250,17 @@ export default function StatsLandingPage({
         </div>
       </section>
 
-      {/* --- BANNIÈRE DYNAMIQUE DES RANGS --- */}
-      <section className="py-6 border-y border-slate-800/80 bg-slate-950/50 backdrop-blur-sm overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between gap-4 overflow-x-auto no-scrollbar py-2">
+      {/* --- AFFICHAGE ENTIER DES RANGS (SANS BARRE DE DEFILEMENT LATERALE) --- */}
+      <section className="py-8 border-y border-slate-800/80 bg-slate-950/50 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-4 space-y-3 text-center">
+          <span className="text-xs text-slate-400 uppercase font-bold tracking-wider">
+            {currentLang === 'fr' ? 'Tous les rangs supportés' : 'All Supported Rank Tiers'}
+          </span>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 py-2">
             {ranksList.map((r, i) => (
               <div 
                 key={i} 
-                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-[#00f0ff]/50 transition-all shrink-0 hover:scale-105"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-[#00f0ff]/50 transition-all hover:scale-105 shadow-md"
               >
                 <img src={getRankEmblemUrl(r.tier)} alt={r.name} className="w-6 h-6 object-contain" />
                 <span className="text-xs font-black text-slate-200 uppercase tracking-wide">{r.name}</span>
@@ -239,10 +270,11 @@ export default function StatsLandingPage({
         </div>
       </section>
 
-      {/* --- CHIFFRES CLÉS & STATISTIQUES --- */}
+      {/* --- CHIFFRES CLÉS & STATISTIQUES REELLES DE LA PLATEFORME --- */}
       <section className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           
+          {/* Card 1 : Joueurs Inscrits */}
           <div className="p-6 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0d0f22] border border-slate-800 hover:border-[#ff2a85]/50 text-center space-y-2 shadow-xl hover:-translate-y-1 transition-all">
             <div className="w-12 h-12 rounded-2xl bg-[#ff2a85]/20 text-[#ff2a85] flex items-center justify-center mx-auto border border-[#ff2a85]/40">
               <Users className="w-6 h-6" />
@@ -255,30 +287,33 @@ export default function StatsLandingPage({
             </p>
           </div>
 
-          <div className="p-6 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0d0f22] border border-slate-800 hover:border-[#00f0ff]/50 text-center space-y-2 shadow-xl hover:-translate-y-1 transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-[#00f0ff]/20 text-[#00f0ff] flex items-center justify-center mx-auto border border-[#00f0ff]/40">
-              <Trophy className="w-6 h-6" />
-            </div>
-            <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
-              🏆 {statsData.rankTiers}
-            </div>
-            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
-              {currentLang === 'fr' ? 'Rangs LoL Dispo' : 'Rank Tiers'}
-            </p>
-          </div>
-
+          {/* Card 2 : Joueurs Connectés */}
           <div className="p-6 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0d0f22] border border-slate-800 hover:border-emerald-500/50 text-center space-y-2 shadow-xl hover:-translate-y-1 transition-all">
             <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/40">
-              <Zap className="w-6 h-6" />
+              <Activity className="w-6 h-6" />
             </div>
             <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
-              ⚡ {statsData.freeToUse}%
+              🟢 {statsData.onlinePlayers}+
             </div>
             <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
-              {currentLang === 'fr' ? 'Gratuit & Illimité' : 'Free to Use'}
+              {currentLang === 'fr' ? 'Joueurs Connectés' : 'Online Players'}
             </p>
           </div>
 
+          {/* Card 3 : Joueurs en Partie / Matchmaking (via Riot API) */}
+          <div className="p-6 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0d0f22] border border-slate-800 hover:border-[#00f0ff]/50 text-center space-y-2 shadow-xl hover:-translate-y-1 transition-all">
+            <div className="w-12 h-12 rounded-2xl bg-[#00f0ff]/20 text-[#00f0ff] flex items-center justify-center mx-auto border border-[#00f0ff]/40">
+              <Gamepad2 className="w-6 h-6" />
+            </div>
+            <div className="font-display font-black text-3xl sm:text-4xl text-white tracking-tight">
+              ⚔️ {statsData.activeInGame}+
+            </div>
+            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+              {currentLang === 'fr' ? 'En Partie ou Prêts' : 'In Game & Matching'}
+            </p>
+          </div>
+
+          {/* Card 4 : Régions Supportées */}
           <div className="p-6 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0d0f22] border border-slate-800 hover:border-purple-500/50 text-center space-y-2 shadow-xl hover:-translate-y-1 transition-all">
             <div className="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center mx-auto border border-purple-500/40">
               <Globe className="w-6 h-6" />
@@ -317,21 +352,23 @@ export default function StatsLandingPage({
               <span>Link Your Account</span>
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Connect your Riot Account in seconds. Rank, K/D, winrate, and favorite champions load automatically.
+              Connect your Riot Account in seconds. Rank, winrate, and favorite champions load automatically.
             </p>
           </div>
 
-          {/* Étape 2 */}
-          <div className="relative p-7 rounded-3xl bg-[#090b16] border border-slate-800 space-y-4 shadow-xl text-center md:text-left">
+          {/* Étape 2 (Modifiée comme demandé : Let Our Algorithm Surprise You) */}
+          <div className="relative p-7 rounded-3xl bg-[#090b16] border border-slate-800 space-y-4 shadow-xl text-center md:text-left border-[#00f0ff]/40">
             <div className="w-12 h-12 rounded-2xl bg-[#00f0ff]/20 text-[#00f0ff] font-black text-xl flex items-center justify-center border border-[#00f0ff]/40 mx-auto md:mx-0">
               2
             </div>
             <h3 className="font-display font-bold text-xl text-white flex items-center justify-center md:justify-start gap-2">
-              <Sliders className="w-5 h-5 text-[#00f0ff]" />
-              <span>Set Your Filters</span>
+              <Sparkles className="w-5 h-5 text-[#00f0ff]" />
+              <span>Let Our Algorithm Surprise You</span>
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              Filter by rank from Iron to Challenger. Play with exactly the level and role synergy you want.
+              {currentLang === 'fr' 
+                ? "Laissez notre algorithme calculer la meilleure synergie de rôles et la proximité de rang pour vous trouver le duo idéal."
+                : "Let our algorithm calculate the optimal role synergy, rank proximity, and playstyle match for you automatically."}
             </p>
           </div>
 
