@@ -299,25 +299,9 @@ async def get_user_matches(
     authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ):
-    """
-    Retourne la liste complète de tous les matchs de l'utilisateur avec les profils et réseaux sociaux débloqués.
-    """
     user = get_current_user_from_token(authorization, db)
 
-    # Auto-réparation : Détection et validation automatique de tous les likes réciproques
-    my_likes = db.query(DuoSwipe).filter(DuoSwipe.swiper_id == user.id, DuoSwipe.liked == True).all()
-    for like in my_likes:
-        reciprocal = db.query(DuoSwipe).filter(
-            DuoSwipe.swiper_id == like.target_id,
-            DuoSwipe.target_id == user.id,
-            DuoSwipe.liked == True
-        ).first()
-        if reciprocal and (not like.is_match or not reciprocal.is_match):
-            like.is_match = True
-            reciprocal.is_match = True
-            db.commit()
-
-    # Récupérer tous les swipes réciproques où is_match est Vrai
+    # Récupérer tous les swipes réciproques de l'utilisateur où is_match est Vrai
     matched_swipes = db.query(DuoSwipe).filter(
         ((DuoSwipe.swiper_id == user.id) | (DuoSwipe.target_id == user.id)),
         DuoSwipe.is_match == True
