@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, Heart, Sparkles, Flame, ShieldCheck, RefreshCw, Copy, Check, ExternalLink, 
-  Trash2, MessageSquare, Send, UserX, AlertTriangle
+  Trash2, MessageSquare, Send, UserX, AlertTriangle, Volume2, VolumeX
 } from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
 import { translations } from '../utils/translations';
@@ -15,6 +15,9 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
   const [inputMessage, setInputMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [unmatchingId, setUnmatchingId] = useState(null);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  const prevMsgCountRef = React.useRef(0);
 
   const t = translations[currentLang]?.matchmaker || translations.fr.matchmaker;
 
@@ -59,14 +62,63 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
     setTimeout(() => setCopiedKey(''), 2000);
   };
 
+  // Effet Sonore LoL Hextech Chime (Web Audio API)
+  const playLoLNotificationSound = () => {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const now = ctx.currentTime;
+      
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(880, now);
+      gain1.gain.setValueAtTime(0.12, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.25);
+
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(1320, now + 0.08);
+      gain2.gain.setValueAtTime(0.18, now + 0.08);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.08);
+      osc2.stop(now + 0.4);
+    } catch (e) {
+      // Audio context fallback
+    }
+  };
+
+  // Polling live des messages toutes les 3.5s quand un chat est ouvert
+  useEffect(() => {
+    let interval = null;
+    if (activeChatId) {
+      interval = setInterval(() => {
+        fetchMessages(activeChatId);
+      }, 3500);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeChatId]);
+
   // --- MESSAGERIE DIRECTE DUO ---
   const handleToggleChat = async (partnerId) => {
     if (activeChatId === partnerId) {
       setActiveChatId(null);
       setMessages([]);
+      prevMsgCountRef.current = 0;
       return;
     }
     setActiveChatId(partnerId);
+    prevMsgCountRef.current = 0;
     await fetchMessages(partnerId);
   };
 
@@ -79,6 +131,13 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
       });
       if (res.ok) {
         const data = await res.json();
+        if (data.length > prevMsgCountRef.current && prevMsgCountRef.current > 0) {
+          const lastMsg = data[data.length - 1];
+          if (lastMsg && lastMsg.senderId !== currentUser.id && soundEnabled) {
+            playLoLNotificationSound();
+          }
+        }
+        prevMsgCountRef.current = data.length;
         setMessages(data);
       }
     } catch (err) {
@@ -423,6 +482,14 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                           <span>Chat Direct avec {cand.displayName || cand.gameName}</span>
                         </span>
                       </div>
+
+                      <button
+                        onClick={() => setSoundEnabled(!soundEnabled)}
+                        className="p-1 rounded-lg text-slate-400 hover:text-[#00f0ff] transition-colors flex items-center gap-1 text-[11px]"
+                        title={soundEnabled ? (currentLang === 'fr' ? 'Son des notifications ACTIF' : 'Notification Sound ON') : (currentLang === 'fr' ? 'Son des notifications DÉSACTIVÉ' : 'Notification Sound OFF')}
+                      >
+                        {soundEnabled ? <Volume2 className="w-4 h-4 text-[#00f0ff]" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
+                      </button>
                     </div>
 
                     {/* Zone d'affichage des messages */}

@@ -127,6 +127,14 @@ export default function StatsLandingPage({
       }))
     : defaultPlayers;
 
+  const topDuos = statsData.topDuos && statsData.topDuos.length > 0 
+    ? statsData.topDuos 
+    : [
+        { id: 1, player1Name: 'Faker', player2Name: 'Keria', score: 98, archetype: '🏆 Duo de Légende T1', winrate: '82%', games: 45 },
+        { id: 2, player1Name: 'PrincessPinkyUp', player2Name: 'Lesbian princess', score: 95, archetype: '💎 High Elo Duo', winrate: '74%', games: 38 },
+        { id: 3, player1Name: 'Doakes', player2Name: 'ILoveN', score: 91, archetype: '🔥 Climber Duo', winrate: '68%', games: 29 }
+      ];
+
   return (
     <div className="space-y-16 py-6 sm:py-10 animate-fadeIn">
       
@@ -298,6 +306,81 @@ export default function StatsLandingPage({
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* --- HALL OF FAME : TOP DUOS DE LA PLATEFORME --- */}
+      <section className="max-w-6xl mx-auto px-4 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold shadow-md">
+            <Trophy className="w-4 h-4 text-amber-400" />
+            <span>{currentLang === 'fr' ? 'CLASSEMENT OFFICIEL DE COMPATIBILITÉ' : 'OFFICIAL SYNERGY LEADERBOARD'}</span>
+          </div>
+          <h3 className="font-display font-black text-2xl sm:text-4xl text-white tracking-wide">
+            🏆 Hall of Fame des Top Duos
+          </h3>
+          <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+            {currentLang === 'fr'
+              ? 'Les Duos d\'invocateurs ayant obtenu les plus puissants scores d\'affinité et de complicité sur la plateforme !'
+              : 'The summoner Duos who achieved the highest affinity & chemistry scores on the platform!'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {topDuos.map((duo, idx) => (
+            <div 
+              key={duo.id || idx}
+              className={`relative p-5 rounded-3xl bg-gradient-to-b from-[#090b16] to-[#0f1227] border shadow-xl flex flex-col justify-between space-y-4 hover:-translate-y-1 transition-all ${
+                idx === 0 
+                  ? 'border-amber-400/60 shadow-amber-500/10' 
+                  : idx === 1 
+                  ? 'border-slate-300/50 shadow-slate-300/10' 
+                  : 'border-amber-700/50 shadow-amber-800/10'
+              }`}
+            >
+              {/* Badge Rang Médaille (1er, 2ème, 3ème) */}
+              <div className="flex items-center justify-between">
+                <span className={`px-3 py-1 rounded-full text-xs font-black uppercase flex items-center gap-1 shadow-md ${
+                  idx === 0 
+                    ? 'bg-amber-400 text-slate-950' 
+                    : idx === 1 
+                    ? 'bg-slate-200 text-slate-950' 
+                    : 'bg-amber-700 text-white'
+                }`}>
+                  <span>{idx === 0 ? '🥇 1er Duo' : idx === 1 ? '🥈 2ème Duo' : idx === 2 ? '🥉 3ème Duo' : `🏅 #${idx + 1} Duo`}</span>
+                </span>
+
+                <span className="text-xs font-mono font-bold text-slate-400">
+                  {duo.games} games
+                </span>
+              </div>
+
+              {/* Noms des 2 joueurs */}
+              <div className="space-y-1.5 text-center my-2">
+                <div className="font-display font-black text-lg text-white flex items-center justify-center gap-2 flex-wrap">
+                  <span className="text-[#ff2a85]">{duo.player1Name}</span>
+                  <Heart className="w-4 h-4 text-pink-500 fill-pink-500 animate-pulse shrink-0" />
+                  <span className="text-[#00f0ff]">{duo.player2Name}</span>
+                </div>
+                <p className="text-xs text-amber-300 font-extrabold italic">
+                  {duo.archetype}
+                </p>
+              </div>
+
+              {/* Stat Score & Winrate */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800 text-center">
+                <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Score Affinité</span>
+                  <span className="text-base font-black text-[#00f0ff]">{duo.score}%</span>
+                </div>
+                <div className="p-2 rounded-xl bg-slate-950/80 border border-slate-800">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Winrate Duo</span>
+                  <span className="text-base font-black text-emerald-400">{duo.winrate}</span>
+                </div>
+              </div>
+
+            </div>
+          ))}
         </div>
       </section>
 
