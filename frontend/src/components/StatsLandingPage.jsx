@@ -139,7 +139,7 @@ export default function StatsLandingPage({
       mainChamp: 'Lux',
       avatar: '/avatars/julie.jpg',
       currentIconId: 7196,
-      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'support', label: '🛡️ Support' }],
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',
       badge: 'TOP WINRATE'
     }
