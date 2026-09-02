@@ -37,7 +37,7 @@ export default function AboutUsModal({ isOpen, onClose, currentLang = 'fr' }) {
           <div className="space-y-1">
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <h3 className="font-display font-black text-2xl text-white">
-                À Propos de RiftAffinity ✨
+                {currentLang === 'fr' ? 'À Propos de RiftAffinity ✨' : 'About RiftAffinity ✨'}
               </h3>
               <span className="px-2.5 py-0.5 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-[10px] font-black uppercase">
                 LoL Matchmaking
