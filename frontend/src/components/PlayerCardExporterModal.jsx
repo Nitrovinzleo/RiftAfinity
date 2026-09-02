@@ -230,8 +230,8 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                 <span>{currentLang === 'fr' ? 'Swipe-moi sur rift-afinity.vercel.app 💖' : 'Swipe me on rift-afinity.vercel.app 💖'}</span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">
-                ID: #{user.id} • LoL Matchmaking
+              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+                {currentLang === 'fr' ? 'Invocateur Vérifié • RiftAffinity' : 'Verified Summoner • RiftAffinity'}
               </span>
             </div>
 
