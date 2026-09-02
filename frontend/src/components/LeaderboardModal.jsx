@@ -23,8 +23,8 @@ export default function LeaderboardModal({ isOpen, onClose, topDuos = [], curren
 
   // Base initiale des Duos inscrits sur la plateforme
   const defaultTop10 = [
-    { id: 1, player1Name: 'Julie', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg', player2Name: 'Alanood', player2Avatar: '/avatars/alanood.jpg', score: 96, archetype: '💎 High Elo Duo', winrate: '76%', games: 38 },
-    { id: 2, player1Name: 'Ismael', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6868.jpg', player2Name: 'Julie', player2Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg', score: 93, archetype: '🔥 Mastermind Duo', winrate: '70%', games: 28 },
+    { id: 1, player1Name: 'Julie', player1Avatar: '/avatars/julie.jpg', player2Name: 'Alanood', player2Avatar: '/avatars/alanood.jpg', score: 96, archetype: '💎 High Elo Duo', winrate: '76%', games: 38 },
+    { id: 2, player1Name: 'Ismael', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6868.jpg', player2Name: 'Julie', player2Avatar: '/avatars/julie.jpg', score: 93, archetype: '🔥 Mastermind Duo', winrate: '70%', games: 28 },
     { id: 3, player1Name: 'tibo', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg', player2Name: 'ILoveN', player2Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg', score: 90, archetype: '⚡ Climber Duo', winrate: '68%', games: 24 }
   ];
 
@@ -139,7 +139,7 @@ export default function LeaderboardModal({ isOpen, onClose, topDuos = [], curren
                               src={duo.player1Avatar} 
                               alt={duo.player1Name} 
                               className="w-full h-full object-cover"
-                              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                              onError={(e) => { e.target.onerror = null; e.target.src = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg'; }}
                             />
                           </div>
                         )}
@@ -156,7 +156,7 @@ export default function LeaderboardModal({ isOpen, onClose, topDuos = [], curren
                               src={duo.player2Avatar} 
                               alt={duo.player2Name} 
                               className="w-full h-full object-cover"
-                              onError={(e) => { e.target.onerror = null; e.target.style.display = 'none'; }}
+                              onError={(e) => { e.target.onerror = null; e.target.src = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7.jpg'; }}
                             />
                           </div>
                         )}
