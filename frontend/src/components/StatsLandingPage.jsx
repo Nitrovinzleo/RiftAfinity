@@ -54,7 +54,7 @@ export default function StatsLandingPage({
     { name: 'Challenger', tier: 'challenger' },
   ];
 
-  // Joueurs réels de la plateforme (fallback si BDD vide)
+  // Joueurs réels de la plateforme
   const defaultPlayers = [
     {
       name: 'PrincessPinkyUp',
@@ -66,7 +66,7 @@ export default function StatsLandingPage({
       losses: 48,
       role: 'ADC',
       mainChamp: 'Twitch',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/588.png',
+      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/6868.png',
       region: 'EUW',
       badge: 'TOP WINRATE'
     },
@@ -80,21 +80,21 @@ export default function StatsLandingPage({
       losses: 99,
       role: 'JUNGLE',
       mainChamp: 'Lillia',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/6.png',
+      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/6024.png',
       region: 'EUW',
       badge: 'JUNGLE KING'
     },
     {
       name: 'No Map Master',
       tag: '#V92',
-      rankTier: 'DIAMOND',
-      rankDivision: 'I',
+      rankTier: 'GOLD',
+      rankDivision: 'III',
       winrate: '59%',
       wins: 145,
       losses: 101,
       role: 'MID',
       mainChamp: 'Ahri',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/28.png',
+      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/3220.png',
       region: 'EUW',
       badge: 'CARRY MID'
     }

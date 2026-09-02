@@ -333,7 +333,7 @@ async def get_public_stats(db: Session = Depends(get_db)):
     verified_users = db.query(User).filter(
         User.is_verified == True,
         User.is_hidden != True
-    ).all()
+    ).order_by(User.id.desc()).all()
 
     total_count = db.query(User).count()
     total_verified = len(verified_users)
@@ -345,16 +345,21 @@ async def get_public_stats(db: Session = Depends(get_db)):
         tot_games = wins + losses
         winrate = round((wins / tot_games) * 100) if tot_games > 0 else 62
 
+        avatar_url = u.custom_avatar
+        if not avatar_url:
+            icon_id = u.current_icon_id or 28
+            avatar_url = f"https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/{icon_id}.png"
+
         cand_list.append({
             "id": u.id,
             "gameName": u.game_name,
             "tagLine": u.tag_line,
             "displayName": u.display_name,
-            "rankTier": u.rank_tier or "DIAMOND",
+            "rankTier": u.rank_tier or "GOLD",
             "rankDivision": u.rank_division or "III",
             "primaryRole": u.primary_role or "MID",
-            "favoriteChampion": u.favorite_champion or "Ahri",
-            "customAvatar": u.custom_avatar or f"https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/{u.currentIconId or 28}.png",
+            "favoriteChampion": u.favorite_champion or "LoL",
+            "customAvatar": avatar_url,
             "region": (u.region or "euw1").upper(),
             "winrate": f"{winrate}%",
             "wins": wins,
@@ -369,6 +374,7 @@ async def get_public_stats(db: Session = Depends(get_db)):
         "regionsCount": 4,
         "featuredPlayers": cand_list
     }
+
 
 
 
