@@ -138,7 +138,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
 
               <span className="px-3 py-1 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-[11px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1">
                 <Heart className="w-3 h-3 fill-[#ff2a85]" />
-                <span>Cherche son Duo LoL</span>
+                <span>{currentLang === 'fr' ? 'Cherche son Duo LoL' : 'Looking for a LoL Duo'}</span>
               </span>
             </div>
 
@@ -182,7 +182,9 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                       className="w-10 h-10 object-contain"
                     />
                     <div>
-                      <span className="text-[10px] text-slate-400 block uppercase font-bold">Rang Solo/Duo</span>
+                      <span className="text-[10px] text-slate-400 block uppercase font-bold">
+                        {currentLang === 'fr' ? 'Rang Solo/Duo' : 'Solo/Duo Rank'}
+                      </span>
                       <span className="font-display font-black text-sm text-white">
                         {rankTier} {rankDiv}
                       </span>
@@ -190,7 +192,9 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 block uppercase font-bold">Poste & Main</span>
+                    <span className="text-[10px] text-slate-400 block uppercase font-bold">
+                      {currentLang === 'fr' ? 'Poste & Main' : 'Role & Main'}
+                    </span>
                     <span className="font-extrabold text-xs text-[#00f0ff]">
                       ⚔️ {user.primaryRole || 'MID'} ({user.favoriteChampion || 'LoL'})
                     </span>
