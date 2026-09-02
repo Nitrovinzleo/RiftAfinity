@@ -1,7 +1,9 @@
 # 💖 RiftAffinity — Calculateur d'Affinité Invocateur League of Legends
 
 🌐 **Site Web Officiel en Ligne** : [https://riftaffinity.vercel.app](https://riftaffinity.vercel.app)  
-📦 **Dépôt GitHub** : [https://github.com/Nitrovinzleo/RiftAfinity](https://github.com/Nitrovinzleo/RiftAfinity)
+📦 **Dépôt GitHub** : [https://github.com/Nitrovinzleo/RiftAfinity](https://github.com/Nitrovinzleo/RiftAfinity)  
+⚡ **Dernier Déploiement Vercel** : Mises à jour automatisées en direct sur la branche `main`.
+
 
 **RiftAffinity** est une application web moderne et gratuite permettant d'analyser et de mesurer la compatibilité amoureuse et amicale entre deux joueurs de League of Legends en interrogeant l'API officielle **Riot Games**.
 
