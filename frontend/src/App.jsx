@@ -10,6 +10,7 @@ import DuoMatchmakerModal from './components/DuoMatchmakerModal';
 import MyMatchesModal from './components/MyMatchesModal';
 import DiscordLinkModal from './components/DiscordLinkModal';
 import DiscordBotModal from './components/DiscordBotModal';
+import AboutUsModal from './components/AboutUsModal';
 import StatsLandingPage from './components/StatsLandingPage';
 import { AlertCircle, RefreshCw, Heart } from 'lucide-react';
 import { translations } from './utils/translations';
@@ -29,6 +30,7 @@ export default function App() {
   const [isMatchmakerOpen, setIsMatchmakerOpen] = useState(false);
   const [isMyMatchesOpen, setIsMyMatchesOpen] = useState(false);
   const [isDiscordGuideOpen, setIsDiscordGuideOpen] = useState(false);
+  const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
 
 
   // Liaison Discord DM Token
@@ -358,8 +360,18 @@ export default function App() {
         currentLang={currentLang}
       />
 
+      {/* Modale À Propos de RiftAffinity */}
+      <AboutUsModal
+        isOpen={isAboutUsOpen}
+        onClose={() => setIsAboutUsOpen(false)}
+        currentLang={currentLang}
+      />
+
       {/* Pied de page */}
-      <Footer onOpenDiscordGuide={() => setIsDiscordGuideOpen(true)} />
+      <Footer 
+        onOpenDiscordGuide={() => setIsDiscordGuideOpen(true)} 
+        onOpenAboutUs={() => setIsAboutUsOpen(true)} 
+      />
 
     </div>
   );

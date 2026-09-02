@@ -1,20 +1,28 @@
 import React from 'react';
-import { Heart, Bot, Sparkles } from 'lucide-react';
+import { Heart, Bot, Sparkles, Info } from 'lucide-react';
 
-export default function Footer({ onOpenDiscordGuide }) {
+export default function Footer({ onOpenDiscordGuide, onOpenAboutUs }) {
   return (
     <footer className="w-full border-t border-slate-800/60 bg-[#06070d] py-8 mt-20 text-slate-500 text-xs">
       <div className="max-w-7xl mx-auto px-4 text-center space-y-4">
         
-        {/* Lien Discord Bot & Guide */}
+        {/* Liens Footer : Bot Discord & À Propos */}
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
             onClick={onOpenDiscordGuide}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-500/50 text-indigo-300 hover:text-white font-bold text-xs shadow-md transition-all active:scale-95 group"
           >
             <Bot className="w-4 h-4 text-indigo-400 group-hover:rotate-12 transition-transform" />
-            <span>Bot Discord & Guide d'Utilisation 🤖</span>
+            <span>Bot Discord & Guide 🤖</span>
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+          </button>
+
+          <button
+            onClick={onOpenAboutUs}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-[#ff2a85] text-slate-300 hover:text-white font-bold text-xs shadow-md transition-all active:scale-95 group"
+          >
+            <Info className="w-4 h-4 text-[#ff2a85] group-hover:scale-110 transition-transform" />
+            <span>À Propos de RiftAffinity ✨</span>
           </button>
         </div>
 
