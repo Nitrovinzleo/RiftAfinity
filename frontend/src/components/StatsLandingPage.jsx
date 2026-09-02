@@ -69,6 +69,7 @@ export default function StatsLandingPage({
       mainChamp: 'Twitch',
       avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg',
       currentIconId: 7196,
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'adc', label: '🏹 ADC Carry' }],
       region: 'EUW',
       badge: 'TOP WINRATE'
     },
@@ -84,6 +85,7 @@ export default function StatsLandingPage({
       mainChamp: 'Lillia',
       avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg',
       currentIconId: 6024,
+      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'jungle', label: '🐉 Jungler' }],
       region: 'EUW',
       badge: 'JUNGLE KING'
     },
@@ -99,6 +101,7 @@ export default function StatsLandingPage({
       mainChamp: 'Singed',
       avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7.jpg',
       currentIconId: 7,
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',
       badge: 'MASTER DUO'
     }
@@ -118,7 +121,7 @@ export default function StatsLandingPage({
         mainChamp: p.favoriteChampion,
         avatar: p.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${p.currentIconId || 28}.jpg`,
         currentIconId: p.currentIconId || 28,
-        badges: p.badges || [],
+        badges: (p.badges && p.badges.length > 0) ? p.badges : [{ id: 'climber', label: '🥇 Climber Duo' }],
         region: p.region,
         badge: idx === 0 ? 'TOP DUO' : idx === 1 ? 'ACTIVE PLAYER' : 'PRO CARRY'
       }))
