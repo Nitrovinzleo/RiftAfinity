@@ -87,8 +87,8 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
   const spokenBadges = getSpokenLangsDisplay(user);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md animate-fadeIn px-3 sm:px-4 py-6 sm:py-10 flex justify-center items-start">
-      <div className="relative w-full max-w-3xl p-5 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#ff2a85]/40 shadow-2xl space-y-6 my-auto text-slate-100">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-md animate-fadeIn px-2 sm:px-4 py-4 sm:py-10 flex justify-center items-start">
+      <div className="relative w-full max-w-3xl p-3.5 sm:p-8 rounded-3xl glass-panel-vibrant border border-[#ff2a85]/40 shadow-2xl space-y-4 my-auto text-slate-100 max-w-full overflow-hidden">
         
         {/* Bouton de fermeture */}
         <button
@@ -142,11 +142,13 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
         </div>
 
         {/* --- ZONE D'APERÇU & CANVAS DE LA CARTE GENEREE --- */}
-        <div className="overflow-x-auto py-2 flex justify-center">
+        <div className="py-1 flex justify-center items-center w-full max-w-full overflow-hidden">
           <div
             ref={cardRef}
-            className={`relative rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-[#0a0b16] via-[#101429] to-[#1a122a] border-2 border-[#ff2a85]/50 shadow-2xl text-slate-100 flex flex-col justify-between overflow-hidden shrink-0 transition-all ${
-              cardFormat === 'horizontal' ? 'w-[560px] sm:w-[620px] min-h-[340px]' : 'w-[340px] sm:w-[380px] min-h-[580px]'
+            className={`relative rounded-3xl p-4 sm:p-8 bg-gradient-to-br from-[#0a0b16] via-[#101429] to-[#1a122a] border-2 border-[#ff2a85]/50 shadow-2xl text-slate-100 flex flex-col justify-between overflow-hidden shrink-0 transition-all max-w-full ${
+              cardFormat === 'horizontal' 
+                ? 'w-full max-w-[560px] sm:max-w-[620px] min-h-[300px] sm:min-h-[340px]' 
+                : 'w-full max-w-[310px] sm:max-w-[380px] min-h-[500px] sm:min-h-[580px]'
             }`}
           >
             {/* Effets d'arrière-plan lumineux Hextech */}
