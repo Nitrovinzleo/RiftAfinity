@@ -59,7 +59,8 @@ export default function StatsLandingPage({
   // Joueurs réels de la plateforme (synchronisés directement depuis l'API Riot Games)
   const defaultPlayers = [
     {
-      name: 'PrincessPinkyUp',
+      name: 'Julie',
+      hasCustomName: true,
       tag: '#8ï8',
       rankTier: 'DIAMOND',
       rankDivision: 'I',
@@ -75,7 +76,8 @@ export default function StatsLandingPage({
       badge: 'TOP WINRATE'
     },
     {
-      name: 'PrincessDarkyUp',
+      name: 'Ismael',
+      hasCustomName: true,
       tag: '#8ï8',
       rankTier: 'EMERALD',
       rankDivision: 'IV',
@@ -92,6 +94,7 @@ export default function StatsLandingPage({
     },
     {
       name: 'ILoveN',
+      hasCustomName: true,
       tag: '#MOMY',
       rankTier: 'BRONZE',
       rankDivision: 'II',
@@ -107,7 +110,8 @@ export default function StatsLandingPage({
       badge: 'SUPPORT DUO'
     },
     {
-      name: 'Doakes',
+      name: 'tibo',
+      hasCustomName: true,
       tag: '#slice',
       rankTier: 'SILVER',
       rankDivision: 'III',
@@ -123,7 +127,8 @@ export default function StatsLandingPage({
       badge: 'JUNGLE KING'
     },
     {
-      name: 'Lesbian princess',
+      name: 'Alanood',
+      hasCustomName: true,
       tag: '#UwU',
       rankTier: 'MASTER',
       rankDivision: 'I',
@@ -142,7 +147,8 @@ export default function StatsLandingPage({
 
   const displayPlayers = statsData.featuredPlayers && statsData.featuredPlayers.length > 0 
     ? statsData.featuredPlayers.map((p, idx) => ({
-        name: p.gameName,
+        name: (p.displayName && p.displayName.trim()) ? p.displayName : p.gameName,
+        hasCustomName: Boolean(p.displayName && p.displayName.trim()),
         tag: `#${p.tagLine}`,
         rankTier: p.rankTier,
         rankDivision: p.rankDivision,
