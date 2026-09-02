@@ -56,7 +56,7 @@ export default function StatsLandingPage({
     { name: 'Challenger', tier: 'challenger' },
   ];
 
-  // Joueurs réels de la plateforme
+  // Joueurs réels de la plateforme (les 5 membres de la communauté)
   const defaultPlayers = [
     {
       name: 'PrincessPinkyUp',
@@ -73,6 +73,38 @@ export default function StatsLandingPage({
       badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'adc', label: '🏹 ADC Carry' }],
       region: 'EUW',
       badge: 'TOP WINRATE'
+    },
+    {
+      name: 'PrincessDarkyUp',
+      tag: '#8ï8',
+      rankTier: 'EMERALD',
+      rankDivision: 'IV',
+      winrate: '64%',
+      wins: 89,
+      losses: 51,
+      role: 'MID',
+      mainChamp: 'Ahri',
+      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6868.jpg',
+      currentIconId: 6868,
+      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
+      region: 'EUW',
+      badge: 'EMERALD CARRY'
+    },
+    {
+      name: 'ILoveN',
+      tag: '#MOMY',
+      rankTier: 'BRONZE',
+      rankDivision: 'II',
+      winrate: '58%',
+      wins: 45,
+      losses: 32,
+      role: 'SUPPORT',
+      mainChamp: 'Morgana',
+      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg',
+      currentIconId: 6926,
+      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'support', label: '🛡️ Support' }],
+      region: 'EUW',
+      badge: 'SUPPORT DUO'
     },
     {
       name: 'Doakes',
@@ -100,7 +132,7 @@ export default function StatsLandingPage({
       losses: 571,
       role: 'MID',
       mainChamp: 'Singed',
-      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7.jpg',
+      avatar: '/avatars/alanood.jpg',
       currentIconId: 7,
       badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',

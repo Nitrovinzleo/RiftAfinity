@@ -439,7 +439,6 @@ async def get_public_stats(db: Session = Depends(get_db)):
     Retourne les statistiques publiques et les vrais joueurs de la plateforme RiftAffinity.
     """
     verified_users = db.query(User).filter(
-        User.is_verified == True,
         User.is_hidden != True
     ).order_by(User.id.desc()).all()
 
