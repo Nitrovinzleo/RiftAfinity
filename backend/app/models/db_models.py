@@ -21,8 +21,9 @@ class User(Base):
     puuid = Column(String, nullable=True, index=True)
     summoner_id = Column(String, nullable=True)
     
-    # Vérification d'icône style Ori Bot
-    is_verified = Column(Boolean, default=True)
+    # Vérification d'icône style Ori Bot (Vrai UNIQUEMENT après validation de l'icône)
+    is_verified = Column(Boolean, default=False)
+
 
     target_icon_id = Column(Integer, default=lambda: random.choice(VERIFICATION_ICON_POOL))
     current_icon_id = Column(Integer, nullable=True)

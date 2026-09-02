@@ -83,14 +83,24 @@ export default function App() {
     setIsMatchmakerOpen(false);
   };
 
-  // Accès au Matchmaking Duo : Utilisateur Connecté
+  // Contrôle d'accès au Matchmaking Duo : Connecté + Icône LoL Vérifiée (style Ori Bot)
   const handleOpenMatchmaker = () => {
     if (!currentUser) {
       setIsAuthOpen(true);
       return;
     }
+    if (!currentUser.isVerified) {
+      alert(
+        currentLang === 'fr'
+          ? "⚠️ Votre compte League of Legends doit être VÉRIFIÉ pour accéder au Matchmaking Duo ! Équipez l'icône requise dans votre profil."
+          : "⚠️ Your League of Legends account must be VERIFIED to access Duo Matchmaking! Equip the required icon in your profile."
+      );
+      setIsProfileOpen(true);
+      return;
+    }
     setIsMatchmakerOpen(true);
   };
+
 
 
   // Envoi de la requête au backend FastAPI
