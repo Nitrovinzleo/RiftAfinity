@@ -9,6 +9,7 @@ import UserProfileModal from './components/UserProfileModal';
 import DuoMatchmakerModal from './components/DuoMatchmakerModal';
 import MyMatchesModal from './components/MyMatchesModal';
 import DiscordLinkModal from './components/DiscordLinkModal';
+import DiscordBotModal from './components/DiscordBotModal';
 import StatsLandingPage from './components/StatsLandingPage';
 import { AlertCircle, RefreshCw, Heart } from 'lucide-react';
 import { translations } from './utils/translations';
@@ -27,6 +28,7 @@ export default function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMatchmakerOpen, setIsMatchmakerOpen] = useState(false);
   const [isMyMatchesOpen, setIsMyMatchesOpen] = useState(false);
+  const [isDiscordGuideOpen, setIsDiscordGuideOpen] = useState(false);
 
 
   // Liaison Discord DM Token
@@ -348,8 +350,15 @@ export default function App() {
         />
       )}
 
+      {/* Modale d'Information Discord Bot & Guide */}
+      <DiscordBotModal
+        isOpen={isDiscordGuideOpen}
+        onClose={() => setIsDiscordGuideOpen(false)}
+        currentLang={currentLang}
+      />
+
       {/* Pied de page */}
-      <Footer />
+      <Footer onOpenDiscordGuide={() => setIsDiscordGuideOpen(true)} />
 
     </div>
   );
