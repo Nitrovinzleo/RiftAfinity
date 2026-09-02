@@ -61,7 +61,11 @@ export default function App() {
         if (res.ok) {
           const user = await res.json();
           setCurrentUser(user);
+          if (user.restoredMessage) {
+            alert(`🎉 ${user.restoredMessage}`);
+          }
         } else {
+
           localStorage.removeItem('riftaffinity_token');
         }
       } catch (err) {

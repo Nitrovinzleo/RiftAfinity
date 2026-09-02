@@ -53,6 +53,10 @@ class User(Base):
     display_name = Column(String, nullable=True)
     spoken_languages = Column(String, nullable=True)  # ex: "FR,EN"
 
+    # Suppression douce (Soft Delete) avec masque de 7 jours
+    is_hidden = Column(Boolean, default=False)
+    scheduled_deletion_at = Column(DateTime, nullable=True)
+
     created_at = Column(DateTime, default=datetime.utcnow)
 
     @property
@@ -96,8 +100,11 @@ class User(Base):
             "twitchUsername": self.twitch_username,
             "twitterUsername": self.twitter_username,
             "displayName": self.display_name,
-            "spokenLanguages": self.spoken_languages
+            "spokenLanguages": self.spoken_languages,
+            "isHidden": self.is_hidden,
+            "scheduledDeletionAt": self.scheduled_deletion_at.isoformat() if self.scheduled_deletion_at else None
         }
+
 
 class DuoSwipe(Base):
     __tablename__ = "duo_swipes"

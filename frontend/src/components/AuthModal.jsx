@@ -64,8 +64,12 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
 
       // Sauvegarde du jeton JWT et des données utilisateur
       localStorage.setItem('riftaffinity_token', data.token);
+      if (data.restoredMessage || data.user?.restoredMessage) {
+        alert(`🎉 ${data.restoredMessage || data.user.restoredMessage}`);
+      }
       onAuthSuccess(data.user);
       onClose();
+
     } catch (err) {
       setErrorMsg(err.message);
     } finally {

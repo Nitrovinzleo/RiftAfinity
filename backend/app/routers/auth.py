@@ -7,7 +7,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from app.database import get_db
-from app.models.db_models import User, DiscordPendingLink
+from app.models.db_models import User, DuoSwipe, DiscordPendingLink
 from app.models.schemas import UserRegisterRequest, UserLoginRequest, UserResponse
 from app.services.auth_service import hash_password, verify_password, create_access_token, decode_access_token
 from app.services.riot_api import RiotApiClient
@@ -80,6 +80,35 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
         "user": new_user.to_dict()
     }
 
+def process_scheduled_deletion_check(user: User, db: Session) -> Optional[str]:
+    """
+    Vérifie si la suppression du compte était programmée :
+    - Si les 7 jours sont écoulés : supprime définitivement le compte et lève une exception 400.
+    - Si la reconnexion a lieu pendant les 7 jours : annule la suppression et démasque le compte.
+    """
+    if not user.scheduled_deletion_at:
+        return None
+
+    now = datetime.utcnow()
+    if now >= user.scheduled_deletion_at:
+        logger.info(f"Délai de grâce de 7 jours expiré pour l'utilisateur {user.id} ({user.email}). Suppression définitive.")
+        db.query(DuoSwipe).filter((DuoSwipe.swiper_id == user.id) | (DuoSwipe.target_id == user.id)).delete(synchronize_session=False)
+        if user.discord_id:
+            db.query(DiscordPendingLink).filter(DiscordPendingLink.discord_id == user.discord_id).delete(synchronize_session=False)
+        db.delete(user)
+        db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Ce compte a été définitivement supprimé suite au délai de grâce de 7 jours sans reconnexion."
+        )
+    else:
+        logger.info(f"Reconnexion de l'utilisateur {user.id} ({user.email}). Annulation automatique de la suppression programmée.")
+        user.scheduled_deletion_at = None
+        user.is_hidden = False
+        db.commit()
+        db.refresh(user)
+        return "Ravi de vous revoir ! La suppression de votre compte a été automatiquement annulée."
+
 @router.post("/login", response_model=dict)
 async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
     try:
@@ -100,12 +129,18 @@ async def login(req: UserLoginRequest, db: Session = Depends(get_db)):
         if not verify_password(pwd_clean, user.hashed_password) and not verify_password(req.password, user.hashed_password):
             raise HTTPException(status_code=400, detail="Mot de passe incorrect. Veuillez vérifier la saisie.")
 
+        restored_msg = process_scheduled_deletion_check(user, db)
+
         token = create_access_token({"sub": str(user.id), "email": user.email})
 
-        return {
+        res_data = {
             "token": token,
             "user": user.to_dict()
         }
+        if restored_msg:
+            res_data["restoredMessage"] = restored_msg
+
+        return res_data
     except HTTPException:
         raise
     except Exception as e:
@@ -126,6 +161,8 @@ async def get_current_user(authorization: Optional[str] = Header(None), db: Sess
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Utilisateur introuvable.")
+
+    restored_msg = process_scheduled_deletion_check(user, db)
 
     # Détection automatique du changement de pseudo LoL par PUUID permanent
     if user.puuid:
@@ -149,7 +186,12 @@ async def get_current_user(authorization: Optional[str] = Header(None), db: Sess
         except Exception as e:
             logger.warning(f"Impossible de vérifier le changement de pseudo: {e}")
 
-    return user.to_dict()
+    user_data = user.to_dict()
+    if restored_msg:
+        user_data["restoredMessage"] = restored_msg
+
+    return user_data
+
 
 
 class DiscordLinkRequest(BaseModel):

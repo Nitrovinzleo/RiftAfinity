@@ -320,7 +320,26 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
     }
   };
 
-  // Suppression définitive du compte
+  // Annulation de la suppression programmée
+  const handleCancelDeletion = async () => {
+    try {
+      const token = localStorage.getItem('riftaffinity_token');
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const res = await fetch(`${backendUrl}/api/profile/cancel-deletion`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.user) {
+        onUserUpdated(data.user);
+        alert(data.message || (currentLang === 'fr' ? 'La suppression de votre compte a été annulée avec succès !' : 'Account deletion cancelled successfully!'));
+      }
+    } catch (err) {
+      alert(currentLang === 'fr' ? "Erreur lors de l'annulation de la suppression." : "Error cancelling deletion.");
+    }
+  };
+
+  // Suppression temporaire avec masque de 7 jours (Soft Delete)
   const handleDeleteAccount = async () => {
     setIsDeletingAccount(true);
     try {
@@ -333,19 +352,21 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
         }
       });
 
-      if (res.ok) {
-        onLogout();
+      const data = await res.json();
+      if (res.ok && data.user) {
+        onUserUpdated(data.user);
+        alert(data.message || (currentLang === 'fr' ? 'Votre compte a été masqué pendant 7 jours.' : 'Account scheduled for deletion in 7 days.'));
       } else {
-        const data = await res.json();
         alert(data.detail || (currentLang === 'fr' ? 'Erreur lors de la suppression du compte.' : 'Account deletion error.'));
       }
     } catch (err) {
-      alert(currentLang === 'fr' ? 'Erreur lors de la suppression du compte.' : 'Error deleting account.');
+      alert(currentLang === 'fr' ? 'Erreur lors de la demande de suppression du compte.' : 'Error deleting account.');
     } finally {
       setIsDeletingAccount(false);
       setShowDeleteConfirm(false);
     }
   };
+
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md animate-fadeIn px-4 py-10 sm:py-16 flex justify-center items-start">
@@ -877,56 +898,80 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
               </button>
             </form>
 
-            {/* DANGER ZONE : SUPPRIMER LE COMPTE */}
+            {/* DANGER ZONE : SUPPRIMER / MASQUER LE COMPTE */}
             <div className="p-4 sm:p-5 rounded-2xl bg-red-950/30 border border-red-500/50 space-y-3">
               <div className="flex items-center gap-2 text-red-400 font-bold text-sm">
                 <Trash2 className="w-4 h-4 text-red-500" />
-                <span>{currentLang === 'fr' ? 'Zone de Danger : Suppression du Compte' : 'Danger Zone: Account Deletion'}</span>
+                <span>{currentLang === 'fr' ? 'Zone de Danger : Masquage & Suppression du Compte' : 'Danger Zone: Hide & Delete Account'}</span>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {currentLang === 'fr'
-                  ? 'La suppression de votre compte effacera définitivement votre profil, votre historique de matchmaking ainsi que l\'association de vos réseaux sociaux.'
-                  : 'Deleting your account will permanently wipe your profile, matchmaking history, and linked social accounts.'}
-              </p>
-
-              {!showDeleteConfirm ? (
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="w-full py-3 px-4 rounded-xl bg-red-950/70 hover:bg-red-900 border border-red-500/60 text-red-200 hover:text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-md"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  <span>{currentLang === 'fr' ? 'Supprimer mon compte' : 'Delete my account'}</span>
-                </button>
-              ) : (
-                <div className="p-4 rounded-xl bg-slate-950 border border-red-500 text-center space-y-3 animate-scaleUp">
-                  <p className="text-xs font-bold text-red-300">
-                    ⚠️ {currentLang === 'fr' ? 'Êtes-vous ABSOLUMENT sûr de vouloir supprimer votre compte ? Cette action est IRREVOCABLE.' : 'Are you ABSOLUTELY sure you want to delete your account? This action cannot be undone.'}
+              {user.scheduledDeletionAt ? (
+                <div className="p-3.5 rounded-xl bg-amber-950/80 border border-amber-500/50 text-amber-200 text-xs space-y-2">
+                  <p className="font-bold flex items-center gap-1.5">
+                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                    <span>{currentLang === 'fr' ? '⏳ Compte masqué - Suppression programmée dans 7 jours' : '⏳ Account hidden - Deletion scheduled in 7 days'}</span>
                   </p>
-                  
-                  <div className="flex items-center justify-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowDeleteConfirm(false)}
-                      className="py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all"
-                    >
-                      {currentLang === 'fr' ? 'Annuler' : 'Cancel'}
-                    </button>
-                    
-                    <button
-                      type="button"
-                      onClick={handleDeleteAccount}
-                      disabled={isDeletingAccount}
-                      className="py-2 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg disabled:opacity-50"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>{isDeletingAccount ? (currentLang === 'fr' ? 'Suppression...' : 'Deleting...') : (currentLang === 'fr' ? 'Oui, Supprimer Définitinement' : 'Yes, Delete Permanently')}</span>
-                    </button>
-                  </div>
+                  <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                    {currentLang === 'fr'
+                      ? 'Votre profil est actuellement masqué et invisible pour les autres joueurs. Si vous ne faites rien, il sera définitivement supprimé. Pour réactiver votre compte, cliquez sur le bouton ci-dessous.'
+                      : 'Your profile is hidden from other players. To restore your account, click the button below.'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleCancelDeletion}
+                    className="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-md"
+                  >
+                    <span>{currentLang === 'fr' ? 'Annuler la suppression & Réactiver mon profil' : 'Cancel deletion & Restore profile'}</span>
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {currentLang === 'fr'
+                      ? 'La suppression masquera immédiatement votre compte pour les autres joueurs. Vous disposerez de 7 jours de réflexion pour changer d\'avis (annulation automatique en vous reconnectant). Au-delà de 7 jours sans connexion, le compte sera définitivement effacé.'
+                      : 'Requesting deletion will immediately hide your profile. You will have 7 days to change your mind by simply logging back in.'}
+                  </p>
+
+                  {!showDeleteConfirm ? (
+                    <button
+                      type="button"
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="w-full py-3 px-4 rounded-xl bg-red-950/70 hover:bg-red-900 border border-red-500/60 text-red-200 hover:text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-md"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>{currentLang === 'fr' ? 'Supprimer mon compte (Masquer 7 jours)' : 'Delete my account (Hide 7 days)'}</span>
+                    </button>
+                  ) : (
+                    <div className="p-4 rounded-xl bg-slate-950 border border-red-500 text-center space-y-3 animate-scaleUp">
+                      <p className="text-xs font-bold text-red-300">
+                        ⚠️ {currentLang === 'fr' ? 'Confirmez-vous le masquage et la suppression de votre compte sous 7 jours ?' : 'Confirm hiding and deleting your account in 7 days?'}
+                      </p>
+                      
+                      <div className="flex items-center justify-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setShowDeleteConfirm(false)}
+                          className="py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all"
+                        >
+                          {currentLang === 'fr' ? 'Annuler' : 'Cancel'}
+                        </button>
+                        
+                        <button
+                          type="button"
+                          onClick={handleDeleteAccount}
+                          disabled={isDeletingAccount}
+                          className="py-2 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg disabled:opacity-50"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{isDeletingAccount ? (currentLang === 'fr' ? 'Traitement...' : 'Processing...') : (currentLang === 'fr' ? 'Masquer & Programmer Suppression' : 'Hide & Schedule Deletion')}</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
+
 
           </div>
         )}

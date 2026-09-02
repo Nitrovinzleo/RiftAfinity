@@ -2,6 +2,8 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from sqlalchemy.orm import Session
 from typing import Optional
+from datetime import datetime, timedelta
+
 
 from app.database import get_db
 from app.models.db_models import User, DuoSwipe, DiscordPendingLink
@@ -273,18 +275,42 @@ async def delete_account(
     authorization: Optional[str] = Header(None),
     db: Session = Depends(get_db)
 ):
+    """
+    Suppression douce (Soft Delete) avec masque de 7 jours :
+    - Le profil est immédiatement masqué (is_hidden = True).
+    - Il n'apparaît plus dans le matchmaking des autres utilisateurs.
+    - Il sera supprimé définitivement dans 7 jours si aucune reconnexion n'a lieu.
+    """
     user = get_current_user_from_token(authorization, db)
 
-    # Nettoyage des swipes où l'utilisateur est swiper ou cible
-    db.query(DuoSwipe).filter((DuoSwipe.swiper_id == user.id) | (DuoSwipe.target_id == user.id)).delete(synchronize_session=False)
-
-    # Nettoyage des pending links discord
-    if user.discord_id:
-        db.query(DiscordPendingLink).filter(DiscordPendingLink.discord_id == user.discord_id).delete(synchronize_session=False)
-
-    # Suppression du compte
-    db.delete(user)
+    user.is_hidden = True
+    user.scheduled_deletion_at = datetime.utcnow() + timedelta(days=7)
     db.commit()
+    db.refresh(user)
 
-    return {"message": "Votre compte a été supprimé définitivement."}
+    return {
+        "message": "Votre compte a été masqué et sera supprimé dans 7 jours. Si vous vous reconnectez d'ici là, l'annulation sera automatique !",
+        "user": user.to_dict()
+    }
+
+@router.post("/cancel-deletion", response_model=dict)
+async def cancel_deletion(
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Annule la demande de suppression de compte et réactive la visibilité du profil.
+    """
+    user = get_current_user_from_token(authorization, db)
+
+    user.is_hidden = False
+    user.scheduled_deletion_at = None
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "message": "La suppression de votre compte a été annulée avec succès !",
+        "user": user.to_dict()
+    }
+
 

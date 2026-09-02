@@ -157,11 +157,14 @@ async def get_matchmaking_candidates(
     # Récupérer les IDs déjà swipés par l'utilisateur
     swiped_ids = [s.target_id for s in db.query(DuoSwipe).filter(DuoSwipe.swiper_id == user.id).all()]
 
-    # Chercher d'autres utilisateurs réels enregistrés et vérifiés uniquement (sans profils de test)
+    # Chercher d'autres utilisateurs réels enregistrés, vérifiés et non masqués (sans profils masqués ou en cours de suppression)
     db_candidates = db.query(User).filter(
         User.id != user.id,
-        User.is_verified == True
+        User.is_verified == True,
+        User.is_hidden != True,
+        User.scheduled_deletion_at == None
     ).all()
+
 
     candidates = []
 
