@@ -252,13 +252,18 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
             </div>
 
             {/* Footer de la Carte */}
-            <div className="relative z-10 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs mt-4">
-              <div className="flex items-center gap-1.5 text-[#00f0ff] font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>{isFr ? 'Swipe-moi sur rift-afinity.vercel.app 💖' : 'Swipe me on rift-afinity.vercel.app 💖'}</span>
+            <div className="relative z-10 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs mt-4 gap-2">
+              <div className="flex flex-col items-start text-xs">
+                <span className="text-slate-300 font-bold flex items-center gap-1 text-[11px]">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+                  <span>{isFr ? 'Swipe-moi sur :' : 'Swipe me on:'}</span>
+                </span>
+                <span className="text-[#00f0ff] font-black text-xs whitespace-nowrap tracking-wide mt-0.5">
+                  rift-afinity.vercel.app 💖
+                </span>
               </div>
               
-              <div className="flex items-center gap-1.5 flex-wrap justify-end">
+              <div className="flex items-center gap-1.5 flex-wrap justify-end shrink-0">
                 {spokenBadges.map((langItem, idx) => (
                   <span 
                     key={idx}
