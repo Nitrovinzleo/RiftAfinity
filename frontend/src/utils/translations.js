@@ -136,8 +136,12 @@ export const translations = {
       likeBtn: "Liker (Oui)"
     },
     footer: {
-      rights: "Tous droits réservés. Non affilié à Riot Games Inc.",
-      disclaimer: "RiftAffinity est un outil de communauté indépendant."
+      discordBotBtn: "Bot Discord & Guide 🤖",
+      aboutUsBtn: "À Propos de RiftAffinity ✨",
+      builtWith: "Développé avec",
+      forCommunity: "pour la communauté League of Legends",
+      disclaimer: "RiftAffinity n'est pas approuvé par Riot Games et ne reflète pas les vues ou opinions de Riot Games ou de toute personne officiellement impliquée dans la production ou la gestion des propriétés de League of Legends.",
+      rights: "RiftAffinity. Propulsé par FastAPI, React et l'API Développeur Riot Games."
     },
     error: {
       title: "Clé API Riot Indisponible ou Expirée",
@@ -279,8 +283,12 @@ export const translations = {
       likeBtn: "Like (Yes)"
     },
     footer: {
-      rights: "All rights reserved. Not affiliated with Riot Games Inc.",
-      disclaimer: "RiftAffinity is an independent community tool."
+      discordBotBtn: "Discord Bot & Guide 🤖",
+      aboutUsBtn: "About RiftAffinity ✨",
+      builtWith: "Built with",
+      forCommunity: "for the League of Legends community",
+      disclaimer: "RiftAffinity isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends properties.",
+      rights: "RiftAffinity. Powered by FastAPI, React and official Riot Games Developer API."
     },
     error: {
       title: "Riot API Key Expired or Invalid",

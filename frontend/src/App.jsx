@@ -369,6 +369,7 @@ export default function App() {
 
       {/* Pied de page */}
       <Footer 
+        currentLang={currentLang}
         onOpenDiscordGuide={() => setIsDiscordGuideOpen(true)} 
         onOpenAboutUs={() => setIsAboutUsOpen(true)} 
       />
