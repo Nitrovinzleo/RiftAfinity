@@ -131,8 +131,30 @@ def calculate_compatibility_score(user1: User, candidate_dict: dict) -> int:
 
 def sanitize_candidate_for_public(cand_dict: dict) -> dict:
     """
-    Protection de la vie privée : Supprime l'adresse e-mail avant de renvoyer le profil au frontend.
-    L'e-mail est utilisé uniquement par le serveur pour l'envoi de la notification.
+    Protection stricte de la vie privée (Cyber-sécurité) :
+    Supprime toutes les données personnelles identifiables et réseaux sociaux
+    du JSON brut renvoyé par l'API avant qu'un Match ne soit confirmé.
+    """
+    clean = dict(cand_dict)
+    clean.pop("email", None)
+    clean.pop("discordId", None)
+    clean.pop("discordTag", None)
+    clean.pop("instagramUsername", None)
+    clean.pop("tiktokUsername", None)
+    clean.pop("twitchUsername", None)
+    clean.pop("twitterUsername", None)
+    
+    # Si un pseudo personnalisé est configuré, ne pas transmettre le Riot ID en clair dans le JSON public
+    if clean.get("displayName"):
+        clean["gameName"] = None
+        clean["tagLine"] = None
+        
+    return clean
+
+def sanitize_candidate_for_match(cand_dict: dict) -> dict:
+    """
+    Déblocage des coordonnées uniquement lorsqu'un Match réciproque est confirmé.
+    Transmet le Riot ID et les réseaux sociaux tout en gardant l'email privé.
     """
     clean = dict(cand_dict)
     clean.pop("email", None)
@@ -265,7 +287,7 @@ async def process_swipe(
 
             return {
                 "isMatch": True,
-                "matchedUser": sanitize_candidate_for_public(target_dict),
+                "matchedUser": sanitize_candidate_for_match(target_dict),
                 "message": "🎉 C'est un MATCH !"
             }
 
@@ -316,7 +338,7 @@ async def get_user_matches(
     for u in matched_users:
         u_dict = u.to_dict()
         u_dict["compatibilityScore"] = calculate_compatibility_score(user, u_dict)
-        result.append(sanitize_candidate_for_public(u_dict))
+        result.append(sanitize_candidate_for_match(u_dict))
 
     return result
 
