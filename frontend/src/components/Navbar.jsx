@@ -50,7 +50,7 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Boutons d'Action Nav (DESKTOP) */}
+        {/* Boutons d'Action Nav */}
         <div className="flex items-center gap-1.5 sm:gap-3">
           
           {/* Bouton Onglet Stats & Community (DESKTOP) */}
@@ -127,16 +127,16 @@ export default function Navbar({
             </button>
           )}
 
-          {/* Bouton de langue DESKTOP */}
+          {/* Bouton de langue (Placé à côté du profil sur Desktop ET Mobile) */}
           <button
             onClick={onToggleLang}
-            className="hidden sm:flex p-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] hover:scale-110 active:scale-95 transition-all shadow-md bg-slate-900 items-center justify-center"
+            className="p-1 rounded-full border border-slate-700/80 hover:border-[#ff2a85] hover:scale-110 active:scale-95 transition-all shadow-md bg-slate-900 flex items-center justify-center shrink-0"
             title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
           >
             {currentLang === 'fr' ? (
-              <FrenchFlag className="w-7 h-7" />
+              <FrenchFlag className="w-6 h-6 sm:w-7 sm:h-7" />
             ) : (
-              <UKFlag className="w-7 h-7" />
+              <UKFlag className="w-6 h-6 sm:w-7 sm:h-7" />
             )}
           </button>
 
@@ -145,26 +145,13 @@ export default function Navbar({
       </div>
 
       {/* --- BARRE NAVIGATION MOBILE RESPONSIVE (SOUS LE HEADER) --- */}
-      <div className="sm:hidden border-t border-slate-800/80 bg-[#070914]/95 backdrop-blur-md px-3 py-2 flex items-center justify-between gap-1.5 overflow-x-auto no-scrollbar shadow-lg">
+      <div className="sm:hidden border-t border-slate-800/80 bg-[#070914]/95 backdrop-blur-md px-3 py-2 flex items-center justify-around gap-2 shadow-lg">
         
-        {/* 1. Bouton de Langue Mobile */}
-        <button
-          onClick={onToggleLang}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-slate-700/80 bg-slate-900 text-xs font-bold text-slate-200 shrink-0 active:scale-95 transition-transform"
-          title={currentLang === 'fr' ? 'Switch to English' : 'Passer en Français'}
-        >
-          {currentLang === 'fr' ? (
-            <span>🇫🇷 FR</span>
-          ) : (
-            <span>🇬🇧 EN</span>
-          )}
-        </button>
-
-        {/* 2. Bouton Onglet Stats & Offres Mobile */}
+        {/* 1. Bouton Onglet Stats Mobile */}
         {onSelectTab && (
           <button
             onClick={() => onSelectTab(activeTab === 'stats' ? 'form' : 'stats')}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-extrabold shrink-0 transition-all border ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all border ${
               activeTab === 'stats'
                 ? 'bg-gradient-to-r from-[#ff2a85]/20 to-[#00f0ff]/20 border-[#00f0ff] text-white shadow-md'
                 : 'bg-slate-900 border-slate-800 text-slate-300'
@@ -175,20 +162,20 @@ export default function Navbar({
           </button>
         )}
 
-        {/* 3. Bouton Trouver mon Duo Mobile (💘) */}
+        {/* 2. Bouton Trouver mon Duo Mobile (💘) */}
         <button
           onClick={onOpenMatchmaker}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white text-xs font-black shadow-md shrink-0 active:scale-95 transition-transform animate-pulse"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white text-xs font-black shadow-md active:scale-95 transition-transform animate-pulse"
         >
           <span>💘</span>
-          <span>{currentLang === 'fr' ? 'Trouver Duo' : 'Find Duo'}</span>
+          <span>{currentLang === 'fr' ? 'Trouver un Duo' : 'Find Duo'}</span>
         </button>
 
-        {/* 4. Bouton Mes Matchs Mobile (💖) */}
+        {/* 3. Bouton Mes Matchs Mobile (💖) */}
         {currentUser && (
           <button
             onClick={onOpenMyMatches}
-            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-[#ff2a85]/50 text-slate-100 text-xs font-bold shadow-md shrink-0 relative active:scale-95 transition-transform"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 border border-[#ff2a85]/50 text-slate-100 text-xs font-bold shadow-md relative active:scale-95 transition-transform"
           >
             <Heart className="w-3.5 h-3.5 text-[#ff2a85] fill-[#ff2a85]" />
             <span>{currentLang === 'fr' ? 'Matchs' : 'Matches'}</span>
