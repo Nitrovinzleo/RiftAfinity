@@ -26,14 +26,29 @@ def init_db():
     try:
         Base.metadata.create_all(bind=engine)
         with engine.connect() as conn:
-            for col in ["custom_avatar", "birth_date", "discord_id", "discord_tag", "instagram_username", "tiktok_username", "twitch_username", "twitter_username", "display_name", "spoken_languages"]:
+            columns_to_add = [
+                ("custom_avatar", "VARCHAR"),
+                ("birth_date", "VARCHAR"),
+                ("discord_id", "VARCHAR"),
+                ("discord_tag", "VARCHAR"),
+                ("instagram_username", "VARCHAR"),
+                ("tiktok_username", "VARCHAR"),
+                ("twitch_username", "VARCHAR"),
+                ("twitter_username", "VARCHAR"),
+                ("display_name", "VARCHAR"),
+                ("spoken_languages", "VARCHAR"),
+                ("is_hidden", "BOOLEAN DEFAULT FALSE"),
+                ("scheduled_deletion_at", "TIMESTAMP")
+            ]
+            for col, col_type in columns_to_add:
                 try:
-                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} VARCHAR"))
+                    conn.execute(text(f"ALTER TABLE users ADD COLUMN {col} {col_type}"))
                     conn.commit()
                 except Exception:
                     pass
     except Exception as e:
         pass
+
 
 try:
     init_db()
