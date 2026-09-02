@@ -105,7 +105,7 @@ export default function StatsLandingPage({
       mainChamp: 'Zed',
       avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg',
       currentIconId: 6926,
-      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'support', label: '🛡️ Support' }],
+      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',
       badge: 'SUPPORT DUO'
     },
@@ -139,7 +139,7 @@ export default function StatsLandingPage({
       mainChamp: 'Lux',
       avatar: '/avatars/julie.jpg',
       currentIconId: 7196,
-      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }, { id: 'support', label: '🛡️ Support' }],
       region: 'EUW',
       badge: 'TOP WINRATE'
     }
