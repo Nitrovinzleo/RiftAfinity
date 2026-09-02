@@ -69,7 +69,7 @@ export default function StatsLandingPage({
       losses: 123,
       role: 'MID',
       mainChamp: 'Lux',
-      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg',
+      avatar: '/avatars/julie.jpg',
       currentIconId: 7196,
       badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',
