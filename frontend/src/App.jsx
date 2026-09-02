@@ -9,11 +9,13 @@ import UserProfileModal from './components/UserProfileModal';
 import DuoMatchmakerModal from './components/DuoMatchmakerModal';
 import MyMatchesModal from './components/MyMatchesModal';
 import DiscordLinkModal from './components/DiscordLinkModal';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import StatsLandingPage from './components/StatsLandingPage';
+import { AlertCircle, RefreshCw, Heart } from 'lucide-react';
 import { translations } from './utils/translations';
 
 export default function App() {
   const [currentLang, setCurrentLang] = useState('fr'); // 'fr' | 'en'
+  const [activeTab, setActiveTab] = useState('form'); // 'form' | 'stats'
   const [viewState, setViewState] = useState('form'); // 'form' | 'loading' | 'result' | 'error'
   const [resultData, setResultData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -175,6 +177,13 @@ export default function App() {
       {/* Barre de navigation sticky */}
       <Navbar
         onReset={handleReset}
+        activeTab={activeTab}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'form') {
+            setViewState('form');
+          }
+        }}
         currentLang={currentLang}
         onToggleLang={toggleLanguage}
         currentUser={currentUser}
@@ -213,8 +222,18 @@ export default function App() {
           </div>
         )}
 
+        {/* Écran Stats & Showcase Landing Page */}
+        {activeTab === 'stats' && (
+          <StatsLandingPage
+            onOpenAuth={() => setIsAuthOpen(true)}
+            onOpenMatchmaker={handleOpenMatchmaker}
+            currentUser={currentUser}
+            currentLang={currentLang}
+          />
+        )}
+
         {/* Écran Formulaire */}
-        {viewState === 'form' && (
+        {activeTab === 'form' && viewState === 'form' && (
           <RiotForm
             onSubmit={handleFormSubmit}
             initialValues={lastSearchInputs}
@@ -224,10 +243,10 @@ export default function App() {
         )}
 
         {/* Écran Chargement Dynamique */}
-        {viewState === 'loading' && <LoadingScreen currentLang={currentLang} />}
+        {activeTab === 'form' && viewState === 'loading' && <LoadingScreen currentLang={currentLang} />}
 
         {/* Écran Tableau de Bord des Résultats */}
-        {viewState === 'result' && (
+        {activeTab === 'form' && viewState === 'result' && (
           <ResultDashboard result={resultData} onReset={handleReset} currentLang={currentLang} />
         )}
 

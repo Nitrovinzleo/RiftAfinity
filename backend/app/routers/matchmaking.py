@@ -324,3 +324,18 @@ async def trigger_test_email(req: TestEmailRequest):
         raise HTTPException(status_code=400, detail="Adresse e-mail invalide.")
     return send_test_email(req.email)
 
+
+@router.get("/public-stats", response_model=dict)
+async def get_public_stats(db: Session = Depends(get_db)):
+    """
+    Retourne les statistiques publiques de la communauté RiftAffinity.
+    """
+    total_users = db.query(User).filter(User.is_verified == True).count()
+    return {
+        "totalPlayers": max(212, total_users),
+        "rankTiers": 9,
+        "regionsCount": 4,
+        "freeToUse": 100
+    }
+
+

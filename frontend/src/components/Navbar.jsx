@@ -1,10 +1,22 @@
 import React from 'react';
-import { User, CheckCircle, LogIn, Heart } from 'lucide-react';
+import { User, CheckCircle, LogIn, Heart, BarChart3, Sparkles } from 'lucide-react';
 import Logo from './Logo';
 import { FrenchFlag, UKFlag } from './FlagIcons';
 import { translations } from '../utils/translations';
 
-export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, matchCount = 0, onOpenAuth, onOpenProfile, onOpenMatchmaker, onOpenMyMatches }) {
+export default function Navbar({ 
+  onReset, 
+  activeTab = 'form',
+  onSelectTab,
+  currentLang, 
+  onToggleLang, 
+  currentUser, 
+  matchCount = 0, 
+  onOpenAuth, 
+  onOpenProfile, 
+  onOpenMatchmaker, 
+  onOpenMyMatches 
+}) {
   const t = translations[currentLang]?.navbar || translations.fr.navbar;
 
   return (
@@ -13,7 +25,10 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
         
         {/* Logo & Main Brand Title */}
         <div 
-          onClick={onReset}
+          onClick={() => {
+            onReset();
+            if (onSelectTab) onSelectTab('form');
+          }}
           className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group"
         >
           {/* Logo Officiel RiftAffinity */}
@@ -35,16 +50,31 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
           </div>
         </div>
 
-        {/* Boutons d'Action (Matchmaking + Notifications Matchs + Connexion/Profil + Langue Desktop) */}
+        {/* Boutons d'Action Nav */}
         <div className="flex items-center gap-1.5 sm:gap-3">
           
+          {/* Bouton Onglet Stats & Community */}
+          {onSelectTab && (
+            <button
+              onClick={() => onSelectTab(activeTab === 'stats' ? 'form' : 'stats')}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-extrabold transition-all border ${
+                activeTab === 'stats'
+                  ? 'bg-gradient-to-r from-[#ff2a85]/20 to-[#00f0ff]/20 border-[#00f0ff] text-white shadow-lg shadow-[#00f0ff]/20'
+                  : 'bg-slate-900/90 border-slate-800 hover:border-[#ff2a85]/50 text-slate-300 hover:text-white'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-[#00f0ff]" />
+              <span className="hidden xs:inline">{currentLang === 'fr' ? 'Stats & Offres 🔥' : 'Stats & Features 🔥'}</span>
+            </button>
+          )}
+
           {/* Bouton Matchmaking Duo */}
           <button
             onClick={onOpenMatchmaker}
             className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white transition-all text-xs font-bold shadow-lg shadow-[#ff2a85]/20 animate-pulse hover:animate-none"
           >
             <span>💘</span>
-            <span>{t.findDuo || 'Trouver un Duo'}</span>
+            <span className="hidden xs:inline">{t.findDuo || 'Trouver un Duo'}</span>
           </button>
 
           {/* Bouton Mes Matchs (si connecté) */}
