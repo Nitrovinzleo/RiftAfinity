@@ -56,24 +56,24 @@ export default function StatsLandingPage({
     { name: 'Challenger', tier: 'challenger' },
   ];
 
-  // Joueurs réels de la plateforme (synchronisés directement depuis l'API Riot Games)
+  // Joueurs réels de la plateforme (les 5 membres de la communauté)
   const defaultPlayers = [
     {
-      name: 'Julie',
+      name: 'tibo',
       hasCustomName: true,
-      tag: '#8ï8',
-      rankTier: 'DIAMOND',
-      rankDivision: 'I',
-      winrate: '54%',
-      wins: 143,
-      losses: 123,
-      role: 'MID',
-      mainChamp: 'Lux',
-      avatar: '/avatars/julie.jpg',
-      currentIconId: 7196,
-      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
+      tag: '#slice',
+      rankTier: 'SILVER',
+      rankDivision: 'III',
+      winrate: '50%',
+      wins: 101,
+      losses: 100,
+      role: 'JUNGLE',
+      mainChamp: 'Lillia',
+      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg',
+      currentIconId: 6024,
+      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'jungle', label: '🐉 Jungler' }],
       region: 'EUW',
-      badge: 'TOP WINRATE'
+      badge: 'JUNGLE KING'
     },
     {
       name: 'Ismael',
@@ -110,23 +110,6 @@ export default function StatsLandingPage({
       badge: 'SUPPORT DUO'
     },
     {
-      name: 'tibo',
-      hasCustomName: true,
-      tag: '#slice',
-      rankTier: 'SILVER',
-      rankDivision: 'III',
-      winrate: '50%',
-      wins: 101,
-      losses: 100,
-      role: 'JUNGLE',
-      mainChamp: 'Lillia',
-      avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg',
-      currentIconId: 6024,
-      badges: [{ id: 'climber', label: '🥇 Climber Duo' }, { id: 'jungle', label: '🐉 Jungler' }],
-      region: 'EUW',
-      badge: 'JUNGLE KING'
-    },
-    {
       name: 'Alanood',
       hasCustomName: true,
       tag: '#UwU',
@@ -142,6 +125,23 @@ export default function StatsLandingPage({
       badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',
       badge: 'MASTER DUO'
+    },
+    {
+      name: 'Julie',
+      hasCustomName: true,
+      tag: '#8ï8',
+      rankTier: 'DIAMOND',
+      rankDivision: 'I',
+      winrate: '54%',
+      wins: 143,
+      losses: 123,
+      role: 'MID',
+      mainChamp: 'Lux',
+      avatar: '/avatars/julie.jpg',
+      currentIconId: 7196,
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'climber', label: '🥇 Climber Duo' }, { id: 'mid', label: '⚡ Carry Mid' }],
+      region: 'EUW',
+      badge: 'TOP WINRATE'
     }
   ];
 
