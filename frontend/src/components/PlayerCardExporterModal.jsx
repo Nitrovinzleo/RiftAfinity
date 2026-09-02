@@ -9,6 +9,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [cardFormat, setCardFormat] = useState('horizontal'); // 'horizontal' | 'vertical'
+  const isFr = String(currentLang).toLowerCase() === 'fr';
 
   useEffect(() => {
     if (isOpen) {
@@ -76,14 +77,14 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
           <div>
             <div className="flex items-center justify-center sm:justify-start gap-2">
               <h3 className="font-display font-black text-xl sm:text-2xl text-white">
-                Générateur de Carte "Duo Card" HD 🎴
+                {isFr ? 'Générateur de Carte "Duo Card" HD 🎴' : 'HD "Duo Card" Generator 🎴'}
               </h3>
               <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#00f0ff] text-white text-[10px] font-black uppercase shadow-md">
-                Virale
+                {isFr ? 'Virale' : 'Viral'}
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              {currentLang === 'fr' 
+              {isFr 
                 ? 'Exportez votre carte illustrée HD pour la partager sur TikTok, Twitter & Discord !'
                 : 'Export your HD player card to share on TikTok, Twitter & Discord!'}
             </p>
@@ -138,7 +139,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
 
               <span className="px-3 py-1 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-[11px] font-black uppercase tracking-wider shadow-sm flex items-center gap-1">
                 <Heart className="w-3 h-3 fill-[#ff2a85]" />
-                <span>{currentLang === 'fr' ? 'Cherche son Duo LoL' : 'Looking for a LoL Duo'}</span>
+                <span>{isFr ? 'Cherche son Duo LoL' : 'Looking for a LoL Duo'}</span>
               </span>
             </div>
 
@@ -183,7 +184,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                     />
                     <div>
                       <span className="text-[10px] text-slate-400 block uppercase font-bold">
-                        {currentLang === 'fr' ? 'Rang Solo/Duo' : 'Solo/Duo Rank'}
+                        {isFr ? 'Rang Solo/Duo' : 'Solo/Duo Rank'}
                       </span>
                       <span className="font-display font-black text-sm text-white">
                         {rankTier} {rankDiv}
@@ -193,7 +194,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
 
                   <div className="text-right">
                     <span className="text-[10px] text-slate-400 block uppercase font-bold">
-                      {currentLang === 'fr' ? 'Poste & Main' : 'Role & Main'}
+                      {isFr ? 'Poste & Main' : 'Role & Main'}
                     </span>
                     <span className="font-extrabold text-xs text-[#00f0ff]">
                       ⚔️ {user.primaryRole || 'MID'} ({user.favoriteChampion || 'LoL'})
@@ -228,10 +229,10 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
             <div className="relative z-10 pt-3 border-t border-slate-700/60 flex items-center justify-between text-xs mt-4">
               <div className="flex items-center gap-1.5 text-[#00f0ff] font-bold">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>{currentLang === 'fr' ? 'Swipe-moi sur rift-afinity.vercel.app 💖' : 'Swipe me on rift-afinity.vercel.app 💖'}</span>
+                <span>{isFr ? 'Swipe-moi sur rift-afinity.vercel.app 💖' : 'Swipe me on rift-afinity.vercel.app 💖'}</span>
               </div>
               <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
-                {currentLang === 'fr' ? 'Invocateur Vérifié • RiftAffinity' : 'Verified Summoner • RiftAffinity'}
+                {isFr ? 'Invocateur Vérifié • RiftAffinity' : 'Verified Summoner • RiftAffinity'}
               </span>
             </div>
 
@@ -245,7 +246,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
             className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-bold text-slate-200 transition-all flex items-center justify-center gap-2"
           >
             {copiedLink ? <Check className="w-4 h-4 text-emerald-400" /> : <Share2 className="w-4 h-4 text-[#00f0ff]" />}
-            <span>{copiedLink ? (currentLang === 'fr' ? 'Lien copié !' : 'Link Copied!') : (currentLang === 'fr' ? 'Copier le Lien du Site' : 'Copy Site Link')}</span>
+            <span>{copiedLink ? (isFr ? 'Lien copié !' : 'Link Copied!') : (isFr ? 'Copier le Lien du Site' : 'Copy Site Link')}</span>
           </button>
 
           <button
@@ -254,7 +255,7 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
             className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-[#ff2a85] via-[#8a2be2] to-[#00f0ff] hover:from-[#ff2a85] hover:to-[#00f0ff] text-xs font-black text-white shadow-lg shadow-[#ff2a85]/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95"
           >
             <Download className="w-4 h-4 animate-bounce" />
-            <span>{isDownloading ? (currentLang === 'fr' ? 'Génération HD...' : 'Generating HD...') : (currentLang === 'fr' ? 'Télécharger la Carte HD 📥' : 'Download HD Card 📥')}</span>
+            <span>{isDownloading ? (isFr ? 'Génération HD...' : 'Generating HD...') : (isFr ? 'Télécharger la Carte HD 📥' : 'Download HD Card 📥')}</span>
           </button>
         </div>
 
