@@ -138,6 +138,10 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                       src={cand.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${cand.currentIconId || 28}.png`}
                       alt="Avatar"
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${cand.currentIconId || 28}.png`;
+                      }}
                     />
                   </div>
 

@@ -107,6 +107,10 @@ export default function Navbar({
                   src={currentUser.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`}
                   alt="Avatar"
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentUser.currentIconId || currentUser.targetIconId || 28}.png`;
+                  }}
                 />
               </div>
               <span className="max-w-[70px] sm:max-w-[120px] truncate">{currentUser.displayName || currentUser.gameName}</span>

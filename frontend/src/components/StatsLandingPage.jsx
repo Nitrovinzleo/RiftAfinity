@@ -205,7 +205,15 @@ export default function StatsLandingPage({
               {/* Avatar + Nom & Rang */}
               <div className="flex items-center gap-4">
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#00f0ff] shrink-0 bg-slate-950 shadow-lg group-hover:scale-105 transition-transform">
-                  <img src={player.avatar} alt={player.name} className="w-full h-full object-cover" />
+                  <img 
+                    src={player.avatar} 
+                    alt={player.name} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/28.png";
+                    }}
+                  />
                 </div>
                 <div>
                   <div className="flex items-center gap-1">

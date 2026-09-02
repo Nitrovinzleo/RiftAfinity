@@ -392,6 +392,10 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                         src={currentCandidate.customAvatar || `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentCandidate.currentIconId || 28}.png`}
                         alt="Avatar Candidate"
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/${currentCandidate.currentIconId || 28}.png`;
+                        }}
                       />
                     </div>
 
