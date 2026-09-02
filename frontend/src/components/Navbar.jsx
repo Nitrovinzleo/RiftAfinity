@@ -36,29 +36,28 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
         </div>
 
         {/* Boutons d'Action (Matchmaking + Notifications Matchs + Connexion/Profil + Langue Desktop) */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           
           {/* Bouton Matchmaking Duo */}
           <button
             onClick={onOpenMatchmaker}
-            className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white transition-all text-xs font-bold shadow-lg shadow-[#ff2a85]/20 animate-pulse hover:animate-none"
+            className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white transition-all text-xs font-bold shadow-lg shadow-[#ff2a85]/20 animate-pulse hover:animate-none"
           >
             <span>💘</span>
-            <span className="hidden xs:inline sm:inline">{t.findDuo || 'Trouver un Duo'}</span>
+            <span>{t.findDuo || 'Trouver un Duo'}</span>
           </button>
 
           {/* Bouton Mes Matchs (si connecté) */}
           {currentUser && (
             <button
               onClick={onOpenMyMatches}
-              className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-200 hover:text-white transition-all text-xs font-bold shadow-md"
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-200 hover:text-white transition-all text-xs font-bold shadow-md"
               title="Mes Matchs & Notifications"
             >
               <Heart className="w-4 h-4 text-[#ff2a85] fill-[#ff2a85]" />
-              <span className="hidden sm:inline">{currentLang === 'fr' ? 'Mes Matchs' : 'My Matches'}</span>
+              <span className="hidden xs:inline">{currentLang === 'fr' ? 'Mes Matchs' : 'My Matches'}</span>
             </button>
           )}
-
 
           {/* Bouton Authentification / Profil */}
           {currentUser ? (
@@ -74,7 +73,7 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="hidden sm:inline max-w-[120px] truncate">{currentUser.displayName || currentUser.gameName}</span>
+              <span className="max-w-[70px] sm:max-w-[120px] truncate">{currentUser.displayName || currentUser.gameName}</span>
               {currentUser.isVerified && (
                 <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
               )}
@@ -85,9 +84,10 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
               className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl btn-pink-cyan text-white transition-all text-xs font-bold shadow-md"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Se Connecter</span>
+              <span>Se Connecter</span>
             </button>
           )}
+
 
           {/* Bouton de langue DESKTOP uniquement (à droite dans la Navbar) */}
           <button
