@@ -263,25 +263,53 @@ export default function PlayerCardExporterModal({ isOpen, onClose, user, current
                 </span>
               </div>
               
-              <div className="flex items-center gap-1.5 flex-wrap justify-end shrink-0">
-                {spokenBadges.map((langItem, idx) => (
-                  <span 
-                    key={idx}
-                    className="text-[10px] font-black text-[#00f0ff] uppercase tracking-wider bg-slate-950/90 border border-[#00f0ff]/40 px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1.5"
-                  >
+              {cardFormat === 'horizontal' ? (
+                <div className="flex items-center gap-1.5 flex-wrap justify-end shrink-0">
+                  {spokenBadges.map((langItem, idx) => (
+                    <span 
+                      key={idx}
+                      className="text-[10px] font-black text-[#00f0ff] uppercase tracking-wider bg-slate-950/90 border border-[#00f0ff]/40 px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1.5"
+                    >
+                      <span>🗣️</span>
+                      <span>{langItem.code}</span>
+                      {langItem.flagUrl && (
+                        <img 
+                          src={langItem.flagUrl} 
+                          alt={langItem.code} 
+                          className="w-4 h-3 rounded-[2px] object-cover shadow-sm"
+                          crossOrigin="anonymous"
+                        />
+                      )}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-end gap-1 shrink-0 max-w-[130px]">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
                     <span>🗣️</span>
-                    <span>{langItem.code}</span>
-                    {langItem.flagUrl && (
-                      <img 
-                        src={langItem.flagUrl} 
-                        alt={langItem.code} 
-                        className="w-4 h-3 rounded-[2px] object-cover shadow-sm"
-                        crossOrigin="anonymous"
-                      />
-                    )}
+                    <span>{isFr ? 'Langues' : 'Languages'}</span>
                   </span>
-                ))}
-              </div>
+
+                  <div className="flex items-center gap-1 flex-wrap justify-end">
+                    {spokenBadges.map((langItem, idx) => (
+                      <span 
+                        key={idx}
+                        className="text-[10px] font-black text-[#00f0ff] uppercase tracking-wider bg-slate-950/90 border border-[#00f0ff]/40 px-1.5 py-0.5 rounded-md shadow-sm flex items-center gap-1"
+                      >
+                        <span>{langItem.code}</span>
+                        {langItem.flagUrl && (
+                          <img 
+                            src={langItem.flagUrl} 
+                            alt={langItem.code} 
+                            className="w-3.5 h-2.5 rounded-[1px] object-cover shadow-sm"
+                            crossOrigin="anonymous"
+                          />
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>
