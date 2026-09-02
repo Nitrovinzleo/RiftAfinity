@@ -204,7 +204,6 @@ async def process_swipe(
     """
     user = get_current_user_from_token(authorization, db)
 
-
     try:
         target_id = int(req.get_target_id())
     except (ValueError, TypeError):
@@ -215,25 +214,27 @@ async def process_swipe(
     if not target_user:
         raise HTTPException(status_code=404, detail="Joueur cible introuvable.")
 
-    # Enregistrer ou mettre à jour le swipe
-    existing_swipe = db.query(DuoSwipe).filter(
+    # 1. Enregistrer ou mettre à jour le swipe de l'utilisateur actuel
+    current_swipe = db.query(DuoSwipe).filter(
         DuoSwipe.swiper_id == user.id,
         DuoSwipe.target_id == target_id
     ).first()
 
-    if existing_swipe:
-        existing_swipe.liked = req.liked
-    else:
-        new_swipe = DuoSwipe(
+    if not current_swipe:
+        current_swipe = DuoSwipe(
             swiper_id=user.id,
             target_id=target_id,
-            liked=req.liked
+            liked=req.liked,
+            is_match=False
         )
-        db.add(new_swipe)
-    
-    db.commit()
+        db.add(current_swipe)
+    else:
+        current_swipe.liked = req.liked
 
-    # Si le swipe actuel est un "Like", vérifier si l'utilisateur cible a également liké l'utilisateur actuel
+    db.commit()
+    db.refresh(current_swipe)
+
+    # 2. Si le swipe actuel est un "Like", vérifier si le joueur cible a également liké l'utilisateur actuel
     if req.liked:
         reciprocal_swipe = db.query(DuoSwipe).filter(
             DuoSwipe.swiper_id == target_id,
@@ -242,15 +243,8 @@ async def process_swipe(
         ).first()
 
         if reciprocal_swipe:
-            # Marquer le match
-            if existing_swipe:
-                existing_swipe.is_match = True
-            else:
-                db.query(DuoSwipe).filter(
-                    DuoSwipe.swiper_id == user.id,
-                    DuoSwipe.target_id == target_id
-                ).update({"is_match": True})
-            
+            # C'est un Match réciproque !
+            current_swipe.is_match = True
             reciprocal_swipe.is_match = True
             db.commit()
 
@@ -267,6 +261,7 @@ async def process_swipe(
             }
 
     return {"isMatch": False, "message": "Swipe enregistré avec succès."}
+
 
 @router.get("/matches", response_model=List[dict])
 async def get_user_matches(
