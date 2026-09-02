@@ -413,6 +413,17 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                         <p className="text-xs text-slate-400">
                           {currentCandidate.age} {currentLang === 'fr' ? 'ans' : 'yo'} • {currentLang === 'fr' ? 'Serveur' : 'Server'} <span className="uppercase text-slate-200 font-semibold">{currentCandidate.region}</span>
                         </p>
+
+                        {/* Badges Automatiques Riot (💎 High Elo, 🥇 Climber Duo...) */}
+                        {currentCandidate.badges && currentCandidate.badges.length > 0 && (
+                          <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                            {currentCandidate.badges.map((b) => (
+                              <span key={b.id} className="px-2 py-0.5 rounded-full bg-slate-950 border border-slate-700/80 text-[10px] font-black text-amber-300 shadow-sm">
+                                {b.label}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

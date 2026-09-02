@@ -76,6 +76,33 @@ class User(Base):
     def full_riot_id(self) -> str:
         return f"{self.game_name}#{self.tag_line}"
 
+    @property
+    def calculated_badges(self) -> list:
+        badges = []
+        tier = (self.rank_tier or "").upper()
+        if tier in ["DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"]:
+            badges.append({"id": "high_elo", "label": "💎 High Elo", "color": "purple"})
+
+        wins = self.rank_wins or 0
+        losses = self.rank_losses or 0
+        tot = wins + losses
+        if tot >= 10 and round((wins / tot) * 100) >= 55:
+            badges.append({"id": "climber", "label": "🥇 Climber Duo", "color": "amber"})
+
+        role = (self.primary_role or "").upper()
+        if role == "SUPPORT":
+            badges.append({"id": "support", "label": "🛡️ Support Main", "color": "blue"})
+        elif role == "JUNGLE":
+            badges.append({"id": "jungle", "label": "🐉 Dragon Slayer", "color": "emerald"})
+        elif role == "MID":
+            badges.append({"id": "mid", "label": "⚡ Carry Mid", "color": "cyan"})
+        elif role in ["ADC", "BOTTOM"]:
+            badges.append({"id": "adc", "label": "🏹 ADC Carry", "color": "pink"})
+        elif role == "TOP":
+            badges.append({"id": "top", "label": "🛡️ Top Titan", "color": "orange"})
+
+        return badges
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -95,6 +122,7 @@ class User(Base):
             "rankTier": self.rank_tier,
             "rankDivision": self.rank_division,
             "rankLp": self.rank_lp,
+            "badges": self.calculated_badges,
             "discordId": self.discord_id,
             "discordTag": self.discord_tag,
             "instagramUsername": self.instagram_username,
@@ -117,6 +145,27 @@ class DuoSwipe(Base):
     liked = Column(Boolean, nullable=False)
     is_match = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class MatchMessage(Base):
+    __tablename__ = "match_messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, nullable=False, index=True)
+    receiver_id = Column(Integer, nullable=False, index=True)
+    content = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    is_read = Column(Boolean, default=False)
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "senderId": self.sender_id,
+            "receiverId": self.receiver_id,
+            "content": self.content,
+            "createdAt": self.created_at.isoformat() if self.created_at else None,
+            "isRead": self.is_read
+        }
 
 
 class DiscordPendingLink(Base):

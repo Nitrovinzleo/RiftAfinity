@@ -6,7 +6,7 @@ from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field
 
 from app.database import get_db
-from app.models.db_models import User, DuoSwipe
+from app.models.db_models import User, DuoSwipe, MatchMessage
 from app.services.auth_service import decode_access_token
 from app.services.email_service import send_match_emails, send_test_email
 
@@ -325,6 +325,100 @@ async def get_user_matches(
         result.append(sanitize_candidate_for_match(u_dict))
 
     return result
+
+
+@router.delete("/matches/{partner_id}", response_model=dict)
+async def delete_user_match(
+    partner_id: int,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Supprime un match réciproque entre l'utilisateur et partner_id.
+    Réinitialise les swipes pour que la personne retourne dans les duos disponibles.
+    """
+    user = get_current_user_from_token(authorization, db)
+
+    # Récupérer les swipes dans les 2 sens et les supprimer
+    swipes = db.query(DuoSwipe).filter(
+        ((DuoSwipe.swiper_id == user.id) & (DuoSwipe.target_id == partner_id)) |
+        ((DuoSwipe.swiper_id == partner_id) & (DuoSwipe.target_id == user.id))
+    ).all()
+
+    for s in swipes:
+        db.delete(s)
+    
+    db.commit()
+
+    return {"success": True, "message": "Match supprimé avec succès. Le profil retourne dans les duos disponibles."}
+
+
+class SendMessageRequest(BaseModel):
+    content: str = Field(..., description="Contenu du message")
+
+@router.get("/matches/{partner_id}/messages", response_model=List[dict])
+async def get_match_messages(
+    partner_id: int,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Récupère l'historique des messages échangés entre 2 duos matchés.
+    """
+    user = get_current_user_from_token(authorization, db)
+
+    # Vérifier que le match existe
+    match_exists = db.query(DuoSwipe).filter(
+        ((DuoSwipe.swiper_id == user.id) & (DuoSwipe.target_id == partner_id) & (DuoSwipe.is_match == True)) |
+        ((DuoSwipe.swiper_id == partner_id) & (DuoSwipe.target_id == user.id) & (DuoSwipe.is_match == True))
+    ).first()
+
+    if not match_exists:
+        raise HTTPException(status_code=403, detail="Vous devez être matché avec cet utilisateur pour accéder au chat.")
+
+    messages = db.query(MatchMessage).filter(
+        ((MatchMessage.sender_id == user.id) & (MatchMessage.receiver_id == partner_id)) |
+        ((MatchMessage.sender_id == partner_id) & (MatchMessage.receiver_id == user.id))
+    ).order_by(MatchMessage.created_at.asc()).all()
+
+    return [m.to_dict() for m in messages]
+
+
+@router.post("/matches/{partner_id}/messages", response_model=dict)
+async def send_match_message(
+    partner_id: int,
+    req: SendMessageRequest,
+    authorization: Optional[str] = Header(None),
+    db: Session = Depends(get_db)
+):
+    """
+    Envoie un message direct à un duo matché.
+    """
+    user = get_current_user_from_token(authorization, db)
+
+    if not req.content or not req.content.strip():
+        raise HTTPException(status_code=400, detail="Le message ne peut pas être vide.")
+
+    # Vérifier que le match existe
+    match_exists = db.query(DuoSwipe).filter(
+        ((DuoSwipe.swiper_id == user.id) & (DuoSwipe.target_id == partner_id) & (DuoSwipe.is_match == True)) |
+        ((DuoSwipe.swiper_id == partner_id) & (DuoSwipe.target_id == user.id) & (DuoSwipe.is_match == True))
+    ).first()
+
+    if not match_exists:
+        raise HTTPException(status_code=403, detail="Vous devez être matché pour envoyer un message.")
+
+    msg = MatchMessage(
+        sender_id=user.id,
+        receiver_id=partner_id,
+        content=req.content.strip()
+    )
+    db.add(msg)
+    db.commit()
+    db.refresh(msg)
+
+    return {"success": True, "message": msg.to_dict()}
+
 
 class TestEmailRequest(BaseModel):
     email: str = Field(..., description="Adresse e-mail destinataire pour le test SMTP")

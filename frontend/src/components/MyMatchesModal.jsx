@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Heart, Sparkles, Flame, ShieldCheck, RefreshCw, Copy, Check, ExternalLink } from 'lucide-react';
+import { 
+  X, Heart, Sparkles, Flame, ShieldCheck, RefreshCw, Copy, Check, ExternalLink, 
+  Trash2, MessageSquare, Send, UserX, AlertTriangle
+} from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
 import { translations } from '../utils/translations';
 
@@ -7,6 +10,11 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
   const [matches, setMatches] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [copiedKey, setCopiedKey] = useState('');
+  const [activeChatId, setActiveChatId] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [unmatchingId, setUnmatchingId] = useState(null);
 
   const t = translations[currentLang]?.matchmaker || translations.fr.matchmaker;
 
@@ -18,6 +26,7 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
     } else {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      setActiveChatId(null);
     }
     return () => {
       document.body.style.overflow = '';
@@ -50,6 +59,87 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
     setTimeout(() => setCopiedKey(''), 2000);
   };
 
+  // --- MESSAGERIE DIRECTE DUO ---
+  const handleToggleChat = async (partnerId) => {
+    if (activeChatId === partnerId) {
+      setActiveChatId(null);
+      setMessages([]);
+      return;
+    }
+    setActiveChatId(partnerId);
+    await fetchMessages(partnerId);
+  };
+
+  const fetchMessages = async (partnerId) => {
+    try {
+      const token = localStorage.getItem('riftaffinity_token');
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const res = await fetch(`${backendUrl}/api/matchmaking/matches/${partnerId}/messages`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMessages(data);
+      }
+    } catch (err) {
+      console.error('Erreur lors du chargement des messages:', err);
+    }
+  };
+
+  const handleSendMessage = async (partnerId) => {
+    if (!inputMessage.trim() || isSending) return;
+    setIsSending(true);
+    try {
+      const token = localStorage.getItem('riftaffinity_token');
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const res = await fetch(`${backendUrl}/api/matchmaking/matches/${partnerId}/messages`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ content: inputMessage.trim() })
+      });
+      if (res.ok) {
+        setInputMessage('');
+        await fetchMessages(partnerId);
+      }
+    } catch (err) {
+      console.error('Erreur lors de l’envoi du message:', err);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  // --- SUPPRESSION D'UN MATCH (UNMATCH) ---
+  const handleUnmatch = async (partnerId, partnerName) => {
+    const confirmMsg = currentLang === 'fr'
+      ? `Voulez-vous vraiment supprimer le match avec ${partnerName} ? Le profil retournera dans les duos disponibles.`
+      : `Are you sure you want to unmatch ${partnerName}? They will return to available duos.`;
+    
+    if (!window.confirm(confirmMsg)) return;
+
+    setUnmatchingId(partnerId);
+    try {
+      const token = localStorage.getItem('riftaffinity_token');
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const res = await fetch(`${backendUrl}/api/matchmaking/matches/${partnerId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setMatches(prev => prev.filter(m => m.id !== partnerId));
+        if (activeChatId === partnerId) {
+          setActiveChatId(null);
+        }
+      }
+    } catch (err) {
+      console.error('Erreur lors de la suppression du match:', err);
+    } finally {
+      setUnmatchingId(null);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -65,14 +155,14 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-display font-black text-lg sm:text-xl text-white leading-none">
-                  {currentLang === 'fr' ? 'Mes Matchs & Notifications 💖' : 'My Matches & Notifications 💖'}
+                  {currentLang === 'fr' ? 'Mes Matchs & Chat Duo 💖' : 'My Matches & Duo Chat 💖'}
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-[#ff2a85]/20 text-[#ff2a85] border border-[#ff2a85]/40 text-xs font-black">
                   {matches.length}
                 </span>
               </div>
               <span className="text-[11px] text-slate-400">
-                {currentLang === 'fr' ? 'Retrouvez tous vos duos matchés et leurs réseaux sociaux débloqués !' : 'View all your matched duos and unlocked social contacts!'}
+                {currentLang === 'fr' ? 'Retrouvez vos duos matchés, discutez en direct et gérez vos contacts !' : 'View your matched duos, chat live, and manage contacts!'}
               </span>
             </div>
           </div>
@@ -125,10 +215,22 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
             {matches.map((cand) => (
               <div key={cand.id} className="relative rounded-2xl bg-[#090b16] border border-slate-800 p-4 space-y-3 shadow-lg hover:border-[#ff2a85]/50 transition-all">
                 
-                {/* Score badge */}
-                <div className="absolute top-4 right-4 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-extrabold text-[11px] shadow-md flex items-center gap-1">
-                  <Flame className="w-3 h-3 text-amber-300" />
-                  <span>{cand.compatibilityScore}%</span>
+                {/* Score badge & Bouton Supprimer le match */}
+                <div className="absolute top-4 right-4 flex items-center gap-2">
+                  <div className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-extrabold text-[11px] shadow-md flex items-center gap-1">
+                    <Flame className="w-3 h-3 text-amber-300" />
+                    <span>{cand.compatibilityScore}%</span>
+                  </div>
+
+                  {/* Bouton Supprimer le match */}
+                  <button
+                    onClick={() => handleUnmatch(cand.id, cand.displayName || cand.gameName)}
+                    disabled={unmatchingId === cand.id}
+                    className="p-1.5 rounded-lg bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-400 hover:text-red-200 transition-colors shadow-sm"
+                    title={currentLang === 'fr' ? 'Supprimer ce match' : 'Unmatch player'}
+                  >
+                    <UserX className={`w-3.5 h-3.5 ${unmatchingId === cand.id ? 'animate-spin' : ''}`} />
+                  </button>
                 </div>
 
                 {/* Candidate header */}
@@ -145,7 +247,7 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                     />
                   </div>
 
-                  <div>
+                  <div className="space-y-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <h4 className="font-display font-black text-lg text-white">
                         {cand.displayName || cand.gameName}
@@ -158,6 +260,17 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                     <p className="text-xs text-slate-400">
                       {cand.age} {currentLang === 'fr' ? 'ans' : 'yo'} • Serveur <span className="uppercase text-slate-200 font-semibold">{cand.region}</span>
                     </p>
+
+                    {/* Badges Automatiques (💎 High Elo, 🥇 Climber Duo...) */}
+                    {cand.badges && cand.badges.length > 0 && (
+                      <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                        {cand.badges.map((b) => (
+                          <span key={b.id} className="px-2 py-0.5 rounded-full bg-slate-950 border border-slate-700/80 text-[10px] font-black text-amber-300 shadow-sm">
+                            {b.label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -188,13 +301,24 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
 
                 {/* Contacts & Réseaux Sociaux Débloqués */}
                 <div className="p-3 rounded-xl bg-slate-900 border border-[#00f0ff]/30 space-y-2">
-                  <h5 className="text-[11px] font-bold text-[#00f0ff] uppercase tracking-wider flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                    <span>{currentLang === 'fr' ? 'Contacts & Réseaux Débloqués :' : 'Unlocked Social Contacts:'}</span>
-                  </h5>
+                  <div className="flex items-center justify-between">
+                    <h5 className="text-[11px] font-bold text-[#00f0ff] uppercase tracking-wider flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      <span>{currentLang === 'fr' ? 'Contacts Débloqués :' : 'Unlocked Contacts:'}</span>
+                    </h5>
+
+                    {/* Bouton Chat Direct */}
+                    <button
+                      onClick={() => handleToggleChat(cand.id)}
+                      className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-transform"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>{activeChatId === cand.id ? (currentLang === 'fr' ? 'Fermer Chat' : 'Close Chat') : (currentLang === 'fr' ? 'Chat Direct 💬' : 'Direct Chat 💬')}</span>
+                    </button>
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    {/* Riot ID (LoL) - Toujours affiché & copiables en 1 clic */}
+                    {/* Riot ID (LoL) - Toujours affiché & copiable */}
                     <div className="p-2.5 rounded-lg bg-slate-950 border border-[#00f0ff]/40 flex items-center justify-between font-mono text-xs col-span-1 sm:col-span-2 shadow-sm">
                       <span className="truncate text-slate-300">
                         ⚔️ Riot ID LoL : <strong className="text-[#00f0ff] font-bold">{cand.gameName}#{cand.tagLine}</strong>
@@ -202,7 +326,6 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                       <button
                         onClick={() => handleCopy(`${cand.gameName}#${cand.tagLine}`, `riot-${cand.id}`)}
                         className="px-2.5 py-1 rounded-lg bg-[#00f0ff]/10 hover:bg-[#00f0ff]/20 text-[#00f0ff] text-[11px] font-bold transition-colors flex items-center gap-1 shrink-0 border border-[#00f0ff]/30"
-                        title="Copier le Riot ID"
                       >
                         {copiedKey === `riot-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedKey === `riot-${cand.id}` ? (currentLang === 'fr' ? 'Copié !' : 'Copied!') : (currentLang === 'fr' ? 'Copier' : 'Copy')}</span>
@@ -215,7 +338,6 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                         <button
                           onClick={() => handleCopy(cand.discordTag, `discord-${cand.id}`)}
                           className="p-1 text-slate-400 hover:text-white transition-colors"
-                          title="Copier"
                         >
                           {copiedKey === `discord-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
@@ -228,40 +350,68 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                         <button
                           onClick={() => handleCopy(cand.instagramUsername, `insta-${cand.id}`)}
                           className="p-1 text-slate-400 hover:text-white transition-colors"
-                          title="Copier"
                         >
                           {copiedKey === `insta-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     )}
-
-                    {cand.tiktokUsername && (
-                      <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono">
-                        <span className="truncate text-slate-300">🎵 <strong className="text-white">{cand.tiktokUsername}</strong></span>
-                        <button
-                          onClick={() => handleCopy(cand.tiktokUsername, `tiktok-${cand.id}`)}
-                          className="p-1 text-slate-400 hover:text-white transition-colors"
-                          title="Copier"
-                        >
-                          {copiedKey === `tiktok-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                    )}
-
-                    {cand.twitchUsername && (
-                      <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono">
-                        <span className="truncate text-slate-300">🟣 <strong className="text-white">{cand.twitchUsername}</strong></span>
-                        <button
-                          onClick={() => handleCopy(cand.twitchUsername, `twitch-${cand.id}`)}
-                          className="p-1 text-slate-400 hover:text-white transition-colors"
-                          title="Copier"
-                        >
-                          {copiedKey === `twitch-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                        </button>
-                      </div>
-                    )}
                   </div>
                 </div>
+
+                {/* --- MODULE CHAT DIRECT ENTRE MATCHS --- */}
+                {activeChatId === cand.id && (
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-[#ff2a85]/40 space-y-3 animate-fadeIn">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                      <span className="text-xs font-bold text-[#ff2a85] flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>Chat Direct avec {cand.displayName || cand.gameName}</span>
+                      </span>
+                    </div>
+
+                    {/* Zone d'affichage des messages */}
+                    <div className="max-h-48 overflow-y-auto space-y-2 p-2 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs">
+                      {messages.length === 0 ? (
+                        <p className="text-center text-slate-500 py-3 italic">
+                          {currentLang === 'fr' ? 'Envoyez votre premier message pour démarrer la conversation !' : 'Send your first message to start chatting!'}
+                        </p>
+                      ) : (
+                        messages.map((m) => {
+                          const isMe = m.senderId === currentUser.id;
+                          return (
+                            <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                              <div className={`max-w-[80%] p-2.5 rounded-2xl ${
+                                isMe 
+                                  ? 'bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-medium rounded-tr-none' 
+                                  : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-tl-none'
+                              }`}>
+                                <p>{m.content}</p>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+
+                    {/* Formulaire d'envoi de message */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={inputMessage}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(cand.id)}
+                        placeholder={currentLang === 'fr' ? 'Écrire un message...' : 'Write a message...'}
+                        className="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-[#ff2a85]"
+                      />
+                      <button
+                        onClick={() => handleSendMessage(cand.id)}
+                        disabled={isSending || !inputMessage.trim()}
+                        className="p-2 rounded-xl bg-[#ff2a85] hover:bg-[#ff2a85]/80 disabled:opacity-50 text-white font-bold transition-all shrink-0"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
 
               </div>
             ))}
