@@ -362,14 +362,23 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                 {activeChatId === cand.id && (
                   <div className="p-3 rounded-2xl bg-slate-950 border border-[#ff2a85]/40 space-y-3 animate-fadeIn">
                     <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                      <span className="text-xs font-bold text-[#ff2a85] flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        <span>Chat Direct avec {cand.displayName || cand.gameName}</span>
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full overflow-hidden border border-[#00f0ff] shrink-0 bg-slate-950 shadow-sm">
+                          <img
+                            src={cand.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${cand.currentIconId || 28}.jpg`}
+                            alt="Avatar Header"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <span className="text-xs font-bold text-[#ff2a85] flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>Chat Direct avec {cand.displayName || cand.gameName}</span>
+                        </span>
+                      </div>
                     </div>
 
                     {/* Zone d'affichage des messages */}
-                    <div className="max-h-48 overflow-y-auto space-y-2 p-2 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs">
+                    <div className="max-h-48 overflow-y-auto space-y-2.5 p-2 rounded-xl bg-slate-900/80 border border-slate-800/80 text-xs">
                       {messages.length === 0 ? (
                         <p className="text-center text-slate-500 py-3 italic">
                           {currentLang === 'fr' ? 'Envoyez votre premier message pour démarrer la conversation !' : 'Send your first message to start chatting!'}
@@ -377,15 +386,47 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                       ) : (
                         messages.map((m) => {
                           const isMe = m.senderId === currentUser.id;
+                          const avatarUrl = isMe 
+                            ? (currentUser.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${currentUser.currentIconId || 28}.jpg`)
+                            : (cand.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${cand.currentIconId || 28}.jpg`);
+
                           return (
-                            <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                              <div className={`max-w-[80%] p-2.5 rounded-2xl ${
+                            <div key={m.id} className={`flex items-end gap-2 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                              {!isMe && (
+                                <div className="w-6 h-6 rounded-full overflow-hidden border border-[#00f0ff] shrink-0 bg-slate-950 shadow-sm mb-0.5">
+                                  <img 
+                                    src={avatarUrl} 
+                                    alt="Partner Avatar" 
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.target.onerror = null;
+                                      e.target.src = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${cand.currentIconId || 28}.jpg`;
+                                    }}
+                                  />
+                                </div>
+                              )}
+
+                              <div className={`max-w-[75%] p-2.5 rounded-2xl text-xs shadow-md ${
                                 isMe 
-                                  ? 'bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-medium rounded-tr-none' 
-                                  : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-tl-none'
+                                  ? 'bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-medium rounded-br-none' 
+                                  : 'bg-slate-800 border border-slate-700 text-slate-200 rounded-bl-none'
                               }`}>
                                 <p>{m.content}</p>
                               </div>
+
+                              {isMe && (
+                                <div className="w-6 h-6 rounded-full overflow-hidden border border-[#ff2a85] shrink-0 bg-slate-950 shadow-sm mb-0.5">
+                                  <img 
+                                    src={avatarUrl} 
+                                    alt="My Avatar" 
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      e.target.onerror = null;
+                                      e.target.src = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${currentUser.currentIconId || 28}.jpg`;
+                                    }}
+                                  />
+                                </div>
+                              )}
                             </div>
                           );
                         })
