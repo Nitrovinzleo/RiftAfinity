@@ -324,11 +324,20 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                 
                 <div className="relative rounded-2xl bg-[#090b16] border border-slate-800 overflow-hidden shadow-xl p-5 space-y-4">
                   
-                  {/* Badge de compatibilité */}
-                  <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-extrabold text-xs shadow-lg flex items-center gap-1.5 animate-pulse">
-                    <Flame className="w-3.5 h-3.5 text-amber-300" />
-                    <span>{currentCandidate.compatibilityScore}% {t.compatibilityBadge || "Compatibilité"}</span>
+                  {/* Badges de compatibilité & A liké votre profil */}
+                  <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5 z-10">
+                    {currentCandidate.hasLikedYou && (
+                      <div className="px-3 py-1 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#e0115f] text-white font-black text-xs shadow-lg flex items-center gap-1.5 animate-bounce border border-white/20">
+                        <Heart className="w-3.5 h-3.5 fill-white text-white" />
+                        <span>{currentLang === 'fr' ? 'A Liké Votre Profil ! 💖' : 'Liked Your Profile! 💖'}</span>
+                      </div>
+                    )}
+                    <div className="px-3 py-1 rounded-full bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] text-white font-extrabold text-xs shadow-lg flex items-center gap-1.5 animate-pulse">
+                      <Flame className="w-3.5 h-3.5 text-amber-300" />
+                      <span>{currentCandidate.compatibilityScore}% {t.compatibilityBadge || "Compatibilité"}</span>
+                    </div>
                   </div>
+
 
                   {/* Header Carte (Avatar + Nom) */}
                   <div className="flex items-center gap-4">

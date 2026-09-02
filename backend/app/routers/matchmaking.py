@@ -158,17 +158,35 @@ async def get_matchmaking_candidates(
         User.scheduled_deletion_at == None
     ).all()
 
-    candidates = []
+    # Récupérer les IDs des personnes qui ont DÉJÀ liké l'utilisateur actuel
+    liker_ids = set([
+        s.swiper_id for s in db.query(DuoSwipe).filter(
+            DuoSwipe.target_id == user.id,
+            DuoSwipe.liked == True,
+            DuoSwipe.is_match == False
+        ).all()
+    ])
+
+    prioritized_candidates = []
+    normal_candidates = []
 
     for c in db_candidates:
         if c.id not in swiped_ids:
             c_dict = c.to_dict()
             c_dict["compatibilityScore"] = calculate_compatibility_score(user, c_dict)
-            candidates.append(sanitize_candidate_for_public(c_dict))
+            c_dict["hasLikedYou"] = (c.id in liker_ids)
+            sanitized = sanitize_candidate_for_public(c_dict)
 
-    # Mélanger les profils réels
-    random.shuffle(candidates)
+            if c.id in liker_ids:
+                prioritized_candidates.append(sanitized)
+            else:
+                normal_candidates.append(sanitized)
+
+    random.shuffle(normal_candidates)
+    # Les personnes ayant déjà liké l'utilisateur sont placées TOUT EN HAUT de la pile !
+    candidates = prioritized_candidates + normal_candidates
     return candidates
+
 
 @router.post("/swipe", response_model=dict)
 async def process_swipe(
