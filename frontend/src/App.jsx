@@ -11,6 +11,7 @@ import MyMatchesModal from './components/MyMatchesModal';
 import DiscordLinkModal from './components/DiscordLinkModal';
 import DiscordBotModal from './components/DiscordBotModal';
 import AboutUsModal from './components/AboutUsModal';
+import PlayerCardExporterModal from './components/PlayerCardExporterModal';
 import StatsLandingPage from './components/StatsLandingPage';
 import { AlertCircle, RefreshCw, Heart } from 'lucide-react';
 import { translations } from './utils/translations';
@@ -31,6 +32,7 @@ export default function App() {
   const [isMyMatchesOpen, setIsMyMatchesOpen] = useState(false);
   const [isDiscordGuideOpen, setIsDiscordGuideOpen] = useState(false);
   const [isAboutUsOpen, setIsAboutUsOpen] = useState(false);
+  const [isCardExporterOpen, setIsCardExporterOpen] = useState(false);
 
 
   // Liaison Discord DM Token
@@ -303,7 +305,7 @@ export default function App() {
         }}
       />
 
-      {/* Modale de Profil Utilisateur (Vérification Ori Bot & Profil Dating LoL) */}
+      {/* Modale de Profil Utilisateur (Vérification Riot & Profil Dating LoL) */}
       <UserProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
@@ -311,6 +313,15 @@ export default function App() {
         currentLang={currentLang}
         onUserUpdated={(updatedUser) => setCurrentUser(updatedUser)}
         onLogout={handleLogout}
+        onOpenCardExporter={() => setIsCardExporterOpen(true)}
+      />
+
+      {/* Modale Générateur de Carte HD ("Duo Card") */}
+      <PlayerCardExporterModal
+        isOpen={isCardExporterOpen}
+        onClose={() => setIsCardExporterOpen(false)}
+        user={currentUser}
+        currentLang={currentLang}
       />
 
       {/* Modale de Matchmaking Duo ("Trouver un Duo") */}

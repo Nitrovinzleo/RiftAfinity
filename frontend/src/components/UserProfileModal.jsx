@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle, Camera, Lock, Mail, KeyRound, Trash2, User as UserIcon } from 'lucide-react';
+import { X, CheckCircle, RefreshCw, Trophy, Shield, Heart, Sparkles, AlertCircle, Camera, Lock, Mail, KeyRound, Trash2, User as UserIcon, Image } from 'lucide-react';
 import { getRankEmblemUrl } from '../utils/rankEmblems';
 import { translations } from '../utils/translations';
 
-export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout, currentLang = 'en' }) {
+export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated, onLogout, onOpenCardExporter, currentLang = 'en' }) {
   const t = translations[currentLang]?.profile || translations.en.profile;
 
   const [activeTab, setActiveTab] = useState('profile'); // 'profile' | 'security'
@@ -449,6 +449,16 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
                 <RefreshCw className={`w-3.5 h-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
                 <span>{t.syncBtn || "Tout synchroniser depuis LoL"}</span>
               </button>
+
+              {onOpenCardExporter && (
+                <button
+                  onClick={onOpenCardExporter}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white text-xs font-bold transition-all shadow-md active:scale-95"
+                >
+                  <Image className="w-3.5 h-3.5" />
+                  <span>{currentLang === 'fr' ? 'Générer ma Carte HD 🎴' : 'Generate HD Card 🎴'}</span>
+                </button>
+              )}
             </div>
           </div>
 
