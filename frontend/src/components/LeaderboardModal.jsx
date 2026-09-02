@@ -21,27 +21,14 @@ export default function LeaderboardModal({ isOpen, onClose, topDuos = [], curren
 
   if (!isOpen) return null;
 
-  // Top 10 Duos par défaut si la liste est courte
+  // Base initiale des Duos inscrits sur la plateforme
   const defaultTop10 = [
-    { id: 1, player1Name: 'Faker', player2Name: 'Keria', score: 98, archetype: '🏆 Duo de Légende T1', winrate: '82%', games: 45 },
-    { id: 2, player1Name: 'PrincessPinkyUp', player2Name: 'Lesbian princess', score: 95, archetype: '💎 High Elo Duo', winrate: '74%', games: 38 },
-    { id: 3, player1Name: 'Doakes', player2Name: 'ILoveN', score: 91, archetype: '🔥 Climber Duo', winrate: '68%', games: 29 },
-    { id: 4, player1Name: 'Rekkles', player2Name: 'Mikyx', score: 89, archetype: '🏹 Bottlane Carry Duo', winrate: '66%', games: 24 },
-    { id: 5, player1Name: 'Caps', player2Name: 'Jankos', score: 87, archetype: '⚡ Mid-Jungle Synergy', winrate: '65%', games: 21 },
-    { id: 6, player1Name: 'Chovy', player2Name: 'Peanut', score: 86, archetype: '🧠 Macro Boss Duo', winrate: '63%', games: 19 },
-    { id: 7, player1Name: 'Viper', player2Name: 'Meiko', score: 84, archetype: '🏹 World Champions', winrate: '62%', games: 17 },
-    { id: 8, player1Name: 'ShowMaker', player2Name: 'Canyon', score: 83, archetype: '⚡ DK Iconic Duo', winrate: '61%', games: 16 },
-    { id: 9, player1Name: 'Gumayusi', player2Name: 'Keria', score: 82, archetype: '🏹 Bot Duo God Tier', winrate: '60%', games: 15 },
-    { id: 10, player1Name: 'tibo', player2Name: 'Ismael', score: 80, archetype: '🛡️ Silver-Gold Climber', winrate: '58%', games: 14 }
+    { id: 1, player1Name: 'Julie', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg', player2Name: 'Alanood', player2Avatar: '/avatars/alanood.jpg', score: 96, archetype: '💎 High Elo Duo', winrate: '76%', games: 38 },
+    { id: 2, player1Name: 'Ismael', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6868.jpg', player2Name: 'Julie', player2Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg', score: 93, archetype: '🔥 Mastermind Duo', winrate: '70%', games: 28 },
+    { id: 3, player1Name: 'tibo', player1Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg', player2Name: 'ILoveN', player2Avatar: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg', score: 90, archetype: '⚡ Climber Duo', winrate: '68%', games: 24 }
   ];
 
-  const rawList = (topDuos && topDuos.length > 0) ? topDuos : defaultTop10;
-
-  // Compléter jusqu'à 10 duos si nécessaire
-  const list = [...rawList];
-  while (list.length < 10 && defaultTop10[list.length]) {
-    list.push(defaultTop10[list.length]);
-  }
+  const list = (topDuos && topDuos.length > 0) ? topDuos : defaultTop10;
 
   // Tri par filtre
   const sortedList = [...list].sort((a, b) => {

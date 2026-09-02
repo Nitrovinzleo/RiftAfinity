@@ -526,11 +526,11 @@ async def get_public_stats(db: Session = Depends(get_db)):
                 "games": entry.total_games or 12
             })
     else:
-        # Fallback aux Duos phares de la communauté
+        # Fallback aux Duos connectés et membres de la communauté
         top_duos_list = [
-          { "id": 1, "player1": "Faker#KR1", "player1Name": "Faker", "player1Avatar": None, "player2": "Keria#T1", "player2Name": "Keria", "player2Avatar": None, "score": 98, "archetype": "🏆 Duo de Légende T1", "winrate": "82%", "games": 45 },
-          { "id": 2, "player1": "PrincessPinkyUp#8ï8", "player1Name": "Julie", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg", "player2": "Lesbian princess#UwU", "player2Name": "Alanood", "player2Avatar": "/avatars/alanood.jpg", "score": 95, "archetype": "💎 High Elo Duo", "winrate": "74%", "games": 38 },
-          { "id": 3, "player1": "Doakes#slice", "player1Name": "tibo", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg", "player2": "ILoveN#MOMY", "player2Name": "ILoveN", "player2Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg", "score": 91, "archetype": "🔥 Climber Duo", "winrate": "68%", "games": 29 }
+          { "id": 1, "player1": "PrincessPinkyUp#8ï8", "player1Name": "Julie", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg", "player2": "Lesbian princess#UwU", "player2Name": "Alanood", "player2Avatar": "/avatars/alanood.jpg", "score": 96, "archetype": "💎 High Elo Duo", "winrate": "76%", "games": 38 },
+          { "id": 2, "player1": "PrincessDarkyUp#8ï8", "player1Name": "Ismael", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6868.jpg", "player2": "PrincessPinkyUp#8ï8", "player2Name": "Julie", "player2Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/7196.jpg", "score": 93, "archetype": "🔥 Mastermind Duo", "winrate": "70%", "games": 28 },
+          { "id": 3, "player1": "Doakes#slice", "player1Name": "tibo", "player1Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6024.jpg", "player2": "ILoveN#MOMY", "player2Name": "ILoveN", "player2Avatar": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/6926.jpg", "score": 90, "archetype": "⚡ Climber Duo", "winrate": "68%", "games": 24 }
         ]
 
     return {
