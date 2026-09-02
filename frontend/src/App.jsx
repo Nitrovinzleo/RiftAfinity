@@ -83,19 +83,15 @@ export default function App() {
     setIsMatchmakerOpen(false);
   };
 
-  // Contrôle d'accès strict au Matchmaking : Connecté + Compte LoL Vérifié
+  // Accès au Matchmaking Duo : Utilisateur Connecté
   const handleOpenMatchmaker = () => {
     if (!currentUser) {
       setIsAuthOpen(true);
       return;
     }
-    if (!currentUser.isVerified) {
-      alert("⚠️ Votre compte League of Legends doit être VÉRIFIÉ pour accéder au Matchmaking Duo ! Équipez l'icône requise dans votre profil.");
-      setIsProfileOpen(true);
-      return;
-    }
     setIsMatchmakerOpen(true);
   };
+
 
   // Envoi de la requête au backend FastAPI
   const handleFormSubmit = async (formData, rawInputs) => {

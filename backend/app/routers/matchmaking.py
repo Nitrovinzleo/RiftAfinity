@@ -148,23 +148,15 @@ async def get_matchmaking_candidates(
     """
     user = get_current_user_from_token(authorization, db)
 
-    if not user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Votre compte League of Legends doit être VÉRIFIÉ pour accéder au Matchmaking Duo !"
-        )
-
     # Récupérer les IDs déjà swipés par l'utilisateur
     swiped_ids = [s.target_id for s in db.query(DuoSwipe).filter(DuoSwipe.swiper_id == user.id).all()]
 
-    # Chercher d'autres utilisateurs réels enregistrés, vérifiés et non masqués (sans profils masqués ou en cours de suppression)
+    # Chercher d'autres utilisateurs réels enregistrés et non masqués (sans profils masqués ou en cours de suppression)
     db_candidates = db.query(User).filter(
         User.id != user.id,
-        User.is_verified == True,
         User.is_hidden != True,
         User.scheduled_deletion_at == None
     ).all()
-
 
     candidates = []
 
@@ -192,8 +184,6 @@ async def process_swipe(
     """
     user = get_current_user_from_token(authorization, db)
 
-    if not user.is_verified:
-        raise HTTPException(status_code=403, detail="Compte non vérifié.")
 
     try:
         target_id = int(req.get_target_id())
