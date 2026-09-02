@@ -453,39 +453,24 @@ async def get_public_stats(db: Session = Depends(get_db)):
             continue
         seen_riot_ids.add(riot_id_key)
 
-        # Calcul des victoires, défaites et winrate avec valeurs réelles
-        if u.rank_wins and u.rank_losses:
-            wins = u.rank_wins
-            losses = u.rank_losses
-        else:
-            g_low = u.game_name.lower()
-            if "pinky" in g_low:
-                wins, losses = 102, 48
-            elif "lesbian" in g_low:
-                wins, losses = 611, 571
-            elif "doakes" in g_low:
-                wins, losses = 101, 99
-            else:
-                wins, losses = 72, 38
-
+        # Victoires, défaites et winrate directement depuis la BDD (synchro API Riot)
+        wins = u.rank_wins or 0
+        losses = u.rank_losses or 0
         tot_games = wins + losses
-        winrate = round((wins / tot_games) * 100) if tot_games > 0 else 64
+        winrate = round((wins / tot_games) * 100) if tot_games > 0 else 50
 
         avatar_url = u.custom_avatar
         if not avatar_url:
-            if "lesbian" in u.game_name.lower():
-                avatar_url = "/avatars/alanood.jpg"
-            else:
-                icon_id = u.current_icon_id or 28
-                avatar_url = f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{icon_id}.jpg"
+            icon_id = u.current_icon_id or 28
+            avatar_url = f"https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{icon_id}.jpg"
 
         cand_list.append({
             "id": u.id,
             "gameName": u.game_name,
             "tagLine": u.tag_line,
             "displayName": u.display_name,
-            "rankTier": u.rank_tier or "GOLD",
-            "rankDivision": u.rank_division or "III",
+            "rankTier": u.rank_tier or "UNRANKED",
+            "rankDivision": u.rank_division or "",
             "primaryRole": u.primary_role or "MID",
             "favoriteChampion": u.favorite_champion or "LoL",
             "customAvatar": avatar_url,
