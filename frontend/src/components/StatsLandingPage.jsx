@@ -122,7 +122,7 @@ export default function StatsLandingPage({
       mainChamp: 'Singed',
       avatar: '/avatars/alanood.jpg',
       currentIconId: 7,
-      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'mid', label: '⚡ Carry Mid' }],
+      badges: [{ id: 'high_elo', label: '💎 High Elo' }, { id: 'top', label: '🛡️ Top Laner' }, { id: 'mid', label: '⚡ Carry Mid' }],
       region: 'EUW',
       badge: 'MASTER DUO'
     },
