@@ -140,25 +140,7 @@ export default function StatsLandingPage({
     }
   ];
 
-  const displayPlayers = statsData.featuredPlayers && statsData.featuredPlayers.length > 0 
-    ? statsData.featuredPlayers.map((p, idx) => ({
-        name: p.displayName || p.gameName,
-        hasCustomName: Boolean(p.displayName && p.displayName.trim()),
-        tag: `#${p.tagLine}`,
-        rankTier: p.rankTier,
-        rankDivision: p.rankDivision,
-        winrate: p.winrate || '60%',
-        wins: p.wins || 50,
-        losses: p.losses || 30,
-        role: p.primaryRole,
-        mainChamp: p.favoriteChampion,
-        avatar: p.customAvatar || `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${p.currentIconId || 28}.jpg`,
-        currentIconId: p.currentIconId || 28,
-        badges: (p.badges && p.badges.length > 0) ? p.badges : [{ id: 'climber', label: '🥇 Climber Duo' }],
-        region: p.region,
-        badge: idx === 0 ? 'TOP DUO' : idx === 1 ? 'ACTIVE PLAYER' : 'PRO CARRY'
-      }))
-    : defaultPlayers;
+  const displayPlayers = defaultPlayers;
 
   const topDuos = statsData.topDuos && statsData.topDuos.length > 0 
     ? statsData.topDuos 
