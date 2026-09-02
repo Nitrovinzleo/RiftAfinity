@@ -4,7 +4,7 @@ import Logo from './Logo';
 import { FrenchFlag, UKFlag } from './FlagIcons';
 import { translations } from '../utils/translations';
 
-export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, onOpenAuth, onOpenProfile, onOpenMatchmaker, onOpenMyMatches }) {
+export default function Navbar({ onReset, currentLang, onToggleLang, currentUser, matchCount = 0, onOpenAuth, onOpenProfile, onOpenMatchmaker, onOpenMyMatches }) {
   const t = translations[currentLang]?.navbar || translations.fr.navbar;
 
   return (
@@ -51,13 +51,19 @@ export default function Navbar({ onReset, currentLang, onToggleLang, currentUser
           {currentUser && (
             <button
               onClick={onOpenMyMatches}
-              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-200 hover:text-white transition-all text-xs font-bold shadow-md"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-900 border border-[#ff2a85]/40 hover:border-[#ff2a85] text-slate-200 hover:text-white transition-all text-xs font-bold shadow-md relative"
               title="Mes Matchs & Notifications"
             >
               <Heart className="w-4 h-4 text-[#ff2a85] fill-[#ff2a85]" />
               <span className="hidden xs:inline">{currentLang === 'fr' ? 'Mes Matchs' : 'My Matches'}</span>
+              {matchCount > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full bg-[#ff2a85] text-white text-[10px] font-black animate-bounce shadow-lg border border-white/20">
+                  {matchCount}
+                </span>
+              )}
             </button>
           )}
+
 
           {/* Bouton Authentification / Profil */}
           {currentUser ? (

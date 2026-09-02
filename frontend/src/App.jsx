@@ -76,9 +76,38 @@ export default function App() {
     fetchCurrentUser();
   }, []);
 
+  const [matchCount, setMatchCount] = useState(0);
+
+  // Récupération dynamique du nombre de matchs débloqués pour l'utilisateur connecté
+  const fetchMatchesCount = async () => {
+    const token = localStorage.getItem('riftaffinity_token');
+    if (!token) return;
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const res = await fetch(`${backendUrl}/api/matchmaking/matches`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMatchCount(data.length);
+      }
+    } catch (err) {
+      console.error('Erreur de chargement du nombre de matchs:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchMatchesCount();
+    } else {
+      setMatchCount(0);
+    }
+  }, [currentUser]);
+
   const handleLogout = () => {
     localStorage.removeItem('riftaffinity_token');
     setCurrentUser(null);
+    setMatchCount(0);
     setIsProfileOpen(false);
     setIsMatchmakerOpen(false);
   };
@@ -149,6 +178,7 @@ export default function App() {
         currentLang={currentLang}
         onToggleLang={toggleLanguage}
         currentUser={currentUser}
+        matchCount={matchCount}
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenMatchmaker={handleOpenMatchmaker}
@@ -158,6 +188,31 @@ export default function App() {
       {/* Contenu Principal */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         
+        {/* Banner Notification de Match Duo Débloqué */}
+        {currentUser && matchCount > 0 && (
+          <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-[#ff2a85]/20 via-[#8a2be2]/20 to-[#00f0ff]/20 border border-[#ff2a85]/50 flex items-center justify-between gap-4 shadow-xl animate-fadeIn">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-[#ff2a85] text-white shadow-md animate-bounce shrink-0">
+                <Heart className="w-5 h-5 fill-white text-white" />
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-sm">
+                  🎉 {currentLang === 'fr' ? `Vous avez ${matchCount} Match(s) Duo débloqué(s) !` : `You have ${matchCount} Duo Match(es) unlocked!`}
+                </h4>
+                <p className="text-xs text-slate-300">
+                  {currentLang === 'fr' ? 'Consultez les coordonnées et réseaux sociaux de vos partenaires Duo.' : 'Check unlocked contacts and social media of your Duo partners.'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsMyMatchesOpen(true)}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#ff2a85] to-[#8a2be2] hover:from-[#ff2a85] hover:to-[#00f0ff] text-white font-bold text-xs shadow-lg shrink-0 transition-all hover:scale-105"
+            >
+              {currentLang === 'fr' ? 'Voir Mes Matchs 💖' : 'View My Matches 💖'}
+            </button>
+          </div>
+        )}
+
         {/* Écran Formulaire */}
         {viewState === 'form' && (
           <RiotForm
@@ -237,7 +292,10 @@ export default function App() {
       {/* Modale de Matchmaking Duo ("Trouver un Duo") */}
       <DuoMatchmakerModal
         isOpen={isMatchmakerOpen}
-        onClose={() => setIsMatchmakerOpen(false)}
+        onClose={() => {
+          setIsMatchmakerOpen(false);
+          fetchMatchesCount();
+        }}
         currentUser={currentUser}
         currentLang={currentLang}
         onOpenProfile={() => {
@@ -249,10 +307,14 @@ export default function App() {
       {/* Modale "Mes Matchs & Notifications" */}
       <MyMatchesModal
         isOpen={isMyMatchesOpen}
-        onClose={() => setIsMyMatchesOpen(false)}
+        onClose={() => {
+          setIsMyMatchesOpen(false);
+          fetchMatchesCount();
+        }}
         currentUser={currentUser}
         currentLang={currentLang}
       />
+
 
       {/* Modale d'Association Discord (DM Token Validation) */}
       {isDiscordLinkOpen && (
