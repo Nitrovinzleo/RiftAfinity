@@ -104,6 +104,7 @@ export default function StatsLandingPage({
   const displayPlayers = statsData.featuredPlayers && statsData.featuredPlayers.length > 0 
     ? statsData.featuredPlayers.map((p, idx) => ({
         name: p.displayName || p.gameName,
+        hasCustomName: Boolean(p.displayName && p.displayName.trim()),
         tag: `#${p.tagLine}`,
         rankTier: p.rankTier,
         rankDivision: p.rankDivision,
@@ -211,7 +212,9 @@ export default function StatsLandingPage({
                     <h3 className="font-display font-black text-lg text-white group-hover:text-[#00f0ff] transition-colors">
                       {player.name}
                     </h3>
-                    <span className="text-xs text-slate-500 font-mono">{player.tag}</span>
+                    {!player.hasCustomName && (
+                      <span className="text-xs text-slate-500 font-mono">{player.tag}</span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <img 
