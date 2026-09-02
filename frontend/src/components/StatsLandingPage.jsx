@@ -60,14 +60,14 @@ export default function StatsLandingPage({
     {
       name: 'PrincessPinkyUp',
       tag: '#8ï8',
-      rankTier: 'EMERALD',
-      rankDivision: 'IV',
+      rankTier: 'DIAMOND',
+      rankDivision: 'I',
       winrate: '68%',
       wins: 102,
       losses: 48,
       role: 'ADC',
       mainChamp: 'Twitch',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/6868.png',
+      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/7196.png',
       region: 'EUW',
       badge: 'TOP WINRATE'
     },
@@ -86,18 +86,18 @@ export default function StatsLandingPage({
       badge: 'JUNGLE KING'
     },
     {
-      name: 'No Map Master',
-      tag: '#V92',
-      rankTier: 'GOLD',
-      rankDivision: 'III',
-      winrate: '59%',
-      wins: 145,
-      losses: 101,
+      name: 'Lesbian princess',
+      tag: '#UwU',
+      rankTier: 'MASTER',
+      rankDivision: 'I',
+      winrate: '64%',
+      wins: 611,
+      losses: 571,
       role: 'MID',
-      mainChamp: 'Ahri',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/3220.png',
+      mainChamp: 'Singed',
+      avatar: 'https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/7.png',
       region: 'EUW',
-      badge: 'CARRY MID'
+      badge: 'MASTER DUO'
     }
   ];
 
