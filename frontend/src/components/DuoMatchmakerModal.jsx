@@ -272,44 +272,60 @@ export default function DuoMatchmakerModal({ isOpen, onClose, currentUser, onOpe
                 </div>
 
                 {matchResult.matchedUser.discordTag && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
-                    <span>🎮 Discord: <strong className="text-white">{matchResult.matchedUser.discordTag}</strong></span>
+                  <div 
+                    className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between hover:border-indigo-500/50 transition-colors"
+                    title={`Discord: ${matchResult.matchedUser.discordTag}`}
+                  >
+                    <span>🎮 <span className="text-indigo-400 font-bold">Discord:</span> <strong className="text-white">{matchResult.matchedUser.discordTag}</strong></span>
                     <button
                       onClick={() => handleCopy(matchResult.matchedUser.discordTag, 'discord-celebration')}
                       className="p-1 text-slate-400 hover:text-white transition-colors"
+                      title="Copier le Discord"
                     >
                       {copiedKey === 'discord-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 )}
                 {matchResult.matchedUser.instagramUsername && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
-                    <span>📷 Insta: <strong className="text-white">{matchResult.matchedUser.instagramUsername}</strong></span>
+                  <div 
+                    className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between hover:border-pink-500/50 transition-colors"
+                    title={`Instagram: ${matchResult.matchedUser.instagramUsername}`}
+                  >
+                    <span>📷 <span className="text-pink-400 font-bold">Instagram:</span> <strong className="text-white">{matchResult.matchedUser.instagramUsername}</strong></span>
                     <button
                       onClick={() => handleCopy(matchResult.matchedUser.instagramUsername, 'insta-celebration')}
                       className="p-1 text-slate-400 hover:text-white transition-colors"
+                      title="Copier l'Instagram"
                     >
                       {copiedKey === 'insta-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 )}
                 {matchResult.matchedUser.tiktokUsername && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
-                    <span>🎵 TikTok: <strong className="text-white">{matchResult.matchedUser.tiktokUsername}</strong></span>
+                  <div 
+                    className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between hover:border-cyan-500/50 transition-colors"
+                    title={`TikTok: ${matchResult.matchedUser.tiktokUsername}`}
+                  >
+                    <span>🎵 <span className="text-cyan-400 font-bold">TikTok:</span> <strong className="text-white">{matchResult.matchedUser.tiktokUsername}</strong></span>
                     <button
                       onClick={() => handleCopy(matchResult.matchedUser.tiktokUsername, 'tiktok-celebration')}
                       className="p-1 text-slate-400 hover:text-white transition-colors"
+                      title="Copier le TikTok"
                     >
                       {copiedKey === 'tiktok-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 )}
                 {matchResult.matchedUser.twitchUsername && (
-                  <div className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between">
-                    <span>🟣 Twitch: <strong className="text-white">{matchResult.matchedUser.twitchUsername}</strong></span>
+                  <div 
+                    className="p-2 rounded-lg bg-slate-950/80 border border-slate-800 font-mono text-slate-200 flex items-center justify-between hover:border-purple-500/50 transition-colors"
+                    title={`Twitch: ${matchResult.matchedUser.twitchUsername}`}
+                  >
+                    <span>🟣 <span className="text-purple-400 font-bold">Twitch:</span> <strong className="text-white">{matchResult.matchedUser.twitchUsername}</strong></span>
                     <button
                       onClick={() => handleCopy(matchResult.matchedUser.twitchUsername, 'twitch-celebration')}
                       className="p-1 text-slate-400 hover:text-white transition-colors"
+                      title="Copier le Twitch"
                     >
                       {copiedKey === 'twitch-celebration' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>

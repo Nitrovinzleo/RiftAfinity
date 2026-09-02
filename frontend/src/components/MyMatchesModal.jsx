@@ -333,11 +333,17 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                     </div>
 
                     {cand.discordTag && (
-                      <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono">
-                        <span className="truncate text-slate-300">🎮 <strong className="text-white">{cand.discordTag}</strong></span>
+                      <div 
+                        className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono hover:border-indigo-500/50 transition-colors group"
+                        title={`Discord: ${cand.discordTag}`}
+                      >
+                        <span className="truncate text-slate-300">
+                          🎮 <span className="text-indigo-400 font-bold">Discord:</span> <strong className="text-white">{cand.discordTag}</strong>
+                        </span>
                         <button
                           onClick={() => handleCopy(cand.discordTag, `discord-${cand.id}`)}
                           className="p-1 text-slate-400 hover:text-white transition-colors"
+                          title="Copier le Discord"
                         >
                           {copiedKey === `discord-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
@@ -345,13 +351,55 @@ export default function MyMatchesModal({ isOpen, onClose, currentUser, currentLa
                     )}
 
                     {cand.instagramUsername && (
-                      <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono">
-                        <span className="truncate text-slate-300">📷 <strong className="text-white">{cand.instagramUsername}</strong></span>
+                      <div 
+                        className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono hover:border-pink-500/50 transition-colors group"
+                        title={`Instagram: ${cand.instagramUsername}`}
+                      >
+                        <span className="truncate text-slate-300">
+                          📷 <span className="text-pink-400 font-bold">Instagram:</span> <strong className="text-white">{cand.instagramUsername}</strong>
+                        </span>
                         <button
                           onClick={() => handleCopy(cand.instagramUsername, `insta-${cand.id}`)}
                           className="p-1 text-slate-400 hover:text-white transition-colors"
+                          title="Copier l'Instagram"
                         >
                           {copiedKey === `insta-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    )}
+
+                    {cand.tiktokUsername && (
+                      <div 
+                        className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono hover:border-cyan-500/50 transition-colors group"
+                        title={`TikTok: ${cand.tiktokUsername}`}
+                      >
+                        <span className="truncate text-slate-300">
+                          🎵 <span className="text-cyan-400 font-bold">TikTok:</span> <strong className="text-white">{cand.tiktokUsername}</strong>
+                        </span>
+                        <button
+                          onClick={() => handleCopy(cand.tiktokUsername, `tiktok-${cand.id}`)}
+                          className="p-1 text-slate-400 hover:text-white transition-colors"
+                          title="Copier le TikTok"
+                        >
+                          {copiedKey === `tiktok-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    )}
+
+                    {cand.twitchUsername && (
+                      <div 
+                        className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between font-mono hover:border-purple-500/50 transition-colors group"
+                        title={`Twitch: ${cand.twitchUsername}`}
+                      >
+                        <span className="truncate text-slate-300">
+                          🟣 <span className="text-purple-400 font-bold">Twitch:</span> <strong className="text-white">{cand.twitchUsername}</strong>
+                        </span>
+                        <button
+                          onClick={() => handleCopy(cand.twitchUsername, `twitch-${cand.id}`)}
+                          className="p-1 text-slate-400 hover:text-white transition-colors"
+                          title="Copier le Twitch"
+                        >
+                          {copiedKey === `twitch-${cand.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                     )}
