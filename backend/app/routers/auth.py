@@ -11,6 +11,8 @@ from app.models.db_models import User, DiscordPendingLink
 from app.models.schemas import UserRegisterRequest, UserLoginRequest, UserResponse
 from app.services.auth_service import hash_password, verify_password, create_access_token, decode_access_token
 from app.services.riot_api import RiotApiClient
+from app.routers.profile import perform_full_riot_sync
+
 
 logger = logging.getLogger("riftaffinity.auth")
 router = APIRouter(tags=["Authentification"])
@@ -43,24 +45,14 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
     except Exception as e:
         logger.warning(f"Impossible de résoudre le PUUID à l'inscription: {e}")
 
-    # Protection SQLi : L'ORM SQLAlchemy utilise des requêtes SQL paramétrées
+    # Vérification si l'adresse e-mail existe déjà
     existing_user = db.query(User).filter(User.email == req.email.strip().lower()).first()
     if existing_user:
-        # Mise à jour transparente du mot de passe et des données si le compte existe déjà
-        existing_user.hashed_password = hash_password(req.password)
-        existing_user.game_name = game_name
-        existing_user.tag_line = tag_line
-        existing_user.region = req.region
-        if puuid:
-            existing_user.puuid = puuid
-        db.commit()
-        db.refresh(existing_user)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Un compte avec cette adresse e-mail existe déjà. Veuillez vous connecter."
+        )
 
-        token = create_access_token({"sub": str(existing_user.id), "email": existing_user.email})
-        return {
-            "token": token,
-            "user": existing_user.to_dict()
-        }
 
     new_user = User(
         email=req.email.strip().lower(),
@@ -75,10 +67,11 @@ async def register(req: UserRegisterRequest, db: Session = Depends(get_db)):
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
+        # Synchronisation automatique initiale (Rang, Avatar LoL, Icone, Main Champ)
+        await perform_full_riot_sync(new_user, riot_client, db)
     except Exception as e:
-        db.rollback()
-        logger.error(f"Erreur lors de l'enregistrement en BDD: {e}")
-        raise HTTPException(status_code=500, detail="Erreur d'enregistrement du compte en base de données.")
+        logger.warning(f"Erreur lors de la synchronisation initiale post-inscription: {e}")
+
 
     token = create_access_token({"sub": str(new_user.id), "email": new_user.email})
 

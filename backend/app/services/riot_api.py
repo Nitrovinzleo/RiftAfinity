@@ -206,16 +206,29 @@ class RiotApiClient:
         url = f"https://{platform_region}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/{puuid}"
         return await self._make_request(url)
 
-    async def get_league_entries_by_puuid(self, puuid: str, platform_region: str) -> List[Dict[str, Any]]:
+    async def get_league_entries_by_puuid(self, puuid: str, platform_region: str, summoner_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """
-        Récupère les classements et le rang (Tier, Rank, LP, Winrate) de l'invocateur directement par PUUID via LEAGUE-V4.
+        Récupère les classements et le rang (Tier, Rank, LP, Winrate) de l'invocateur par PUUID ou Summoner ID via LEAGUE-V4.
         """
         url = f"https://{platform_region}.api.riotgames.com/lol/league/v4/entries/by-puuid/{puuid}"
         try:
-            return await self._make_request(url)
+            res = await self._make_request(url)
+            if isinstance(res, list) and len(res) > 0:
+                return res
         except Exception as e:
             logger.warning(f"Impossible de récupérer le classement par PUUID {puuid}: {e}")
-            return []
+
+        if summoner_id:
+            try:
+                url_sum = f"https://{platform_region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{summoner_id}"
+                res_sum = await self._make_request(url_sum)
+                if isinstance(res_sum, list):
+                    return res_sum
+            except Exception as e:
+                logger.warning(f"Impossible de récupérer le classement par Summoner ID {summoner_id}: {e}")
+
+        return []
+
 
     async def get_account_by_puuid(self, puuid: str, regional_cluster: str) -> Dict[str, Any]:
         """

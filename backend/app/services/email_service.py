@@ -58,8 +58,14 @@ def send_match_emails(user1_dict: dict, user2_dict: dict):
 
     if smtp_host and smtp_user and smtp_password:
         try:
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
+            # Prise en charge TLS (587) et SSL (465)
+            if smtp_port == 465:
+                server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10.0)
+            else:
+                server = smtplib.SMTP(smtp_host, smtp_port, timeout=10.0)
                 server.starttls()
+
+            with server:
                 server.login(smtp_user, smtp_password)
 
                 msg1 = MIMEMultipart("alternative")
@@ -81,3 +87,59 @@ def send_match_emails(user1_dict: dict, user2_dict: dict):
             logger.error(f"Erreur d'envoi d'email SMTP: {e}")
     else:
         logger.info(f"[SIMULATION EMAIL] Match entre {u1_name} ({user1_dict.get('email')}) et {u2_name} ({user2_dict.get('email')}) - E-mails générés avec succès.")
+
+def send_test_email(to_email: str) -> dict:
+    """
+    Envoie un e-mail de test SMTP pour valider la configuration des variables d'environnement.
+    """
+    smtp_host = os.getenv("SMTP_HOST", "")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER", "")
+    smtp_password = os.getenv("SMTP_PASSWORD", "")
+    sender_email = os.getenv("SENDER_EMAIL", smtp_user or "test@riftaffinity.app")
+
+    if not (smtp_host and smtp_user and smtp_password):
+        return {
+            "success": False,
+            "mode": "SIMULATION",
+            "message": "Variables SMTP non configurées dans .env (SMTP_HOST, SMTP_USER, SMTP_PASSWORD). Envoi simulé."
+        }
+
+    subject = "🧪 Test de Configuration E-mail SMTP - RiftAffinity"
+    body_html = f"""
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #080912; color: #ffffff; padding: 24px; border-radius: 16px; border: 1px solid #00f0ff;">
+      <h2 style="color: #00f0ff; text-align: center;">⚡ Test de Configuration E-mail Réussi !</h2>
+      <p>Bonjour,</p>
+      <p>Ce message confirme que votre serveur d'envoi d'e-mails (SMTP) pour <strong>RiftAffinity</strong> fonctionne parfaitement !</p>
+      <div style="background-color: #121528; padding: 16px; border-radius: 12px; border-left: 4px solid #ff2a85; margin: 20px 0;">
+        <p style="margin: 4px 0;">🌐 <strong>Serveur SMTP :</strong> {smtp_host}:{smtp_port}</p>
+        <p style="margin: 4px 0;">📧 <strong>Expéditeur :</strong> {sender_email}</p>
+        <p style="margin: 4px 0;">📩 <strong>Destinataire :</strong> {to_email}</p>
+      </div>
+      <p style="text-align: center; color: #ff2a85; font-weight: bold; margin-top: 24px;">Les notifications de Matchs en temps réel sont actives ! 🚀</p>
+    </div>
+    """
+
+    try:
+        if smtp_port == 465:
+            server = smtplib.SMTP_SSL(smtp_host, smtp_port, timeout=10.0)
+        else:
+            server = smtplib.SMTP(smtp_host, smtp_port, timeout=10.0)
+            server.starttls()
+
+        with server:
+            server.login(smtp_user, smtp_password)
+
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"] = sender_email
+            msg["To"] = to_email
+            msg.attach(MIMEText(body_html, "html"))
+            server.sendmail(sender_email, to_email, msg.as_string())
+
+        logger.info(f"E-mail de test SMTP envoyé à {to_email}")
+        return {"success": True, "mode": "REAL_SMTP", "message": f"E-mail de test envoyé avec succès à {to_email}."}
+    except Exception as e:
+        logger.error(f"Erreur d'envoi d'e-mail de test SMTP: {e}")
+        return {"success": False, "mode": "REAL_SMTP", "error": str(e)}
+

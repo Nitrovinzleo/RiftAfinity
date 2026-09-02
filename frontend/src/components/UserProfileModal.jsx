@@ -49,19 +49,32 @@ export default function UserProfileModal({ isOpen, onClose, user, onUserUpdated,
   // Synchronisation des états locaux si l'utilisateur est mis à jour depuis le backend
   useEffect(() => {
     if (user) {
-      if (user.displayName !== undefined) setDisplayName(user.displayName || '');
-      if (user.spokenLanguages) setSpokenLangs(user.spokenLanguages.split(',').map(s => s.trim()));
-      if (user.birthDate) setBirthDate(user.birthDate);
-      if (user.bio) setBio(user.bio);
-      if (user.primaryRole) setPrimaryRole(user.primaryRole);
-      if (user.favoriteChampion) setFavoriteChampion(user.favoriteChampion);
-      if (user.discordTag) setDiscordTag(user.discordTag);
-      if (user.instagramUsername) setInstagramUsername(user.instagramUsername);
-      if (user.tiktokUsername) setTiktokUsername(user.tiktokUsername);
-      if (user.twitchUsername) setTwitchUsername(user.twitchUsername);
-      if (user.twitterUsername) setTwitterUsername(user.twitterUsername);
+      setDisplayName(user.displayName || '');
+      setSpokenLangs(user.spokenLanguages ? user.spokenLanguages.split(',').map(s => s.trim()) : ['FR', 'EN']);
+      setBirthDate(user.birthDate || '');
+      setBio(user.bio || '');
+      setPrimaryRole(user.primaryRole || 'MID');
+      setFavoriteChampion(user.favoriteChampion || '');
+      setDiscordTag(user.discordTag || '');
+      setInstagramUsername(user.instagramUsername || '');
+      setTiktokUsername(user.tiktokUsername || '');
+      setTwitchUsername(user.twitchUsername || '');
+      setTwitterUsername(user.twitterUsername || '');
+    } else {
+      setDisplayName('');
+      setSpokenLangs(['FR', 'EN']);
+      setBirthDate('');
+      setBio('');
+      setPrimaryRole('MID');
+      setFavoriteChampion('');
+      setDiscordTag('');
+      setInstagramUsername('');
+      setTiktokUsername('');
+      setTwitchUsername('');
+      setTwitterUsername('');
     }
   }, [user]);
+
 
   const toggleSpokenLang = (code) => {
     setSpokenLangs(prev => 

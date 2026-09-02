@@ -63,12 +63,17 @@ async def perform_full_riot_sync(user: User, riot_client: RiotApiClient, db: Ses
         except Exception as e:
             logger.warning(f"Impossible de synchroniser le pseudo: {e}")
 
-    # 3. Icône Invocateur & Summoner ID
+    # 3. Icône Invocateur, Summoner ID & Photo de profil LoL
     if user.puuid:
         try:
             summoner_data = await riot_client.get_summoner_by_puuid(user.puuid, user.region)
-            user.current_icon_id = summoner_data.get("profileIconId")
+            icon_id = summoner_data.get("profileIconId")
+            user.current_icon_id = icon_id
             user.summoner_id = summoner_data.get("id")
+
+            # Met automatiquement à jour la photo de profil avec l'icône LoL active
+            if icon_id:
+                user.custom_avatar = f"https://ddragon.leagueoflegends.com/cdn/14.10.1/img/profileicon/{icon_id}.png"
 
             # Statut vérification icône
             if user.current_icon_id == user.target_icon_id:
@@ -76,10 +81,10 @@ async def perform_full_riot_sync(user: User, riot_client: RiotApiClient, db: Ses
         except Exception as e:
             logger.warning(f"Impossible de synchroniser l'icône invocateur: {e}")
 
-    # 4. Classement Rank Solo/Duo & Flex via PUUID
+    # 4. Classement Rank Solo/Duo & Flex via PUUID / Summoner ID
     if user.puuid:
         try:
-            entries = await riot_client.get_league_entries_by_puuid(user.puuid, user.region)
+            entries = await riot_client.get_league_entries_by_puuid(user.puuid, user.region, summoner_id=user.summoner_id)
             solo_entry = next((e for e in entries if e.get("queueType") == "RANKED_SOLO_5x5"), None)
             flex_entry = next((e for e in entries if e.get("queueType") == "RANKED_FLEX_SR"), None)
             
@@ -96,6 +101,7 @@ async def perform_full_riot_sync(user: User, riot_client: RiotApiClient, db: Ses
                 user.rank_lp = 0
         except Exception as e:
             logger.warning(f"Erreur lors de la récupération du classement par PUUID: {e}")
+
 
     # 5. Champion Favori (#1 Maîtrise)
     if user.puuid:

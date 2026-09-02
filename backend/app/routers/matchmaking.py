@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from app.database import get_db
 from app.models.db_models import User, DuoSwipe
 from app.services.auth_service import decode_access_token
-from app.services.email_service import send_match_emails
+from app.services.email_service import send_match_emails, send_test_email
 
 logger = logging.getLogger("riftaffinity.matchmaking")
 router = APIRouter(tags=["Matchmaking Duo"])
@@ -290,4 +290,15 @@ async def get_user_matches(
 
     return result
 
+class TestEmailRequest(BaseModel):
+    email: str = Field(..., description="Adresse e-mail destinataire pour le test SMTP")
+
+@router.post("/test-email", response_model=dict)
+async def trigger_test_email(req: TestEmailRequest):
+    """
+    Endpoint utilitaire pour tester l'envoi d'un e-mail SMTP.
+    """
+    if not req.email or "@" not in req.email:
+        raise HTTPException(status_code=400, detail="Adresse e-mail invalide.")
+    return send_test_email(req.email)
 
