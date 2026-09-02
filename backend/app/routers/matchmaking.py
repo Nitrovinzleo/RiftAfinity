@@ -158,8 +158,16 @@ async def get_matchmaking_candidates(
         User.is_verified == True,
         User.is_hidden != True,
         User.scheduled_deletion_at == None
-    ).all()
+    ).order_by(User.id.desc()).all()
 
+    # Déduplication par Riot ID unique
+    seen_ids = set()
+    unique_db_candidates = []
+    for c in db_candidates:
+        key = f"{c.game_name.lower()}#{c.tag_line.lower()}"
+        if key not in seen_ids:
+            seen_ids.add(key)
+            unique_db_candidates.append(c)
 
     # Récupérer les IDs des personnes qui ont DÉJÀ liké l'utilisateur actuel
     liker_ids = set([
@@ -173,7 +181,7 @@ async def get_matchmaking_candidates(
     prioritized_candidates = []
     normal_candidates = []
 
-    for c in db_candidates:
+    for c in unique_db_candidates:
         if c.id not in swiped_ids:
             c_dict = c.to_dict()
             c_dict["compatibilityScore"] = calculate_compatibility_score(user, c_dict)
@@ -338,8 +346,14 @@ async def get_public_stats(db: Session = Depends(get_db)):
     total_count = db.query(User).count()
     total_verified = len(verified_users)
 
+    seen_riot_ids = set()
     cand_list = []
-    for u in verified_users[:6]:
+    for u in verified_users:
+        riot_id_key = f"{u.game_name.lower()}#{u.tag_line.lower()}"
+        if riot_id_key in seen_riot_ids:
+            continue
+        seen_riot_ids.add(riot_id_key)
+
         wins = u.rank_wins or 45
         losses = u.rank_losses or 35
         tot_games = wins + losses
@@ -365,6 +379,8 @@ async def get_public_stats(db: Session = Depends(get_db)):
             "wins": wins,
             "losses": losses
         })
+        if len(cand_list) >= 6:
+            break
 
     return {
         "totalPlayers": max(212, total_count),
