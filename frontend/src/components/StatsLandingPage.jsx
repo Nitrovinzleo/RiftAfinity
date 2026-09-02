@@ -165,7 +165,7 @@ export default function StatsLandingPage({
         </p>
 
         {/* CTAs Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
           
           <button
             onClick={currentUser ? onOpenMatchmaker : onOpenAuth}
@@ -176,12 +176,25 @@ export default function StatsLandingPage({
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
 
+          {/* Bouton Classement (Trophée / 1/4 de taille) */}
+          <button
+            onClick={() => {
+              const el = document.getElementById('hall-of-fame-section');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="w-full sm:w-auto py-4 px-5 rounded-2xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 hover:text-amber-200 font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all active:scale-95 group"
+            title={currentLang === 'fr' ? 'Voir le Classement des Top Duos' : 'View Top Duos Leaderboard'}
+          >
+            <Trophy className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform shrink-0" />
+            <span>{currentLang === 'fr' ? 'Classement 🏆' : 'Leaderboard 🏆'}</span>
+          </button>
+
           {!currentUser && (
             <button
               onClick={onOpenAuth}
-              className="w-full sm:w-auto py-4 px-6 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-[#00f0ff] text-slate-200 hover:text-white font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto py-4 px-5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 hover:border-[#00f0ff] text-slate-200 hover:text-white font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2"
             >
-              <span>{currentLang === 'fr' ? 'Déjà un compte ? Se Connecter →' : 'Already have an account? Sign In →'}</span>
+              <span>{currentLang === 'fr' ? 'Se Connecter →' : 'Sign In →'}</span>
             </button>
           )}
 
@@ -310,7 +323,7 @@ export default function StatsLandingPage({
       </section>
 
       {/* --- HALL OF FAME : TOP DUOS DE LA PLATEFORME --- */}
-      <section className="max-w-6xl mx-auto px-4 space-y-6">
+      <section id="hall-of-fame-section" className="max-w-6xl mx-auto px-4 space-y-6 scroll-mt-24">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold shadow-md">
             <Trophy className="w-4 h-4 text-amber-400" />
